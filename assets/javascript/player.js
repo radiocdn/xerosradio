@@ -157,7 +157,7 @@ class RadioPlayer {
 
                 // Fetch album artwork from XerosRadio API.
                 const query = `${artist} ${title}`;
-                fetch(`https://corsproxy.io?https://api.deezer.com/search?q=${query}`)
+                fetch(`https://corsproxy.io?https://api.deezer.com/search?q=${query}&output=json`)
                     .then(response => response.json())
                     .then(deezerData => {
                         if (deezerData['data'][0]) {
