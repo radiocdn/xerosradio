@@ -10,7 +10,7 @@ function isValidUrl(url) {
   
   function updateDJInfo() {
     // Fetch URL for XerosRadio Api
-    const url = 'https://azuracast.streamxerosradio.duckdns.org/api/nowplaying/xerosradio';
+    const url = 'https://azuracast.streamxerosradio.duckdns.org/api/nowplaying_static/xerosradio.json';
   
     const djInfoElement = document.getElementById('djInfo');
     const artworkElement = document.getElementById('artwork');
