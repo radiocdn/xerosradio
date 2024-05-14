@@ -146,7 +146,7 @@ class RadioPlayer {
     // Function to update XerosRadio API now playing info and artwork info.
     updateNowPlaying() {
         // Fetch now playing info from the XerosRadio API.
-        fetch('https://azuracast.streamxerosradio.duckdns.org/api/nowplaying/xerosradio')
+        fetch('https://azuracast.streamxerosradio.duckdns.org/api/nowplaying_static/xerosradio.json')
             .then(response => response.json())
             .then(data => {
                 const artist = data['now_playing']['song']['artist'];
