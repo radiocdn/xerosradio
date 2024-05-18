@@ -17,7 +17,6 @@ async function updateDJInfo() {
 
     const fetchOptions = {
         method: 'GET',
-        mode: 'cors', // CORS for XerosRadio API
         cache: 'no-cache',
         headers: {
             'Accept': 'application/json',
