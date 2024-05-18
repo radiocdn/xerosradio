@@ -1,4 +1,4 @@
-// Function to check if a string is a valid URL | XerosRadio Api Checking
+// Function to check if a string is a valid URL
 function isValidUrl(url) {
     try {
         new URL(url);
@@ -9,15 +9,15 @@ function isValidUrl(url) {
 }
 
 async function updateDJInfo() {
-    // Fetch URL for XerosRadio Api
-    const url = 'https://azuracast.streamxerosradio.duckdns.org/api/nowplaying_static/xerosradio.json';
+    // Fetch URL for XerosRadio API
+    const url = 'https://php.streamxerosradio.duckdns.org/api/xerosradio/';
 
     const djInfoElement = document.getElementById('djInfo');
     const artworkElement = document.getElementById('artwork');
 
     const fetchOptions = {
         method: 'GET',
-        mode: 'cors', // Cors for XerosRadio Api
+        mode: 'cors', // CORS for XerosRadio API
         cache: 'no-cache',
         headers: {
             'Content-Type': 'application/json',
@@ -33,15 +33,22 @@ async function updateDJInfo() {
 
         const data = await response.json();
 
-        if (data.live && data.live.is_live) {
-            djInfoElement.textContent = data.live.streamer_name;
-            const artworkUrl = isValidUrl(data.live.art)
-                ? data.live.art
-                : 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_auto,q_auto/XerosRadio_Logo_Achtergrond_Wit';
+        const djLiveStatus = data.onair_info.dj_live_status;
+        const djName = data.onair_info.dj_name;
+        const djCover = data.onair_info.dj_cover;
+
+        const songArtist = data.current_song.artist;
+        const songTitle = data.current_song.title;
+        const coverArt = data.current_song.cover_art;
+
+        if (djLiveStatus) {
+            djInfoElement.textContent = `${djName} is live with "${songTitle}" by ${songArtist}`;
+            
+            const artworkUrl = isValidUrl(djCover) ? djCover : 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_auto,q_auto/XerosRadio_Logo_Achtergrond_Wit';
 
             const newImage = new Image();
             newImage.src = "https://wsrv.nl/?w=200&h=200&output=webp&url=" + artworkUrl;
-            newImage.draggable = false; // Prevent image dragging | XerosRadio Api
+            newImage.draggable = false; // Prevent image dragging
             newImage.loading = "lazy";
             newImage.alt = "DJ";
             newImage.style.opacity = 1;
@@ -56,18 +63,18 @@ async function updateDJInfo() {
             artworkElement.innerHTML = '';
             artworkElement.appendChild(newImage);
         } else {
-            djInfoElement.textContent = 'Nonstop Muziek';
-            artworkElement.innerHTML = `<img src="https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_auto,q_auto/v1/Assets/Nonstop_Muziek" alt="XerosRadio" draggable="false" loading="lazy" style="width: 200px; height: 200px;">`;
+            djInfoElement.textContent = `Nonstop Muziek: "${songTitle}" by ${songArtist}`;
+            artworkElement.innerHTML = `<img src="${coverArt}" alt="XerosRadio" draggable="false" loading="lazy" style="width: 200px; height: 200px;">`;
         }
     } catch (error) {
         console.error('Fout:', error);
         djInfoElement.textContent = 'XerosRadio is momenteel niet beschikbaar. Probeer het later opnieuw.';
 
-        // Load the default image on error of XerosRadio Api
+        // Load the default image on error of XerosRadio API
         artworkElement.innerHTML = `<img src="https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_auto,q_auto/XerosRadio_Logo_Achtergrond_Wit" alt="XerosRadio" draggable="false" loading="lazy" style="width: 200px; height: 200px;">`;
     }
 }
 
-// Get New DJ-info immediately From XerosRadio Api and check and if available load every 5 seconds
+// Get new DJ info immediately from XerosRadio API and check and if available load every 5 seconds
 setInterval(updateDJInfo, 5000);
 updateDJInfo(); // Call the function immediately
