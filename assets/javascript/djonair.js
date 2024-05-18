@@ -20,7 +20,7 @@ async function updateDJInfo() {
         mode: 'cors', // CORS for XerosRadio API
         cache: 'no-cache',
         headers: {
-            'Content-Type': 'application/json',
+            'Accept': 'application/json',
         },
     };
 
