@@ -39,7 +39,7 @@ async function updateDJInfo() {
             const artworkUrl = isValidUrl(djCover) ? djCover : 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_auto,q_auto/XerosRadio_Logo_Achtergrond_Wit';
 
             const newImage = new Image();
-            newImage.src = "https://wsrv.nl/?w=200&h=200&output=webp&url=" + artworkUrl;
+            newImage.src = artworkUrl;
             newImage.draggable = false; // Prevent image dragging
             newImage.loading = "lazy";
             newImage.alt = "DJ";
