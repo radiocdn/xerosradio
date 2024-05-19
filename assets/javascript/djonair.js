@@ -1,4 +1,4 @@
-// Function to check if a string is a valid URL
+// Function to check if a string is a valid URL and if it is online
 function isValidUrl(url) {
     try {
         new URL(url);
