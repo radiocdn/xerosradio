@@ -18,9 +18,6 @@ async function updateDJInfo() {
     const fetchOptions = {
         method: 'GET',
         cache: 'no-cache',
-        headers: {
-            'Accept': 'application/json',
-        },
     };
 
     try {
