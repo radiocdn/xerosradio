@@ -1,4 +1,4 @@
-// Function to check if a string is a valid URL and if it is online
+// Function to check if a string is a valid URL
 function isValidUrl(url) {
     try {
         new URL(url);
@@ -9,15 +9,15 @@ function isValidUrl(url) {
 }
 
 async function updateDJInfo() {
-    // Fetch URL for XerosRadio API
+    // URL for XerosRadio API
     const url = 'https://php.streamxerosradio.duckdns.org/api/xerosradio/';
-
+    
     const djInfoElement = document.getElementById('djInfo');
     const artworkElement = document.getElementById('artwork');
-
+    
     const fetchOptions = {
         method: 'GET',
-        cache: 'no-cache',
+        cache: 'no-cache'
     };
 
     try {
@@ -29,33 +29,29 @@ async function updateDJInfo() {
 
         const data = await response.json();
 
-        const djLiveStatus = data.onair_info.dj_live_status;
-        const djName = data.onair_info.dj_name;
-        const djCover = data.onair_info.dj_cover;
-        
+        const { dj_live_status: djLiveStatus, dj_name: djName, dj_cover: djCover } = data.onair_info;
+
         if (djLiveStatus) {
-            djInfoElement.textContent = `${djName}`;
+            djInfoElement.textContent = djName;
             
             const artworkUrl = isValidUrl(djCover) ? djCover : 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_auto,q_auto/XerosRadio_Logo_Achtergrond_Wit';
-
+            
             const newImage = new Image();
             newImage.src = artworkUrl;
-            newImage.draggable = false; // Prevent image dragging
-            newImage.loading = "lazy";
-            newImage.alt = "DJ";
+            newImage.draggable = false;
+            newImage.loading = 'lazy';
+            newImage.alt = 'DJ';
             newImage.style.opacity = 1;
             newImage.style.width = '200px';
             newImage.style.height = '200px';
 
             // Disable right-click context menu
-            newImage.addEventListener('contextmenu', function (e) {
-                e.preventDefault();
-            });
-
+            newImage.addEventListener('contextmenu', (e) => e.preventDefault());
+            
             artworkElement.innerHTML = '';
             artworkElement.appendChild(newImage);
         } else {
-            djInfoElement.textContent = `Nonstop Muziek`;
+            djInfoElement.textContent = 'Nonstop Muziek';
             artworkElement.innerHTML = `<img src="${djCover}" alt="XerosRadio" draggable="false" loading="lazy" style="width: 200px; height: 200px;">`;
         }
     } catch (error) {
@@ -67,6 +63,6 @@ async function updateDJInfo() {
     }
 }
 
-// Get new DJ info immediately from XerosRadio API and check and if available load every 5 seconds
+// Get new DJ info immediately from XerosRadio API and check if available every 5 seconds
 setInterval(updateDJInfo, 5000);
 updateDJInfo(); // Call the function immediately
