@@ -162,7 +162,7 @@ class RadioPlayer {
                     .then(deezerData => {
                         if (deezerData['data'][0]) {
                             const artworkURL = deezerData['data'][0]['album']['cover_big'];
-                            this.albumArtwork.src = 'https://wsrv.nl/?w=200&h=200&output=webp&url=' + artworkURL;
+                            this.albumArtwork.src = 'https://xerosradio-broadcastimages.global.ssl.fastly.net/upload/w_200_h_200_o_webp/' + artworkURL;
                         } else {
                             // Use default artwork if not found.
                             this.albumArtwork.src = 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_auto,q_auto/XerosRadio_Logo_Achtergrond_Wit';
