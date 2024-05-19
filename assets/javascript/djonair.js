@@ -40,7 +40,7 @@ async function updateDJInfo() {
             newImage.src = artworkUrl;
             newImage.draggable = false;
             newImage.loading = 'lazy';
-            newImage.alt = 'DJ';
+            newImage.alt = 'XerosRadio DJ';
             newImage.style.opacity = 1;
             newImage.style.width = '200px';
             newImage.style.height = '200px';
@@ -52,7 +52,7 @@ async function updateDJInfo() {
             artworkElement.appendChild(newImage);
         } else {
             djInfoElement.textContent = 'Nonstop Muziek';
-            artworkElement.innerHTML = `<img src="${djCover}" alt="XerosRadio" draggable="false" loading="lazy" style="width: 200px; height: 200px;">`;
+            artworkElement.innerHTML = `<img src="${djCover}" alt="XerosRadio Nonstop Muziek" draggable="false" loading="lazy" style="width: 200px; height: 200px;">`;
         }
     } catch (error) {
         console.error('Fout:', error);
