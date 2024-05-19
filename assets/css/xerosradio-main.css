@@ -499,3 +499,9 @@ text-decoration: none;
   color: #666;
   line-height: 1.5;
 }
+
+@supports (-webkit-touch-callout: none) {
+  .hide-on-ios {
+    display: none;
+  }
+}
