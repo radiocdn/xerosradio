@@ -32,13 +32,9 @@ async function updateDJInfo() {
         const djLiveStatus = data.onair_info.dj_live_status;
         const djName = data.onair_info.dj_name;
         const djCover = data.onair_info.dj_cover;
-
-        const songArtist = data.current_song.artist;
-        const songTitle = data.current_song.title;
-        const coverArt = data.current_song.cover_art;
-
+        
         if (djLiveStatus) {
-            djInfoElement.textContent = `${djName} is live with "${songTitle}" by ${songArtist}`;
+            djInfoElement.textContent = `${djName}`;
             
             const artworkUrl = isValidUrl(djCover) ? djCover : 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_auto,q_auto/XerosRadio_Logo_Achtergrond_Wit';
 
@@ -59,8 +55,8 @@ async function updateDJInfo() {
             artworkElement.innerHTML = '';
             artworkElement.appendChild(newImage);
         } else {
-            djInfoElement.textContent = `Nonstop Muziek: "${songTitle}" by ${songArtist}`;
-            artworkElement.innerHTML = `<img src="${coverArt}" alt="XerosRadio" draggable="false" loading="lazy" style="width: 200px; height: 200px;">`;
+            djInfoElement.textContent = `Nonstop Muziek`;
+            artworkElement.innerHTML = `<img src="${djCover}" alt="XerosRadio" draggable="false" loading="lazy" style="width: 200px; height: 200px;">`;
         }
     } catch (error) {
         console.error('Fout:', error);
