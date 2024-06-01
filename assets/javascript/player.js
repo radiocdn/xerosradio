@@ -165,7 +165,7 @@ class RadioPlayer {
                             this.albumArtwork.src = 'https://xerosradio-broadcastimages.global.ssl.fastly.net/upload/w_200_h_200_o_webp/' + artworkURL;
                         } else {
                             // Use default artwork if not found.
-                            this.albumArtwork.src = 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_auto,q_auto/XerosRadio_Logo_Achtergrond_Wit';
+                            this.albumArtwork.src = 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
                         }
                     })
                     .catch(error => console.error('XerosRadio API Error:', error));
