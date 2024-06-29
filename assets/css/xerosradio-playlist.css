@@ -1,0 +1,115 @@
+        body {
+            font-family: 'Sofia Sans', sans-serif; /* Use Sofia Sans with a fallback to sans-serif */
+            background-color: rgba(0, 0, 0, 0); /* Transparent background */
+            margin: 0;
+            padding: 20px;
+            font-weight: 800; /* Set font weight to extrabold (800) */
+            -webkit-user-select: none; /* Safari */
+            -ms-user-select: none; /* IE 10 and IE 11 */
+            user-select: none; /* Standard syntax */
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .playlist-item {
+            position: relative; /* Added relative positioning for overlay */
+            background-color: #fff;
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between; /* Align Spotify and YouTube icons */
+            transition: background-color 0.3s ease; /* Smooth transition on hover */
+        }
+
+        .playlist-item:hover {
+            background-color: #ededed; /* Darken the background on hover */
+        }
+
+        .playlist-item img {
+            width: 100px; /* Set cover art size to 100x100 pixels */
+            height: 100px;
+            border-radius: 5px;
+            margin-right: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow to the cover art */
+        }
+
+        .playlist-item .details {
+            flex: 1;
+        }
+
+        .playlist-item .details h2 {
+            margin: 0;
+            transition: color 0.3s ease; /* Add transition for color change */
+        }
+
+        .playlist-item .details h2:hover {
+            color: #34a8eb; /* Change text color on hover */
+        }
+
+        .playlist-item .details p {
+            margin: 0;
+            transition: color 0.3s ease; /* Add transition for color change */
+        }
+
+        .playlist-item .details p:hover {
+            color: #34a8eb; /* Change text color on hover */
+        }
+
+        .spotify-youtube-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .youtube-icon {
+            font-size: 30px;
+            cursor: pointer;
+            color: red; /* Set the color to red */
+            transition: color 0.3s ease; /* Add transition for color change */
+        }
+
+        .spotify-icon {
+            font-size: 30px;
+            cursor: pointer;
+            color: green; /* Set the color to green */
+            transition: color 0.3s ease; /* Add transition for color change */
+        }
+
+        .youtube-icon:hover,
+        .spotify-icon:hover {
+            color: black; /* Set the color to black */
+            transition: color 0.3s ease; /* Add transition for color change */
+        }
+
+
+        .youtube-icon {
+            margin-left: 10px; /* Add margin to create spacing */
+        }
+
+        /* Mobile styles */
+        @media (max-width: 768px) {
+            .playlist-item {
+                flex-direction: column; /* Stack items vertically on small screens */
+                text-align: center;
+            }
+
+            .playlist-item img {
+                width: 80px; /* Adjust image size for smaller screens */
+                height: 80px;
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+
+            .spotify-youtube-container {
+                margin-top: 10px; /* Add space between cover art and icons on mobile */
+            }
+
+            .spotify-icon,
+            .youtube-icon {
+                font-size: 24px; /* Reduce icon size on smaller screens */
+            }
+        }
