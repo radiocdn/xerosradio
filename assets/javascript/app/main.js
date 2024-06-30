@@ -3,10 +3,9 @@ document.addEventListener('DOMContentLoaded', function () {
     // Selecteer alle afbeeldingen op de pagina
     const afbeeldingen = document.querySelectorAll('img');
   
-    // Voorkom het standaard contextmenu en toon een aangepopt bericht | XerosRadio
+    // Voorkom alles met de Content | XerosRadio
     function toonAangepoptBericht(event) {
         event.preventDefault();
-        alert('U mag geen afbeeldingen van onze app stelen zonder toestemming!');
     }
   
     // Voeg een eventlistener toe aan elke afbeelding om met rechts klikken om te gaan | XerosRadio
