@@ -505,3 +505,17 @@ text-decoration: none;
     display: none;
   }
 }
+.appen-naar-de-studio-button {
+    background-color: #9003fc;
+    color: white;
+    border: none;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+}
+
+.appen-naar-de-studio-button .icon {
+    margin-right: 0.5rem;
+}
