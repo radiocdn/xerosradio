@@ -2,10 +2,23 @@ jobs:
   purge-jsdelivr-cache:
     runs-on: ubuntu-20.04
     steps:
-      - uses: egad13/purge-jsdelivr-cache@v1
+      - name: Checkout main
+        uses: actions/checkout@v3
         with:
-          url: |
-            https://cdn.jsdelivr.net/gh/radiocdn/xerosradio/assets/javascript/djonair.js
-            https://cdn.jsdelivr.net/gh/radiocdn/xerosradio/assets/javascript/djonair.min.js
-            https://cdn.jsdelivr.net/gh/radiocdn/xerosradio/assets/javascript/player.js
-            https://cdn.jsdelivr.net/gh/radiocdn/xerosradio/assets/javascript/player.min.js
+          ref: ${{ github.ref }}
+
+      # Generates a comma-separated list of URLs for each .js file in the 'dist' directory
+      - name: Determine CDN URLs to Purge
+        id: purge_urls
+        run: |
+          baseUrl="https://cdn.jsdelivr.net/gh/${{ github.repository }}@latest"
+          urls=""
+          for f in `find dist -name "*.js" -type f`; do
+            urls+="${baseUrl}/${f},"
+          done
+          echo "urls=${urls%,*}" >> $GITHUB_OUTPUT
+
+      - name: Purge CDN Caches
+        uses: egad13/purge-jsdelivr-cache@v1
+        with:
+          url: ${{ steps.purge_urls.outputs.urls }}
