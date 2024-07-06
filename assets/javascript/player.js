@@ -90,7 +90,7 @@ class RadioPlayer {
             return;
         }
 
-        const mediaInfo = new chrome.cast.media.MediaInfo('https://stream.streamxerosradio.duckdns.org/xerosradio', 'audio/mp3');
+        const mediaInfo = new chrome.cast.media.MediaInfo('https://stream.streamxerosradio.duckdns.org/xerosradio', 'audio/mpeg');
         const request = new chrome.cast.media.LoadRequest(mediaInfo);
         castSession.loadMedia(request).then(() => {
             console.log('Media loaded successfully.');
@@ -146,11 +146,11 @@ class RadioPlayer {
     // Function to update XerosRadio API now playing info and artwork info.
     updateNowPlaying() {
         // Fetch now playing info from the XerosRadio API.
-        fetch('https://azuracast.streamxerosradio.duckdns.org/api/nowplaying_static/xerosradio.json')
+        fetch('https://php.streamxerosradio.duckdns.org/api/xerosradio')
             .then(response => response.json())
             .then(data => {
-                const artist = data['now_playing']['song']['artist'];
-                const title = data['now_playing']['song']['title'];
+                const artist = data['current_song']['artist'];
+                const title = data['current_song']['title'];
 
                 this.artistInfo.textContent = artist;
                 this.titleInfo.textContent = title;
