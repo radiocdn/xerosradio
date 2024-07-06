@@ -10,7 +10,7 @@ function isValidUrl(url) {
 
 async function updateDJInfo() {
     // URL for XerosRadio API
-    const url = 'https://xerosradioapi.global.ssl.fastly.net/api/xerosradio';
+    const url = 'https://xerosradioapi.global.ssl.fastly.net/api/xerosradio/';
     
     const djInfoElement = document.getElementById('djInfo');
     const artworkElement = document.getElementById('artwork');
