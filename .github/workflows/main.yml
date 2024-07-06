@@ -1,3 +1,11 @@
-              
-- name: jsDelivr Cache Purge
-  uses: egad13/purge-jsdelivr-cache@v1.1.0
+jobs:
+  purge-jsdelivr-cache:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: gacts/purge-jsdelivr-cache@v1
+        with:
+          url: |
+            https://cdn.jsdelivr.net/gh/radiocdn/xerosradio/assets/javascript/djonair.js
+            https://cdn.jsdelivr.net/gh/radiocdn/xerosradio/assets/javascript/djonair.min.js
+            https://cdn.jsdelivr.net/gh/radiocdn/xerosradio/assets/javascript/player.js
+            https://cdn.jsdelivr.net/gh/radiocdn/xerosradio/assets/javascript/player.min.js
