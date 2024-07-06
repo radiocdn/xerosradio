@@ -146,7 +146,7 @@ class RadioPlayer {
     // Function to update XerosRadio API now playing info and artwork info.
     updateNowPlaying() {
         // Fetch now playing info from the XerosRadio API.
-        fetch('https://php.streamxerosradio.duckdns.org/api/xerosradio')
+        fetch('https://xerosradioapi.global.ssl.fastly.net/api/xerosradio')
             .then(response => response.json())
             .then(data => {
                 const artist = data.current_song.artist;
