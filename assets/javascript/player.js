@@ -145,33 +145,29 @@ class RadioPlayer {
 
     // Function to update XerosRadio API now playing info and artwork info.
     updateNowPlaying() {
-        // Fetch now playing info from the XerosRadio API.
-        fetch('https://xerosradioapi.global.ssl.fastly.net/api/xerosradio/')
-            .then(response => response.json())
-            .then(data => {
-                const artist = data.current_song.artist;
-                const title = data.current_song.title;
+    // Fetch now playing info from the XerosRadio API.
+    fetch('https://xerosradioapi.global.ssl.fastly.net/api/xerosradio/')
+        .then(response => response.json())
+        .then(data => {
+            const mainartwork = data.current_song.cover_art200x200;
+            const artist = data.current_song.artist;
+            const title = data.current_song.title;
 
-                this.artistInfo.textContent = artist;
-                this.titleInfo.textContent = title;
+            // Update artist and title information on the UI.
+            this.artistInfo.textContent = artist;
+            this.titleInfo.textContent = title;
 
-                // Fetch album artwork from XerosRadio API.
-                const query = `${artist} ${title}`;
-                fetch(`https://corsproxy.io?https://api.deezer.com/search?q=${query}&limit=1&output=json`)
-                    .then(response => response.json())
-                    .then(deezerData => {
-                        if (deezerData['data'][0]) {
-                            const artworkURL = deezerData['data'][0]['album']['cover_big'];
-                            this.albumArtwork.src = 'https://xerosradio-broadcastimages.global.ssl.fastly.net/upload/w_200_h_200_o_webp/' + artworkURL;
-                        } else {
-                            // Use default artwork if not found.
-                            this.albumArtwork.src = 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
-                        }
-                    })
-                    .catch(error => console.error('XerosRadio API Error:', error));
-            })
-            .catch(error => console.error('XerosRadio API Error:', error));
-    }
+            // Update album artwork on the UI.
+            if (mainartwork) {
+                this.albumArtwork.src = mainartwork;
+            } else {
+                // Use default artwork if mainartwork is not found.
+                this.albumArtwork.src = 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
+            }
+        })
+        .catch(error => console.error('XerosRadio API Error:', error));
+}
+
 
     // Function to handle the XerosRadio API play/pause button click.
     togglePlay() {
