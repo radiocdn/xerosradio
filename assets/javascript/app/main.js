@@ -20,3 +20,11 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     });
   });
+    (window.onload = function () {
+        var t = document.getElementById("chatBox");
+        t.scrollTop = t.scrollHeight;
+    }),
+    (window.onload = function () {
+        var t = document.getElementById("chatBox");
+        t.scrollTop = t.scrollHeight;
+    });
