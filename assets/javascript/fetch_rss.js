@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 const link = document.createElement('a');
                 link.href = article.link;
-                link.textContent = 'Read more';
+                link.textContent = 'Lees meer';
                 link.target = '_blank';
                 link.classList.add('feed-read-more'); // Updated class
                 articleDiv.appendChild(link);
