@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const feedUrl = '/api/xerosradio/nieuws/'; // Path to your PHP script
+    const feedUrl = 'https://xerosradioapi.global.ssl.fastly.net/api/xerosradio/nieuws/'; // Path to your PHP script
     const container = document.getElementById('feed-feed-container'); // Updated ID
     const loadMoreButton = document.getElementById('feed-load-more'); // Updated ID
     const loader = document.getElementById('feed-loader'); // Updated ID
