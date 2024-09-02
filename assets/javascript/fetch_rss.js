@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     const feedUrl = '/api/xerosradio/nieuws/'; // Path to your PHP script
-    const container = document.getElementById('feed-container');
-    const loadMoreButton = document.getElementById('load-more');
-    const loader = document.getElementById('loader');
+    const container = document.getElementById('feed-feed-container'); // Updated ID
+    const loadMoreButton = document.getElementById('feed-load-more'); // Updated ID
+    const loader = document.getElementById('feed-loader'); // Updated ID
     let start = 0;
     const limit = 8;
 
@@ -27,14 +27,14 @@ document.addEventListener('DOMContentLoaded', function() {
             // Create HTML content for each article
             articles.forEach((article, index) => {
                 const articleDiv = document.createElement('div');
-                articleDiv.classList.add('article');
+                articleDiv.classList.add('feed-article'); // Updated class
 
                 const title = document.createElement('h2');
                 title.textContent = article.title;
                 articleDiv.appendChild(title);
 
                 const date = document.createElement('p');
-                date.classList.add('date');
+                date.classList.add('feed-date'); // Updated class
                 date.textContent = new Date(article.pubDate).toLocaleDateString();
                 articleDiv.appendChild(date);
 
@@ -42,19 +42,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 link.href = article.link;
                 link.textContent = 'Read more';
                 link.target = '_blank';
-                link.classList.add('read-more');
+                link.classList.add('feed-read-more'); // Updated class
                 articleDiv.appendChild(link);
 
                 if (article.image) {
                     const img = document.createElement('img');
                     img.src = article.image;
                     img.alt = article.title;
-                    img.classList.add('article-image');
+                    img.classList.add('feed-article-image'); // Updated class
                     articleDiv.appendChild(img);
                 }
 
                 const description = document.createElement('p');
-                description.classList.add('description');
+                description.classList.add('feed-description'); // Updated class
                 description.textContent = article.description;
                 description.style.display = 'none'; // Initially hidden
                 articleDiv.appendChild(description);
