@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const loadMoreButton = document.getElementById('feed-load-more'); // Updated ID
     const loader = document.getElementById('feed-loader'); // Updated ID
     let start = 0;
-    const limit = 8;
+    const limit = 8; // Number of articles to fetch per request
 
     async function fetchAndDisplayFeed(url) {
         try {
@@ -13,8 +13,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
             loader.style.display = 'none'; // Hide loader
 
-            if (data.error) {
-                console.error(data.error);
+            if (!data.articles) {
+                console.error('No articles found');
                 return;
             }
 
@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             // Create HTML content for each article
-            articles.forEach((article, index) => {
+            articles.forEach(article => {
                 const articleDiv = document.createElement('div');
                 articleDiv.classList.add('feed-article'); // Updated class
 
