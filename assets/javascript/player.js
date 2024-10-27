@@ -90,7 +90,7 @@ class RadioPlayer {
             return;
         }
 
-        const mediaInfo = new chrome.cast.media.MediaInfo('https://stream.streamxerosradio.duckdns.org/xerosradio', 'audio/mpeg');
+        const mediaInfo = new chrome.cast.media.MediaInfo('https://xerosradiostream.global.ssl.fastly.net/xerosradio', 'audio/mpeg');
         const request = new chrome.cast.media.LoadRequest(mediaInfo);
         castSession.loadMedia(request).then(() => {
             console.log('Media loaded successfully.');
