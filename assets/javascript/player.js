@@ -66,7 +66,7 @@ class RadioPlayer {
                 title: title,
                 artist: artist,
                 artwork: [
-                    { src: artworkUrl, sizes: '200x200', type: 'image/png' }
+                    { src: artworkUrl, sizes: '200x200', type: 'image/webp' }
                 ]
             });
         }
