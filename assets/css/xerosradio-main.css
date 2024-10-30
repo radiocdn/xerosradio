@@ -723,3 +723,44 @@ text-decoration: none;
     width: 90%;
     margin-bottom: 20px;
 }
+
+.article {
+    color:black;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 10px 0;
+    background-color: #fff;
+    margin: 20px;
+}
+  
+.article img {
+    max-width: 500px;
+    height: auto;
+    border-radius: 4px;
+    margin: 10px 0;
+    user-drag: none;
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    border-radius: 5px;
+}
+  
+.article h2 {
+    margin: 0;
+    font-size: 1.5em;
+}
+  
+.article p {
+    margin: 10px 0;
+}
+  
+.article a {
+    color: #007BFF;
+    text-decoration: none;
+}
+  
+.article a:hover {
+    text-decoration: underline;
+}
