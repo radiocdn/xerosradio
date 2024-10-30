@@ -519,3 +519,207 @@ text-decoration: none;
 .appen-naar-de-studio-button .icon {
     margin-right: 0.5rem;
 }
+
+/* Unieke naamgeving door een voorvoegsel te gebruiken */
+.feed-body {
+    line-height: 1.6;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.feed-container {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+
+#feed-feed-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.feed-article {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.feed-article:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.feed-article h2 {
+    margin: 0 0 10px;
+    font-size: 1.2em;
+    color: #333;
+}
+
+.feed-date {
+    font-size: 0.9em;
+    color: #666;
+    margin: 0 0 10px;
+}
+
+.feed-read-more {
+    display: inline-block;
+    padding: 8px 15px;
+    font-size: 0.9em;
+    color: #007bff;
+    text-decoration: none;
+    border: 1px solid #007bff;
+    border-radius: 4px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.feed-read-more:hover {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.feed-article-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin: 10px 0;
+    user-drag: none;
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+}
+
+.feed-description {
+    font-size: 0.9em;
+    color: #555;
+    transition: max-height 0.3s ease;
+    overflow: hidden;
+    width: 100%;
+}
+
+#feed-load-more {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    font-size: 1em;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 20px;
+}
+
+#feed-load-more:hover {
+    background-color: #0056b3;
+}
+
+#feed-loader {
+    display: none;
+    margin: 20px auto;
+    text-align: center;
+}
+
+#feed-loader::after {
+    content: '';
+    display: block;
+    width: 50px;
+    height: 50px;
+    border: 5px solid #007bff;
+    border-radius: 50%;
+    border-top: 5px solid transparent;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.xeros-footer {
+    display: flex;
+    justify-content: center;
+    padding: 50px 0;
+    color: white;
+}
+
+.xeros-footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    width: 90%;
+    max-width: 1200px;
+}
+
+.xeros-tiktok-container, .xeros-instagram-container {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    width: 45%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    color: black;
+}
+
+.xeros-tiktok-container h3, .xeros-instagram-container h3 {
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    color: #0d1b2a; /* Donkere tekstkleur */
+}
+
+.xeros-tiktok-link, .xeros-instagram-link {
+    text-decoration: none;
+    color: #007bff; /* Blauwe links */
+    display: inline-block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+.xeros-tiktok-btn {
+    background-color: #ff4b5c; /* Rood voor de TikTok-knop */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block;
+    margin-top: 15px;
+    text-align: center;
+    text-decoration: none;
+}
+
+.xeros-tiktok-btn:hover {
+    background-color: #ff1e39;
+}
+
+.xeros-instagram-feed img {
+    width: 100%;
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+@media (max-width: 768px) {
+    .xeros-footer-container {
+    flex-direction: column;
+    align-items: center;
+}
+  
+.xeros-tiktok-container, .xeros-instagram-container {
+    width: 90%;
+    margin-bottom: 20px;
+}
