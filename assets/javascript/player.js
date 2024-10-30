@@ -59,14 +59,15 @@ class RadioPlayer {
         }
     }
 
-    // Update Media Session metadata
-    updateMediaMetadata(artist, title, artworkUrl) {
+    // Update Media Session metadata with two artwork images
+    updateMediaMetadata(artist, title, artworkUrl200, artworkUrl500) {
         if ('mediaSession' in navigator) {
             navigator.mediaSession.metadata = new MediaMetadata({
                 title: title,
                 artist: artist,
                 artwork: [
-                    { src: artworkUrl, sizes: '200x200', type: 'image/webp' }
+                    { src: artworkUrl500, sizes: '500x500', type: 'image/webp' },
+                    { src: artworkUrl200, sizes: '200x200', type: 'image/webp' }
                 ]
             });
         }
@@ -137,13 +138,14 @@ class RadioPlayer {
             .then(data => {
                 const artist = data.current_song.artist;
                 const title = data.current_song.title;
-                const artwork = data.current_song.cover_art200x200 || 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
+                const artwork200 = data.current_song.cover_art200x200 || 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
+                const artwork500 = data.current_song.cover_art500x500 || 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
 
                 // Update UI and Media Session metadata.
                 this.artistInfo.textContent = artist;
                 this.titleInfo.textContent = title;
-                this.albumArtwork.src = artwork;
-                this.updateMediaMetadata(artist, title, artwork);
+                this.albumArtwork.src = artwork200;
+                this.updateMediaMetadata(artist, title, artwork200, artwork500); // Pass both artworks
             })
             .catch(error => console.error('XerosRadio API Error:', error));
     }
