@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
             start += limit; // Update start for next fetch
 
         } catch (error) {
-            console.error('Error fetching RSS feed:', error);
+            console.error('Fout Bij XerosRadio Nieuws Systeem:', error);
         }
     }
 
