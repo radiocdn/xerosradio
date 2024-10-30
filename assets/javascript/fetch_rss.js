@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
             loader.style.display = 'none'; // Hide loader
 
             if (!data.articles) {
-                console.error('No articles found');
+                console.error('Geen Artikelen Gevonden Uit Het XerosRadio Systeem');
                 return;
             }
 
