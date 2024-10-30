@@ -49,6 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const img = document.createElement('img');
                     img.src = article.image;
                     img.alt = article.title;
+                    img.loading = 'lazy';
                     img.classList.add('feed-article-image'); // Updated class
                     articleDiv.appendChild(img);
                 }
