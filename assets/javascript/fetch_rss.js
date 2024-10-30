@@ -50,6 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     img.src = article.image;
                     img.alt = article.title;
                     img.loading = 'lazy';
+                    img.longdesc = article.link;
                     img.classList.add('feed-article-image'); // Updated class
                     articleDiv.appendChild(img);
                 }
