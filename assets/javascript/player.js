@@ -139,7 +139,7 @@ class RadioPlayer {
                 const artist = data.current_song.artist;
                 const title = data.current_song.title;
                 const artwork200 = data.current_song.cover_art200x200 || 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
-                const artwork500 = data.current_song.cover_art500x500 || 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
+                const artwork500 = data.current_song.cover_art || 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
 
                 // Update UI and Media Session metadata.
                 this.artistInfo.textContent = artist;
