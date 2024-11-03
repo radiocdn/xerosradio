@@ -94,7 +94,7 @@ class RadioPlayer {
     loadMediaToCast() {
         const session = cast.framework.CastContext.getInstance().getCurrentSession();
         if (session) {
-            const mediaInfo = new chrome.cast.media.MediaInfo('https://xerosradiostream.global.ssl.fastly.net/xerosradio', 'audio/mpeg');
+            const mediaInfo = new chrome.cast.media.MediaInfo('https://stream.streamxerosradio.duckdns.org/xerosradio', 'audio/mpeg');
             const request = new chrome.cast.media.LoadRequest(mediaInfo);
             session.loadMedia(request)
                 .then(() => console.log('Media loaded successfully.'))
