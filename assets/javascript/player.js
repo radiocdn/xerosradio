@@ -63,7 +63,7 @@ class RadioPlayer {
             const { dj_live_status: djLiveStatus, dj_name: djName, dj_cover: djCover } = data.onair_info;
 
             // Update now-playing information
-            const artwork200 = cover_art_200x200 || 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
+            const artwork200 = cover_art ? cover_art : 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
             this.artistInfo.textContent = artist;
             this.titleInfo.textContent = title;
             this.albumArtwork.src = artwork200;
@@ -128,7 +128,7 @@ class RadioPlayer {
     }
 
     // Update Media Session metadata with two artwork images
-    updateMediaMetadata(artist, title, artworkUrl500, artworkUrl200) {
+    updateMediaMetadata(artist, title, artworkUrl200, artworkUrl500) {
         if ('mediaSession' in navigator) {
             navigator.mediaSession.metadata = new MediaMetadata({
                 title: title,
