@@ -128,7 +128,7 @@ class RadioPlayer {
     }
 
     // Update Media Session metadata with two artwork images
-    updateMediaMetadata(artist, title, artworkUrl200, artworkUrl500) {
+    updateMediaMetadata(artist, title, artworkUrl500, artworkUrl200) {
         if ('mediaSession' in navigator) {
             navigator.mediaSession.metadata = new MediaMetadata({
                 title: title,
