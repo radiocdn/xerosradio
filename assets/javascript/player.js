@@ -52,29 +52,33 @@ class RadioPlayer {
         };
 
         try {
-            // Fetch the main radio data
             const response = await fetch(url, fetchOptions);
             if (!response.ok) {
                 throw new Error('Het verzoek aan de XerosRadio Servers is mislukt. Probeer het later opnieuw.');
             }
 
             const data = await response.json();
+            // Extract now-playing and DJ info
             const { artist, title, cover_art } = data.current_song;
             const { dj_live_status: djLiveStatus, dj_name: djName, dj_cover: djCover } = data.onair_info;
 
-            // Update the now-playing info (artist and title)
+            // Update now-playing information
             const artwork200 = cover_art ? cover_art : 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
             this.artistInfo.textContent = artist;
             this.titleInfo.textContent = title;
             this.albumArtwork.src = artwork200;
             this.updateMediaMetadata(artist, title, artwork200, artwork200);
 
-            // Update DJ info
+            // Update DJ information
             if (djLiveStatus) {
                 this.djInfoElement.textContent = djName;
                 const artworkUrl = this.isValidUrl(djCover) ? djCover : 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
+
                 const newImage = new Image();
                 newImage.src = artworkUrl;
+                newImage.onerror = () => {
+                    newImage.src = 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit'; // Fallback image
+                };
                 newImage.draggable = false;
                 newImage.loading = 'lazy';
                 newImage.alt = 'XerosRadio DJ';
@@ -82,44 +86,19 @@ class RadioPlayer {
                 newImage.style.width = '200px';
                 newImage.style.height = '200px';
 
+                // Disable right-click context menu
                 newImage.addEventListener('contextmenu', (e) => e.preventDefault());
+                
                 this.artworkElement.innerHTML = '';
                 this.artworkElement.appendChild(newImage);
             } else {
                 this.djInfoElement.textContent = 'Nonstop Muziek';
                 this.artworkElement.innerHTML = `<img src="${djCover}" alt="XerosRadio Nonstop Muziek" draggable="false" loading="lazy" style="width: 200px; height: 200px;">`;
             }
-
-            // Now fetch the casting metadata
-            const castingResponse = await fetch('https://xerosradioapi.global.ssl.fastly.net/api/xerosradio/metadatacasting');
-            if (!castingResponse.ok) {
-                throw new Error('Error fetching casting metadata');
-            }
-
-            const castingData = await castingResponse.json();
-            const { logo_url, title: castingTitle, title2: castingTitle2 } = castingData;
-
-            // Update the media session with the new metadata for casting
-            this.updateCastMediaMetadata(castingTitle, castingTitle2, logo_url);
-
         } catch (error) {
             console.error('Fout:', error);
             this.djInfoElement.textContent = 'XerosRadio is momenteel niet beschikbaar. Probeer het later opnieuw.';
             this.artworkElement.innerHTML = `<img src="https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit" alt="XerosRadio" draggable="false" loading="lazy" style="width: 200px; height: 200px;">`;
-        }
-    }
-
-    // New function to update the media metadata for casting
-    updateCastMediaMetadata(castingTitle, castingTitle2, logoUrl) {
-        if ('mediaSession' in navigator) {
-            navigator.mediaSession.metadata = new MediaMetadata({
-                title: castingTitle2,
-                artist: castingTitle,
-                artwork: [
-                    { src: logoUrl, sizes: '500x500', type: 'image/webp' },
-                    { src: logoUrl, sizes: '200x200', type: 'image/webp' }
-                ]
-            });
         }
     }
 
@@ -175,7 +154,7 @@ class RadioPlayer {
     }
 
     // Cast button click event
-    castButtonClick() {
+    async castButtonClick() {
         const castContext = cast.framework.CastContext.getInstance();
         castContext.requestSession()
             .then(() => this.loadMediaToCast())
@@ -183,14 +162,32 @@ class RadioPlayer {
     }
 
     // Load media to Cast device
-    loadMediaToCast() {
+    async loadMediaToCast() {
         const session = cast.framework.CastContext.getInstance().getCurrentSession();
         if (session) {
-            const mediaInfo = new chrome.cast.media.MediaInfo('https://stream.streamxerosradio.duckdns.org/xerosradio', 'audio/mpeg');
-            const request = new chrome.cast.media.LoadRequest(mediaInfo);
-            session.loadMedia(request)
-                .then(() => console.log('Media loaded successfully.'))
-                .catch(error => console.error('Error loading media:', error));
+            // Fetch casting metadata
+            try {
+                const response = await fetch('https://php.streamxerosradio.duckdns.org/api/xerosradio/metadatacasting/');
+                const metadata = await response.json();
+                const { logo_url, title, title2 } = metadata;
+
+                // Create media info for the cast
+                const mediaInfo = new chrome.cast.media.MediaInfo('https://stream.streamxerosradio.duckdns.org/xerosradio', 'audio/mpeg');
+                mediaInfo.metadata = new chrome.cast.media.MusicTrackMetadata();
+                mediaInfo.metadata.artist = title;
+                mediaInfo.metadata.title = title2;
+                mediaInfo.metadata.albumName = 'XerosRadio';
+                mediaInfo.metadata.artwork = [
+                    { src: logo_url, sizes: '500x500', type: 'image/webp' }
+                ];
+
+                const request = new chrome.cast.media.LoadRequest(mediaInfo);
+                session.loadMedia(request)
+                    .then(() => console.log('Media loaded successfully.'))
+                    .catch(error => console.error('Error loading media:', error));
+            } catch (error) {
+                console.error('Error fetching casting metadata:', error);
+            }
         }
     }
 
@@ -223,31 +220,30 @@ class RadioPlayer {
         this.playPauseButton.className = this.isPlaying ? 'fas fa-pause' : 'fas fa-play';
     }
 
-    // Adjust volume
+    // Adjust volume and save to cookie
     adjustVolume() {
         this.radioPlayer.volume = this.volumeSlider.value;
-        this.setVolumeCookie(this.volumeSlider.value);
+        this.saveVolumeToCookie(this.volumeSlider.value);
     }
 
     // Save volume to cookie
-    setVolumeCookie(volume) {
-        document.cookie = `volume=${volume}; path=/`;
+    saveVolumeToCookie(volume) {
+        const expirationDate = new Date();
+        expirationDate.setFullYear(expirationDate.getFullYear() + 1); // 1 year expiration
+        document.cookie = `volume=${volume}; expires=${expirationDate.toUTCString()}; path=/`;
     }
 
     // Get volume from cookie
     getVolumeFromCookie() {
-        const volumeCookie = document.cookie.split('; ').find(row => row.startsWith('volume='));
-        if (volumeCookie) {
-            return parseFloat(volumeCookie.split('=')[1]);
-        }
-        return null;
+        const cookie = document.cookie.split(';').find(cookie => cookie.trim().startsWith('volume='));
+        return cookie ? parseFloat(cookie.split('=')[1]) : null;
     }
 
-    // Seek functionality for skipping tracks
-    seek(offset) {
-        this.radioPlayer.currentTime += offset;
+    // Seek forward or backward
+    seek(seconds) {
+        this.radioPlayer.currentTime += seconds;
     }
 }
 
-// Initialize the RadioPlayer class
+// Create an instance of the RadioPlayer class.
 const radioPlayer = new RadioPlayer();
