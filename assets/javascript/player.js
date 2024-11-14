@@ -153,21 +153,38 @@ class RadioPlayer {
     updateCastMetadata(artist, title, artworkUrl) {
         const session = cast.framework.CastContext.getInstance().getCurrentSession();
         if (session) {
-            const mediaInfo = new chrome.cast.media.MediaInfo('https://stream.streamxerosradio.duckdns.org/xerosradio', 'audio/mpeg');
-            mediaInfo.metadata = new chrome.cast.media.MusicTrackMediaMetadata();
-            mediaInfo.metadata.title = title;
-            mediaInfo.metadata.artist = artist;
-            mediaInfo.metadata.images = [
-                new chrome.cast.Image(artworkUrl),
-                new chrome.cast.Image('https://res.cloudinary.com/xerosradio/image/upload/w_50,h_50,f_webp,q_auto/XerosRadio_Logo')
-            ];
+            const media = session.media;
 
-            const request = new chrome.cast.media.LoadRequest(mediaInfo);
-            request.autoplay = true;
+            // If media is already loaded, update metadata without reloading the stream
+            if (media) {
+                media.metadata.title = title;
+                media.metadata.artist = artist;
+                media.metadata.images = [
+                    new chrome.cast.Image(artworkUrl),
+                    new chrome.cast.Image('https://res.cloudinary.com/xerosradio/image/upload/w_50,h_50,f_webp,q_auto/XerosRadio_Logo')
+                ];
 
-            session.loadMedia(request)
-                .then(() => console.log('Updated media metadata on cast device.'))
-                .catch(error => console.error('Error updating cast metadata:', error));
+                media.updateMetadata()  // Update the metadata without reloading the media
+                    .then(() => console.log('Cast metadata updated.'))
+                    .catch(error => console.error('Error updating cast metadata:', error));
+            } else {
+                // If no media is loaded yet, load the media for the first time
+                const mediaInfo = new chrome.cast.media.MediaInfo('https://stream.streamxerosradio.duckdns.org/xerosradio', 'audio/mpeg');
+                mediaInfo.metadata = new chrome.cast.media.MusicTrackMediaMetadata();
+                mediaInfo.metadata.title = title;
+                mediaInfo.metadata.artist = artist;
+                mediaInfo.metadata.images = [
+                    new chrome.cast.Image(artworkUrl),
+                    new chrome.cast.Image('https://res.cloudinary.com/xerosradio/image/upload/w_50,h_50,f_webp,q_auto/XerosRadio_Logo')
+                ];
+
+                const request = new chrome.cast.media.LoadRequest(mediaInfo);
+                request.autoplay = true;
+
+                session.loadMedia(request)
+                    .then(() => console.log('Media loaded on cast device.'))
+                    .catch(error => console.error('Error loading media:', error));
+            }
         }
     }
 
@@ -215,4 +232,6 @@ class RadioPlayer {
     }
 }
 
-const radioPlayer = new RadioPlayer();
+document.addEventListener('DOMContentLoaded', () => {
+    new RadioPlayer();
+});
