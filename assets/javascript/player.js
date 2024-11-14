@@ -167,7 +167,7 @@ class RadioPlayer {
         if (session) {
             // Fetch casting metadata
             try {
-                const response = await fetch('https://php.streamxerosradio.duckdns.org/api/xerosradio/metadatacasting/');
+                const response = await fetch('https://radiocdn.pages.dev/xerosradio/api/casting/xerosradio.json');
                 const metadata = await response.json();
                 const { logo_url, title, title2 } = metadata;
 
