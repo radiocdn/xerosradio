@@ -160,23 +160,39 @@ class RadioPlayer {
     }
 
     // Load media to Cast device
-    loadMediaToCast() {
-        const session = cast.framework.CastContext.getInstance().getCurrentSession();
-        if (session) {
-            const mediaInfo = new chrome.cast.media.MediaInfo('https://stream.streamxerosradio.duckdns.org/xerosradio', 'audio/mpeg');
-            // Create MediaMetadata object for custom artwork
-            mediaInfo.metadata = new chrome.cast.media.MusicTrackMetadata();
-            mediaInfo.metadata.artist = 'XerosRadio';
-            mediaInfo.metadata.title = 'Until It Hurts';
-            mediaInfo.metadata.artwork = 'https://res.cloudinary.com/xerosradio/image/upload/f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
-            
-            const request = new chrome.cast.media.LoadRequest(mediaInfo);
-            session.loadMedia(request)
-                .then(() => console.log('Media loaded successfully.'))
-                .catch(error => console.error('Error loading media:', error));
-        }
-    }
+function loadMediaToCast() {
+    const castContext = cast.framework.CastContext.getInstance();
+    const session = castContext.getCurrentSession();
 
+    if (session) {
+        // Create media information for the stream
+        const mediaInfo = new chrome.cast.media.MediaInfo('https://stream.streamxerosradio.duckdns.org/xerosradio', 'audio/mpeg');
+        
+        // Create MediaMetadata object for custom artwork
+        const mediaMetadata = new chrome.cast.media.MusicTrackMetadata();
+        mediaMetadata.artist = 'XerosRadio';
+        mediaMetadata.title = 'Until It Hurts';
+        
+        // Define artwork properly with Image object
+        mediaMetadata.artwork = [
+            new chrome.cast.Image('https://res.cloudinary.com/xerosradio/image/upload/f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit')
+        ];
+
+        // Set metadata to media info
+        mediaInfo.metadata = mediaMetadata;
+        
+        // Create a load request with media info
+        const loadRequest = new chrome.cast.media.LoadRequest(mediaInfo);
+
+        // Load the media on the current session
+        session.loadMedia(loadRequest)
+            .then(() => console.log('Media loaded successfully.'))
+            .catch(error => console.error('Error loading media:', error));
+    } else {
+        console.error('No Cast session found.');
+    }
+}
+    
     // Toggle play/pause functionality
     togglePlay() {
         if (this.isPlaying) {
