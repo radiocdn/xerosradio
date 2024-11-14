@@ -93,17 +93,25 @@ class RadioPlayer {
     }
 
     initializeCastSDK() {
-        window['__onGCastApiAvailable'] = isAvailable => {
+        window['__onGCastApiAvailable'] = (isAvailable) => {
             if (isAvailable) {
                 const castContext = cast.framework.CastContext.getInstance();
+                
+                // Set the cast options, like the receiverApplicationId and autoJoinPolicy
                 castContext.setOptions({
                     receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
                     autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
                 });
+
+                // Add an event listener for session state changes
                 castContext.addEventListener(
                     cast.framework.CastContextEventType.SESSION_STATE_CHANGED,
-                    event => this.handleCastSessionState(event)
+                    (event) => this.handleCastSessionState(event)
                 );
+
+                console.log("Cast SDK initialized and ready for use.");
+            } else {
+                console.error("Google Cast API is not available.");
             }
         };
     }
@@ -141,9 +149,16 @@ class RadioPlayer {
 
     castButtonClick() {
         const castContext = cast.framework.CastContext.getInstance();
-        castContext.requestSession()
-            .then(() => this.loadMediaToCast())
-            .catch(error => console.error('Error starting session:', error));
+
+        // Ensure the Cast API is fully initialized before trying to request a session
+        if (castContext) {
+            // Now that Cast context is initialized, request the session
+            castContext.requestSession()
+                .then(() => this.loadMediaToCast())
+                .catch(error => console.error('Error starting Cast session:', error));
+        } else {
+            console.error('Cast context is not initialized.');
+        }
     }
 
     isCasting() {
@@ -219,20 +234,18 @@ class RadioPlayer {
         this.saveVolumeToCookie(this.volumeSlider.value);
     }
 
-    saveVolumeToCookie(volume) {
-        document.cookie = `volume=${volume}`;
+    saveVolumeToCookie(value) {
+        document.cookie = `volume=${value}; path=/; max-age=31536000`;
     }
 
     getVolumeFromCookie() {
-        const cookie = document.cookie.split(';').find(cookie => cookie.trim().startsWith('volume='));
-        return cookie ? parseFloat(cookie.split('=')[1]) : null;
+        const match = document.cookie.match(/volume=([^;]+)/);
+        return match ? parseFloat(match[1]) : 0.5;
     }
 
-    seek(seconds) {
-        this.radioPlayer.currentTime += seconds;
+    seek(time) {
+        this.radioPlayer.currentTime += time;
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    new RadioPlayer();
-});
+const radioPlayer = new RadioPlayer();
