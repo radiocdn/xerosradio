@@ -1,6 +1,5 @@
 class RadioPlayer {
     constructor() {
-        // Get the XerosRadio API DOM elements.
         this.radioPlayer = document.getElementById('radioPlayer');
         this.radioPlayer.setAttribute('preload', 'none');
         this.artistInfo = document.getElementById('artistInfo');
@@ -12,28 +11,22 @@ class RadioPlayer {
         this.volumeSlider = document.getElementById('volumeSlider');
         this.castButton = document.getElementById('castButton');
 
-        // XerosRadio API variable to track the playing state.
         this.isPlaying = false;
 
-        // Event listeners.
         this.playPauseButton.addEventListener('click', this.togglePlay.bind(this));
         this.volumeSlider.addEventListener('input', this.adjustVolume.bind(this));
         this.castButton.addEventListener('click', this.castButtonClick.bind(this));
 
-        // Load volume from cookie or set default.
         this.volumeSlider.value = this.getVolumeFromCookie() || 0.5;
         this.radioPlayer.volume = this.volumeSlider.value;
 
-        // Update combined info (now-playing and DJ info) every 5 seconds.
         this.updateRadioInfo();
         setInterval(this.updateRadioInfo.bind(this), 5000);
 
-        // Initialize Cast SDK and Media Session API.
         this.initializeCastSDK();
         this.setupMediaSession();
     }
 
-    // Function to check if a string is a valid URL
     isValidUrl(url) {
         try {
             new URL(url);
@@ -43,7 +36,6 @@ class RadioPlayer {
         }
     }
 
-    // Combined function to update now-playing and DJ info
     async updateRadioInfo() {
         const url = 'https://xerosradioapi.global.ssl.fastly.net/api/xerosradio/';
         const fetchOptions = {
@@ -58,18 +50,21 @@ class RadioPlayer {
             }
 
             const data = await response.json();
-            // Extract now-playing and DJ info
             const { artist, title, cover_art } = data.current_song;
             const { dj_live_status: djLiveStatus, dj_name: djName, dj_cover: djCover } = data.onair_info;
 
-            // Update now-playing information
-            const artwork200 = cover_art ? cover_art : 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
+            const artwork200 = cover_art || 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
             this.artistInfo.textContent = artist;
             this.titleInfo.textContent = title;
             this.albumArtwork.src = artwork200;
+
             this.updateMediaMetadata(artist, title, artwork200, artwork200);
 
-            // Update DJ information
+            // Update metadata on cast device if casting
+            if (this.isCasting()) {
+                this.updateCastMetadata(artist, title, artwork200);
+            }
+
             if (djLiveStatus) {
                 this.djInfoElement.textContent = djName;
                 const artworkUrl = this.isValidUrl(djCover) ? djCover : 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
@@ -82,10 +77,8 @@ class RadioPlayer {
                 newImage.style.opacity = 1;
                 newImage.style.width = '200px';
                 newImage.style.height = '200px';
-
-                // Disable right-click context menu
                 newImage.addEventListener('contextmenu', (e) => e.preventDefault());
-                
+
                 this.artworkElement.innerHTML = '';
                 this.artworkElement.appendChild(newImage);
             } else {
@@ -99,13 +92,12 @@ class RadioPlayer {
         }
     }
 
-    // Initialize the Cast SDK
     initializeCastSDK() {
         window['__onGCastApiAvailable'] = isAvailable => {
             if (isAvailable) {
                 const castContext = cast.framework.CastContext.getInstance();
                 castContext.setOptions({
-                    receiverApplicationId: 'YOUR_CUSTOM_APP_ID',  // vervang dit door je eigen App ID
+                    receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
                     autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
                 });
                 castContext.addEventListener(
@@ -116,7 +108,6 @@ class RadioPlayer {
         };
     }
 
-    // Set up the Media Session API for system controls
     setupMediaSession() {
         if ('mediaSession' in navigator) {
             navigator.mediaSession.setActionHandler('play', this.playMedia.bind(this));
@@ -127,7 +118,6 @@ class RadioPlayer {
         }
     }
 
-    // Update Media Session metadata with two artwork images
     updateMediaMetadata(artist, title, artworkUrl200, artworkUrl500) {
         if ('mediaSession' in navigator) {
             navigator.mediaSession.metadata = new MediaMetadata({
@@ -141,17 +131,14 @@ class RadioPlayer {
         }
     }
 
-    // Cast session event handling
     handleCastSessionState(event) {
         if (event.sessionState === cast.framework.SessionState.SESSION_STARTED) {
             this.pauseMedia();
         } else if (event.sessionState === cast.framework.SessionState.SESSION_ENDED) {
-            this.isPlaying = false;
             this.playMedia();
         }
     }
 
-    // Cast button click event
     castButtonClick() {
         const castContext = cast.framework.CastContext.getInstance();
         castContext.requestSession()
@@ -159,22 +146,31 @@ class RadioPlayer {
             .catch(error => console.error('Error starting session:', error));
     }
 
-    // Load media to Cast device
-    loadMediaToCast() {
+    isCasting() {
+        return cast.framework.CastContext.getInstance().getCurrentSession() != null;
+    }
+
+    updateCastMetadata(artist, title, artworkUrl) {
         const session = cast.framework.CastContext.getInstance().getCurrentSession();
-        if (session && !this.isPlaying) {  // Prevent reloading if media is already playing
+        if (session) {
             const mediaInfo = new chrome.cast.media.MediaInfo('https://stream.streamxerosradio.duckdns.org/xerosradio', 'audio/mpeg');
+            mediaInfo.metadata = new chrome.cast.media.MusicTrackMediaMetadata();
+            mediaInfo.metadata.title = title;
+            mediaInfo.metadata.artist = artist;
+            mediaInfo.metadata.images = [
+                new chrome.cast.Image(artworkUrl),
+                new chrome.cast.Image('https://res.cloudinary.com/xerosradio/image/upload/w_50,h_50,f_webp,q_auto/XerosRadio_Logo')
+            ];
+
             const request = new chrome.cast.media.LoadRequest(mediaInfo);
+            request.autoplay = true;
+
             session.loadMedia(request)
-                .then(() => {
-                    console.log('Media geladen en afgespeeld.');
-                    this.isPlaying = true;
-                })
-                .catch(error => console.error('Error loading media:', error));
+                .then(() => console.log('Updated media metadata on cast device.'))
+                .catch(error => console.error('Error updating cast metadata:', error));
         }
     }
 
-    // Toggle play/pause functionality
     togglePlay() {
         if (this.isPlaying) {
             this.pauseMedia();
@@ -184,47 +180,39 @@ class RadioPlayer {
         this.updatePlayPauseButton();
     }
 
-    // Play media
     playMedia() {
         this.radioPlayer.play();
         this.isPlaying = true;
         this.updatePlayPauseButton();
     }
 
-    // Pause media
     pauseMedia() {
         this.radioPlayer.pause();
         this.isPlaying = false;
         this.updatePlayPauseButton();
     }
 
-    // Update play/pause button icon
     updatePlayPauseButton() {
         this.playPauseButton.className = this.isPlaying ? 'fas fa-pause' : 'fas fa-play';
     }
 
-    // Adjust volume and save to cookie
     adjustVolume() {
         this.radioPlayer.volume = this.volumeSlider.value;
         this.saveVolumeToCookie(this.volumeSlider.value);
     }
 
-    // Save volume to cookie
     saveVolumeToCookie(volume) {
         document.cookie = `volume=${volume}`;
     }
 
-    // Get volume from cookie
     getVolumeFromCookie() {
         const cookie = document.cookie.split(';').find(cookie => cookie.trim().startsWith('volume='));
         return cookie ? parseFloat(cookie.split('=')[1]) : null;
     }
 
-    // Seek forward or backward
     seek(seconds) {
         this.radioPlayer.currentTime += seconds;
     }
 }
 
-// Create an instance of the RadioPlayer class.
 const radioPlayer = new RadioPlayer();
