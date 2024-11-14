@@ -154,7 +154,7 @@ class RadioPlayer {
     }
 
     // Cast button click event
-    castButtonClick() {
+    async castButtonClick() {
         const castContext = cast.framework.CastContext.getInstance();
         castContext.requestSession()
             .then(() => this.loadMediaToCast())
@@ -162,14 +162,32 @@ class RadioPlayer {
     }
 
     // Load media to Cast device
-    loadMediaToCast() {
+    async loadMediaToCast() {
         const session = cast.framework.CastContext.getInstance().getCurrentSession();
         if (session) {
-            const mediaInfo = new chrome.cast.media.MediaInfo('https://stream.streamxerosradio.duckdns.org/xerosradio', 'audio/mpeg');
-            const request = new chrome.cast.media.LoadRequest(mediaInfo);
-            session.loadMedia(request)
-                .then(() => console.log('Media loaded successfully.'))
-                .catch(error => console.error('Error loading media:', error));
+            // Fetch casting metadata
+            try {
+                const response = await fetch('https://xerosradioapi.global.ssl.fastly.net/api/xerosradio/metadatacasting');
+                const metadata = await response.json();
+                const { logo_url, title, title2 } = metadata;
+
+                // Create media info for the cast
+                const mediaInfo = new chrome.cast.media.MediaInfo('https://stream.streamxerosradio.duckdns.org/xerosradio', 'audio/mpeg');
+                mediaInfo.metadata = new chrome.cast.media.MusicTrackMetadata();
+                mediaInfo.metadata.artist = title;
+                mediaInfo.metadata.title = title2;
+                mediaInfo.metadata.albumName = 'XerosRadio';
+                mediaInfo.metadata.artwork = [
+                    { src: logo_url, sizes: '500x500', type: 'image/webp' }
+                ];
+
+                const request = new chrome.cast.media.LoadRequest(mediaInfo);
+                session.loadMedia(request)
+                    .then(() => console.log('Media loaded successfully.'))
+                    .catch(error => console.error('Error loading media:', error));
+            } catch (error) {
+                console.error('Error fetching casting metadata:', error);
+            }
         }
     }
 
