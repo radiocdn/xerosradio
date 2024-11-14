@@ -93,7 +93,7 @@ class RadioPlayer {
                 this.artworkElement.appendChild(newImage);
             } else {
                 this.djInfoElement.textContent = 'Nonstop Muziek';
-                this.artworkElement.innerHTML = `<img src="${djCover}" alt="XerosRadio Nonstop Muziek" draggable="false" loading="lazy" style="width: 200px; height: 200px;">`;
+                this.artworkElement.innerHTML = `<img src="https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit" alt="XerosRadio Nonstop Muziek" draggable="false" loading="lazy" style="width: 200px; height: 200px;">`;
             }
         } catch (error) {
             console.error('Fout:', error);
@@ -117,31 +117,6 @@ class RadioPlayer {
                 );
             }
         };
-    }
-
-    // Set up the Media Session API for system controls
-    setupMediaSession() {
-        if ('mediaSession' in navigator) {
-            navigator.mediaSession.setActionHandler('play', this.playMedia.bind(this));
-            navigator.mediaSession.setActionHandler('pause', this.pauseMedia.bind(this));
-            navigator.mediaSession.setActionHandler('stop', this.pauseMedia.bind(this));
-            navigator.mediaSession.setActionHandler('seekbackward', () => this.seek(-10));
-            navigator.mediaSession.setActionHandler('seekforward', () => this.seek(10));
-        }
-    }
-
-    // Update Media Session metadata with two artwork images
-    updateMediaMetadata(artist, title, artworkUrl200, artworkUrl500) {
-        if ('mediaSession' in navigator) {
-            navigator.mediaSession.metadata = new MediaMetadata({
-                title: title,
-                artist: artist,
-                artwork: [
-                    { src: artworkUrl500, sizes: '500x500', type: 'image/webp' },
-                    { src: artworkUrl200, sizes: '200x200', type: 'image/webp' }
-                ]
-            });
-        }
     }
 
     // Cast session event handling
@@ -219,11 +194,6 @@ class RadioPlayer {
     getVolumeFromCookie() {
         const cookie = document.cookie.split(';').find(cookie => cookie.trim().startsWith('volume='));
         return cookie ? parseFloat(cookie.split('=')[1]) : null;
-    }
-
-    // Seek forward or backward
-    seek(seconds) {
-        this.radioPlayer.currentTime += seconds;
     }
 }
 
