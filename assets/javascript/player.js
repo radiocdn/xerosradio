@@ -126,12 +126,16 @@ class RadioPlayer {
         }
     }
 
-    castButtonClick() {
+    async castButtonClick() {
         const castContext = cast.framework.CastContext.getInstance();
         if (castContext) {
-            castContext.requestSession()
-                .then(() => this.loadMediaToCast())
-                .catch(error => console.error('Error starting Cast session:', error));
+            try {
+                await castContext.requestSession();
+                await this.loadMediaToCast();
+                await this.updateCastMetadataOnCast();
+            } catch (error) {
+                console.error('Error starting Cast session:', error);
+            }
         } else {
             console.error('Cast context is not initialized.');
         }
@@ -141,27 +145,35 @@ class RadioPlayer {
         return cast.framework.CastContext.getInstance().getCurrentSession() != null;
     }
 
-    updateCastMetadata(artist, title, artworkUrl) {
-        const session = cast.framework.CastContext.getInstance().getCurrentSession();
-        if (session) {
-            const media = session.getMediaSession();
+    async updateCastMetadataOnCast() {
+        const url = 'https://xerosradioapi.global.ssl.fastly.net/api/xerosradio/metadatacasting/';
+        try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Metadata voor casting niet geladen.');
+            const data = await response.json();
+            
+            const { logo_url, background_url, title, title2 } = data;
 
-            if (media) {
-                // Update metadata only, no reloading
-                const mediaMetadata = new chrome.cast.media.MusicTrackMediaMetadata();
-                mediaMetadata.title = title;
-                mediaMetadata.artist = artist;
-                mediaMetadata.images = [
-                    new chrome.cast.Image(artworkUrl),
-                    new chrome.cast.Image('https://res.cloudinary.com/xerosradio/image/upload/w_50,h_50,f_webp,q_auto/XerosRadio_Logo')
-                ];
+            const session = cast.framework.CastContext.getInstance().getCurrentSession();
+            if (session) {
+                const media = session.getMediaSession();
+                if (media) {
+                    const mediaMetadata = new chrome.cast.media.MusicTrackMediaMetadata();
+                    mediaMetadata.title = title;
+                    mediaMetadata.artist = title2;
+                    mediaMetadata.images = [
+                        new chrome.cast.Image(logo_url),
+                        new chrome.cast.Image(background_url)
+                    ];
+                    media.metadata = mediaMetadata;
 
-                media.metadata = mediaMetadata;
-
-                media.updateMetadata()
-                    .then(() => console.log('Updated cast metadata without restarting stream.'))
-                    .catch(error => console.error('Error updating cast metadata:', error));
+                    media.updateMetadata()
+                        .then(() => console.log('Updated cast metadata for casting.'))
+                        .catch(error => console.error('Error updating cast metadata:', error));
+                }
             }
+        } catch (error) {
+            console.error('Error fetching casting metadata:', error);
         }
     }
 
