@@ -10,9 +10,8 @@ class RadioPlayer {
         this.playPauseButton = document.getElementById('playPauseButton');
         this.volumeSlider = document.getElementById('volumeSlider');
         this.castButton = document.getElementById('castButton');
-
         this.isPlaying = false;
-
+        
         this.playPauseButton.addEventListener('click', this.togglePlay.bind(this));
         this.volumeSlider.addEventListener('input', this.adjustVolume.bind(this));
         this.castButton.addEventListener('click', this.castButtonClick.bind(this));
@@ -28,26 +27,16 @@ class RadioPlayer {
     }
 
     isValidUrl(url) {
-        try {
-            new URL(url);
-            return true;
-        } catch (error) {
-            return false;
-        }
+        try { new URL(url); return true; } catch (error) { return false; }
     }
 
     async updateRadioInfo() {
         const url = 'https://xerosradioapi.global.ssl.fastly.net/api/xerosradio/';
-        const fetchOptions = {
-            method: 'GET',
-            cache: 'no-cache'
-        };
-
+        const fetchOptions = { method: 'GET', cache: 'no-cache' };
+        
         try {
             const response = await fetch(url, fetchOptions);
-            if (!response.ok) {
-                throw new Error('Het verzoek aan de XerosRadio Servers is mislukt. Probeer het later opnieuw.');
-            }
+            if (!response.ok) throw new Error('Verzoek mislukt.');
 
             const data = await response.json();
             const { artist, title, cover_art } = data.current_song;
@@ -57,28 +46,21 @@ class RadioPlayer {
             this.artistInfo.textContent = artist;
             this.titleInfo.textContent = title;
             this.albumArtwork.src = artwork200;
-
             this.updateMediaMetadata(artist, title, artwork200, artwork200);
 
-            // Update metadata on cast device if casting
-            if (this.isCasting()) {
-                this.updateCastMetadata(artist, title, artwork200);
-            }
+            if (this.isCasting()) this.updateCastMetadata(artist, title, artwork200);
 
             if (djLiveStatus) {
                 this.djInfoElement.textContent = djName;
                 const artworkUrl = this.isValidUrl(djCover) ? djCover : 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
-
                 const newImage = new Image();
                 newImage.src = artworkUrl;
                 newImage.draggable = false;
                 newImage.loading = 'lazy';
                 newImage.alt = 'XerosRadio DJ';
-                newImage.style.opacity = 1;
                 newImage.style.width = '200px';
                 newImage.style.height = '200px';
                 newImage.addEventListener('contextmenu', (e) => e.preventDefault());
-
                 this.artworkElement.innerHTML = '';
                 this.artworkElement.appendChild(newImage);
             } else {
@@ -87,7 +69,7 @@ class RadioPlayer {
             }
         } catch (error) {
             console.error('Fout:', error);
-            this.djInfoElement.textContent = 'XerosRadio is momenteel niet beschikbaar. Probeer het later opnieuw.';
+            this.djInfoElement.textContent = 'XerosRadio niet beschikbaar.';
             this.artworkElement.innerHTML = `<img src="https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit" alt="XerosRadio" draggable="false" loading="lazy" style="width: 200px; height: 200px;">`;
         }
     }
@@ -96,14 +78,11 @@ class RadioPlayer {
         window['__onGCastApiAvailable'] = (isAvailable) => {
             if (isAvailable) {
                 const castContext = cast.framework.CastContext.getInstance();
-                
-                // Set the cast options, like the receiverApplicationId and autoJoinPolicy
                 castContext.setOptions({
                     receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
                     autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
                 });
 
-                // Add an event listener for session state changes
                 castContext.addEventListener(
                     cast.framework.CastContextEventType.SESSION_STATE_CHANGED,
                     (event) => this.handleCastSessionState(event)
@@ -149,10 +128,7 @@ class RadioPlayer {
 
     castButtonClick() {
         const castContext = cast.framework.CastContext.getInstance();
-
-        // Ensure the Cast API is fully initialized before trying to request a session
         if (castContext) {
-            // Now that Cast context is initialized, request the session
             castContext.requestSession()
                 .then(() => this.loadMediaToCast())
                 .catch(error => console.error('Error starting Cast session:', error));
@@ -169,10 +145,8 @@ class RadioPlayer {
         const session = cast.framework.CastContext.getInstance().getCurrentSession();
         if (session) {
             const media = session.media;
-
             // If media is already loaded, update metadata without restarting the stream
             if (media) {
-                // Only update metadata without restarting the stream
                 media.metadata.title = title;
                 media.metadata.artist = artist;
                 media.metadata.images = [
