@@ -22,8 +22,7 @@ class RadioPlayer {
         this.updateRadioInfo();
         setInterval(this.updateRadioInfo.bind(this), 5000);
 
-        this.initializeCastSDK(); // Make sure Cast SDK is initialized at the start
-        this.setupMediaSession();
+        this.initializeCastSDK(); // Initialize Cast SDK
     }
 
     isValidUrl(url) {
@@ -112,8 +111,8 @@ class RadioPlayer {
             if (isAvailable) {
                 const castContext = cast.framework.CastContext.getInstance();
                 castContext.setOptions({
-                    receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID, // Make sure this is set
-                    autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED // Set the auto join policy to allow casting from the same origin
+                    receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
+                    autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
                 });
 
                 castContext.addEventListener(
@@ -128,33 +127,12 @@ class RadioPlayer {
         };
     }
 
-    setupMediaSession() {
-        if ('mediaSession' in navigator) {
-            navigator.mediaSession.setActionHandler('play', this.playMedia.bind(this));
-            navigator.mediaSession.setActionHandler('pause', this.pauseMedia.bind(this));
-            navigator.mediaSession.setActionHandler('stop', this.pauseMedia.bind(this));
-            navigator.mediaSession.setActionHandler('seekbackward', () => this.seek(-10));
-            navigator.mediaSession.setActionHandler('seekforward', () => this.seek(10));
-        }
-    }
-
-    updateMediaMetadata(artist, title, artworkUrl200, artworkUrl500) {
-        if ('mediaSession' in navigator) {
-            navigator.mediaSession.metadata = new MediaMetadata({
-                title: title,
-                artist: artist,
-                artwork: [
-                    { src: artworkUrl500, sizes: '500x500', type: 'image/webp' },
-                    { src: artworkUrl200, sizes: '200x200', type: 'image/webp' }
-                ]
-            });
-        }
-    }
-
     handleCastSessionState(event) {
         if (event.sessionState === cast.framework.SessionState.SESSION_STARTED) {
-            this.pauseMedia();
+            console.log('Casting session started');
+            this.playMediaOnCast();
         } else if (event.sessionState === cast.framework.SessionState.SESSION_ENDED) {
+            console.log('Casting session ended');
             this.playMedia();
         }
     }
@@ -163,10 +141,31 @@ class RadioPlayer {
         const castContext = cast.framework.CastContext.getInstance();
         if (castContext) {
             castContext.requestSession()
-                .then(() => this.updateCastMetadataOnCast())
+                .then(() => {
+                    this.updateCastMetadataOnCast();
+                    this.playMediaOnCast(); // Play media on the Cast device once the session is started
+                })
                 .catch(error => console.error('Error starting Cast session:', error));
         } else {
             console.error('Cast context is not initialized.');
+        }
+    }
+
+    playMediaOnCast() {
+        const session = cast.framework.CastContext.getInstance().getCurrentSession();
+        if (session) {
+            const mediaInfo = new chrome.cast.media.MediaInfo(this.radioPlayer.src, 'audio/mp3');
+            mediaInfo.metadata = new chrome.cast.media.MusicTrackMetadata();
+            mediaInfo.metadata.title = this.artistInfo.textContent; // Set title to artist
+            mediaInfo.metadata.subtitle = this.titleInfo.textContent; // Set subtitle to song title
+            mediaInfo.metadata.images = [new chrome.cast.Image(this.albumArtwork.src)];
+
+            const request = new chrome.cast.media.LoadRequest(mediaInfo);
+            session.loadMedia(request)
+                .then(() => console.log('Media loaded successfully on Cast device'))
+                .catch(error => console.error('Error loading media on Cast device:', error));
+        } else {
+            console.error('No Cast session found.');
         }
     }
 
@@ -204,17 +203,13 @@ class RadioPlayer {
         this.saveVolumeToCookie(this.volumeSlider.value);
     }
 
-    saveVolumeToCookie(value) {
-        document.cookie = `volume=${value}; path=/; max-age=31536000`;
+    saveVolumeToCookie(volume) {
+        document.cookie = `volume=${volume}; path=/; max-age=${60 * 60 * 24 * 365}`;
     }
 
     getVolumeFromCookie() {
-        const match = document.cookie.match(/volume=([^;]+)/);
-        return match ? parseFloat(match[1]) : 0.5;
-    }
-
-    seek(time) {
-        this.radioPlayer.currentTime += time;
+        const cookieValue = document.cookie.replace(/(?:(?:^|.*;\s*)volume\s*=\s*([^;]*).*$)|^.*$/, "$1");
+        return cookieValue ? parseFloat(cookieValue) : 0.5;
     }
 }
 
