@@ -93,7 +93,7 @@ class RadioPlayer {
                 this.artworkElement.appendChild(newImage);
             } else {
                 this.djInfoElement.textContent = 'Nonstop Muziek';
-                this.artworkElement.innerHTML = `<img src="https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit" alt="XerosRadio Nonstop Muziek" draggable="false" loading="lazy" style="width: 200px; height: 200px;">`;
+                this.artworkElement.innerHTML = `<img src="${djCover}" alt="XerosRadio Nonstop Muziek" draggable="false" loading="lazy" style="width: 200px; height: 200px;">`;
             }
         } catch (error) {
             console.error('Fout:', error);
@@ -119,6 +119,31 @@ class RadioPlayer {
         };
     }
 
+    // Set up the Media Session API for system controls
+    setupMediaSession() {
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.setActionHandler('play', this.playMedia.bind(this));
+            navigator.mediaSession.setActionHandler('pause', this.pauseMedia.bind(this));
+            navigator.mediaSession.setActionHandler('stop', this.pauseMedia.bind(this));
+            navigator.mediaSession.setActionHandler('seekbackward', () => this.seek(-10));
+            navigator.mediaSession.setActionHandler('seekforward', () => this.seek(10));
+        }
+    }
+
+    // Update Media Session metadata with two artwork images
+    updateMediaMetadata(artist, title, artworkUrl200, artworkUrl500) {
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title: title,
+                artist: artist,
+                artwork: [
+                    { src: artworkUrl500, sizes: '500x500', type: 'image/webp' },
+                    { src: artworkUrl200, sizes: '200x200', type: 'image/webp' }
+                ]
+            });
+        }
+    }
+
     // Cast session event handling
     handleCastSessionState(event) {
         if (event.sessionState === cast.framework.SessionState.SESSION_STARTED) {
@@ -141,6 +166,21 @@ class RadioPlayer {
         const session = cast.framework.CastContext.getInstance().getCurrentSession();
         if (session) {
             const mediaInfo = new chrome.cast.media.MediaInfo('https://stream.streamxerosradio.duckdns.org/xerosradio', 'audio/mpeg');
+
+            // Create MediaMetadata object for custom artwork
+            const metadata = new chrome.cast.media.MediaMetadata();
+            metadata.title = 'XerosRadio';
+            metadata.artist = 'Live Radio';
+            metadata.albumName = 'XerosRadio Live';
+
+            // Set the custom artwork (image) for the receiver
+            metadata.artwork = [
+                { src: 'https://res.cloudinary.com/xerosradio/image/upload/w_500,h_500,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit', sizes: '500x500', type: 'image/webp' },
+                { src: 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit', sizes: '200x200', type: 'image/webp' }
+            ];
+
+            mediaInfo.metadata = metadata;
+
             const request = new chrome.cast.media.LoadRequest(mediaInfo);
             session.loadMedia(request)
                 .then(() => console.log('Media loaded successfully.'))
@@ -183,19 +223,17 @@ class RadioPlayer {
         this.saveVolumeToCookie(this.volumeSlider.value);
     }
 
-    // Save volume to cookie
-    saveVolumeToCookie(volume) {
-        const expirationDate = new Date();
-        expirationDate.setFullYear(expirationDate.getFullYear() + 1); // 1 year expiration
-        document.cookie = `volume=${volume}; expires=${expirationDate.toUTCString()}; path=/`;
-    }
-
     // Get volume from cookie
     getVolumeFromCookie() {
-        const cookie = document.cookie.split(';').find(cookie => cookie.trim().startsWith('volume='));
-        return cookie ? parseFloat(cookie.split('=')[1]) : null;
+        const volume = document.cookie.match(/(^|;) ?volume=([^;]*)(;|$)/);
+        return volume ? parseFloat(volume[2]) : 0.5;
+    }
+
+    // Save volume to cookie
+    saveVolumeToCookie(value) {
+        document.cookie = `volume=${value}; path=/; max-age=${60 * 60 * 24 * 365}`;
     }
 }
 
-// Create an instance of the RadioPlayer class.
+// Initialize the RadioPlayer
 const radioPlayer = new RadioPlayer();
