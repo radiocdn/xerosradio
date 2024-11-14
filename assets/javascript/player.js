@@ -11,7 +11,7 @@ class RadioPlayer {
         this.volumeSlider = document.getElementById('volumeSlider');
         this.castButton = document.getElementById('castButton');
         this.isPlaying = false;
-
+        
         this.playPauseButton.addEventListener('click', this.togglePlay.bind(this));
         this.volumeSlider.addEventListener('input', this.adjustVolume.bind(this));
         this.castButton.addEventListener('click', this.castButtonClick.bind(this));
@@ -22,7 +22,8 @@ class RadioPlayer {
         this.updateRadioInfo();
         setInterval(this.updateRadioInfo.bind(this), 5000);
 
-        this.initializeCastSDK(); // Initialize Cast SDK
+        this.initializeCastSDK();
+        this.setupMediaSession();
     }
 
     isValidUrl(url) {
@@ -47,7 +48,7 @@ class RadioPlayer {
             this.albumArtwork.src = artwork200;
             this.updateMediaMetadata(artist, title, artwork200, artwork200);
 
-            if (this.isCasting()) this.updateCastMetadataOnCast();
+            if (this.isCasting()) this.updateCastMetadata(artist, title, artwork200);
 
             if (djLiveStatus) {
                 this.djInfoElement.textContent = djName;
@@ -73,39 +74,6 @@ class RadioPlayer {
         }
     }
 
-    async updateCastMetadataOnCast() {
-        const url = 'https://xerosradioapi.global.ssl.fastly.net/api/xerosradio/metadatacasting/';
-        const fetchOptions = { method: 'GET', cache: 'no-cache' };
-        
-        try {
-            const response = await fetch(url, fetchOptions);
-            if (!response.ok) throw new Error('Verzoek mislukt voor casting metadata.');
-
-            const data = await response.json();
-            const { logo_url, background_url, title, title2 } = data;
-
-            // Update metadata for casting session
-            const session = cast.framework.CastContext.getInstance().getCurrentSession();
-            if (session) {
-                const media = session.media;
-                if (media) {
-                    media.metadata.title = title;
-                    media.metadata.subtitle = title2;
-                    media.metadata.images = [
-                        new chrome.cast.Image(logo_url),
-                        new chrome.cast.Image(background_url)
-                    ];
-
-                    media.updateMetadata()
-                        .then(() => console.log('Casting metadata updated.'))
-                        .catch(error => console.error('Error updating casting metadata:', error));
-                }
-            }
-        } catch (error) {
-            console.error('Fout:', error);
-        }
-    }
-
     initializeCastSDK() {
         window['__onGCastApiAvailable'] = (isAvailable) => {
             if (isAvailable) {
@@ -127,12 +95,44 @@ class RadioPlayer {
         };
     }
 
+    async updateCastMetadata(artist, title, artworkUrl) {
+        if (this.isCasting()) {
+            try {
+                const castMetadataUrl = 'https://xerosradioapi.global.ssl.fastly.net/api/xerosradio/metadatacasting/';
+                const castResponse = await fetch(castMetadataUrl);
+                const castData = await castResponse.json();
+
+                const castArtworkUrl = castData.logo_url || 'https://res.cloudinary.com/xerosradio/image/upload/f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
+                const castTitle = castData.title || 'XerosRadio';
+                const castSubtitle = castData.title2 || 'Je Luistert Naar Het Beste Station';
+
+                const session = cast.framework.CastContext.getInstance().getCurrentSession();
+                if (session) {
+                    const media = session.media;
+                    const mediaInfo = new chrome.cast.media.MediaInfo('https://stream.streamxerosradio.duckdns.org/xerosradio', 'audio/mpeg');
+                    mediaInfo.metadata = new chrome.cast.media.MusicTrackMetadata();
+                    mediaInfo.metadata.title = castTitle;
+                    mediaInfo.metadata.subtitle = castSubtitle;
+                    mediaInfo.metadata.images = [
+                        new chrome.cast.Image(castArtworkUrl),
+                        new chrome.cast.Image(artworkUrl)
+                    ];
+
+                    const request = new chrome.cast.media.LoadRequest(mediaInfo);
+                    session.loadMedia(request)
+                        .then(() => console.log('Loaded media on cast device with updated metadata'))
+                        .catch(error => console.error('Error loading media on Cast:', error));
+                }
+            } catch (error) {
+                console.error('Error fetching cast metadata:', error);
+            }
+        }
+    }
+
     handleCastSessionState(event) {
         if (event.sessionState === cast.framework.SessionState.SESSION_STARTED) {
-            console.log('Casting session started');
-            this.playMediaOnCast();
+            this.pauseMedia();
         } else if (event.sessionState === cast.framework.SessionState.SESSION_ENDED) {
-            console.log('Casting session ended');
             this.playMedia();
         }
     }
@@ -142,30 +142,12 @@ class RadioPlayer {
         if (castContext) {
             castContext.requestSession()
                 .then(() => {
-                    this.updateCastMetadataOnCast();
-                    this.playMediaOnCast(); // Play media on the Cast device once the session is started
+                    this.updateCastMetadata();
+                    console.log('Cast session started.');
                 })
                 .catch(error => console.error('Error starting Cast session:', error));
         } else {
             console.error('Cast context is not initialized.');
-        }
-    }
-
-    playMediaOnCast() {
-        const session = cast.framework.CastContext.getInstance().getCurrentSession();
-        if (session) {
-            const mediaInfo = new chrome.cast.media.MediaInfo(this.radioPlayer.src, 'audio/mp3');
-            mediaInfo.metadata = new chrome.cast.media.MusicTrackMetadata();
-            mediaInfo.metadata.title = this.artistInfo.textContent; // Set title to artist
-            mediaInfo.metadata.subtitle = this.titleInfo.textContent; // Set subtitle to song title
-            mediaInfo.metadata.images = [new chrome.cast.Image(this.albumArtwork.src)];
-
-            const request = new chrome.cast.media.LoadRequest(mediaInfo);
-            session.loadMedia(request)
-                .then(() => console.log('Media loaded successfully on Cast device'))
-                .catch(error => console.error('Error loading media on Cast device:', error));
-        } else {
-            console.error('No Cast session found.');
         }
     }
 
@@ -203,8 +185,8 @@ class RadioPlayer {
         this.saveVolumeToCookie(this.volumeSlider.value);
     }
 
-    saveVolumeToCookie(volume) {
-        document.cookie = `volume=${volume}; path=/; max-age=${60 * 60 * 24 * 365}`;
+    saveVolumeToCookie(value) {
+        document.cookie = `volume=${value}; path=/; max-age=${60 * 60 * 24 * 365}`;
     }
 
     getVolumeFromCookie() {
