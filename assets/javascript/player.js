@@ -168,7 +168,6 @@ class RadioPlayer {
             mediaInfo.metadata = new chrome.cast.media.MusicTrackMetadata();
             mediaInfo.metadata.artist = 'XerosRadio';
             mediaInfo.metadata.title = 'Until It Hurts';
-            mediaInfo.metadata.albumName = 'XerosRadio';
             mediaInfo.metadata.artwork = 'https://res.cloudinary.com/xerosradio/image/upload/f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
             
             const request = new chrome.cast.media.LoadRequest(mediaInfo);
