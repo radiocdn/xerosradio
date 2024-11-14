@@ -125,8 +125,6 @@ class RadioPlayer {
             navigator.mediaSession.setActionHandler('play', this.playMedia.bind(this));
             navigator.mediaSession.setActionHandler('pause', this.pauseMedia.bind(this));
             navigator.mediaSession.setActionHandler('stop', this.pauseMedia.bind(this));
-            navigator.mediaSession.setActionHandler('seekbackward', () => this.seek(-10));
-            navigator.mediaSession.setActionHandler('seekforward', () => this.seek(10));
         }
     }
 
