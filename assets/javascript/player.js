@@ -11,7 +11,7 @@ class RadioPlayer {
         this.volumeSlider = document.getElementById('volumeSlider');
         this.castButton = document.getElementById('castButton');
         this.isPlaying = false;
-        
+
         this.playPauseButton.addEventListener('click', this.togglePlay.bind(this));
         this.volumeSlider.addEventListener('input', this.adjustVolume.bind(this));
         this.castButton.addEventListener('click', this.castButtonClick.bind(this));
@@ -22,6 +22,7 @@ class RadioPlayer {
         this.updateRadioInfo();
         setInterval(this.updateRadioInfo.bind(this), 5000);
 
+        this.initializeCastSDK(); // Make sure Cast SDK is initialized at the start
         this.setupMediaSession();
     }
 
@@ -111,8 +112,8 @@ class RadioPlayer {
             if (isAvailable) {
                 const castContext = cast.framework.CastContext.getInstance();
                 castContext.setOptions({
-                    receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
-                    autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
+                    receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID, // Make sure this is set
+                    autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED // Set the auto join policy to allow casting from the same origin
                 });
 
                 castContext.addEventListener(
