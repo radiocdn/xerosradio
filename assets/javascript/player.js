@@ -67,13 +67,13 @@ class RadioPlayer {
             this.artistInfo.textContent = artist;
             this.titleInfo.textContent = title;
             this.albumArtwork.src = artwork200;
-            this.updateMediaMetadata(artist, title, artwork200, artwork200);
+            this.updateMediaMetadata(artist, title, artwork200); // Update media metadata
 
             // Update DJ information
             if (djLiveStatus) {
                 this.djInfoElement.textContent = djName;
                 const artworkUrl = this.isValidUrl(djCover) ? djCover : 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
-
+                
                 const newImage = new Image();
                 newImage.src = artworkUrl;
                 newImage.onerror = () => {
@@ -93,7 +93,7 @@ class RadioPlayer {
                 this.artworkElement.appendChild(newImage);
             } else {
                 this.djInfoElement.textContent = 'Nonstop Muziek';
-                this.artworkElement.innerHTML = `<img src="${djCover}" alt="XerosRadio Nonstop Muziek" draggable="false" loading="lazy" style="width: 200px; height: 200px;">`;
+                this.artworkElement.innerHTML = `<img src="https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit" alt="XerosRadio" draggable="false" loading="lazy" style="width: 200px; height: 200px;">`;
             }
         } catch (error) {
             console.error('Fout:', error);
@@ -130,15 +130,14 @@ class RadioPlayer {
         }
     }
 
-    // Update Media Session metadata with two artwork images
-    updateMediaMetadata(artist, title, artworkUrl200, artworkUrl500) {
+    // Update Media Session metadata with a single artwork image
+    updateMediaMetadata(artist, title, artworkUrl) {
         if ('mediaSession' in navigator) {
             navigator.mediaSession.metadata = new MediaMetadata({
                 title: title,
                 artist: artist,
                 artwork: [
-                    { src: artworkUrl500, sizes: '500x500', type: 'image/webp' },
-                    { src: artworkUrl200, sizes: '200x200', type: 'image/webp' }
+                    { src: artworkUrl, sizes: '500x500', type: 'image/webp' }
                 ]
             });
         }
@@ -173,10 +172,9 @@ class RadioPlayer {
             metadata.artist = 'Live Radio';
             metadata.albumName = 'XerosRadio Live';
 
-            // Set the custom artwork (image) for the receiver
+            // Set the custom artwork (single image URL)
             metadata.artwork = [
-                { src: 'https://res.cloudinary.com/xerosradio/image/upload/w_500,h_500,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit', sizes: '500x500', type: 'image/webp' },
-                { src: 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit', sizes: '200x200', type: 'image/webp' }
+                { src: 'https://res.cloudinary.com/xerosradio/image/upload/f_webp,q_auto/XerosRadio_Logo', sizes: '500x500', type: 'image/webp' }
             ];
 
             mediaInfo.metadata = metadata;
@@ -202,22 +200,20 @@ class RadioPlayer {
     playMedia() {
         this.radioPlayer.play();
         this.isPlaying = true;
-        this.updatePlayPauseButton();
     }
 
     // Pause media
     pauseMedia() {
         this.radioPlayer.pause();
         this.isPlaying = false;
-        this.updatePlayPauseButton();
     }
 
-    // Update play/pause button icon
+    // Update play/pause button
     updatePlayPauseButton() {
-        this.playPauseButton.className = this.isPlaying ? 'fas fa-pause' : 'fas fa-play';
+        this.playPauseButton.textContent = this.isPlaying ? 'Pause' : 'Play';
     }
 
-    // Adjust volume and save to cookie
+    // Adjust volume
     adjustVolume() {
         this.radioPlayer.volume = this.volumeSlider.value;
         this.saveVolumeToCookie(this.volumeSlider.value);
