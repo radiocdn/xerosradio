@@ -76,6 +76,9 @@ class RadioPlayer {
 
                 const newImage = new Image();
                 newImage.src = artworkUrl;
+                newImage.onerror = () => {
+                    newImage.src = 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit'; // Fallback image
+                };
                 newImage.draggable = false;
                 newImage.loading = 'lazy';
                 newImage.alt = 'XerosRadio DJ';
@@ -90,12 +93,12 @@ class RadioPlayer {
                 this.artworkElement.appendChild(newImage);
             } else {
                 this.djInfoElement.textContent = 'Nonstop Muziek';
-                this.artworkElement.innerHTML = <img src="${djCover}" alt="XerosRadio Nonstop Muziek" draggable="false" loading="lazy" style="width: 200px; height: 200px;">;
+                this.artworkElement.innerHTML = `<img src="${djCover}" alt="XerosRadio Nonstop Muziek" draggable="false" loading="lazy" style="width: 200px; height: 200px;">`;
             }
         } catch (error) {
             console.error('Fout:', error);
             this.djInfoElement.textContent = 'XerosRadio is momenteel niet beschikbaar. Probeer het later opnieuw.';
-            this.artworkElement.innerHTML = <img src="https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit" alt="XerosRadio" draggable="false" loading="lazy" style="width: 200px; height: 200px;">;
+            this.artworkElement.innerHTML = `<img src="https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit" alt="XerosRadio" draggable="false" loading="lazy" style="width: 200px; height: 200px;">`;
         }
     }
 
@@ -207,7 +210,9 @@ class RadioPlayer {
 
     // Save volume to cookie
     saveVolumeToCookie(volume) {
-        document.cookie = volume=${volume};
+        const expirationDate = new Date();
+        expirationDate.setFullYear(expirationDate.getFullYear() + 1); // 1 year expiration
+        document.cookie = `volume=${volume}; expires=${expirationDate.toUTCString()}; path=/`;
     }
 
     // Get volume from cookie
