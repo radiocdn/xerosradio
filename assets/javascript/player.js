@@ -15,10 +15,16 @@ class RadioPlayer {
         // XerosRadio API variable to track the playing state.
         this.isPlaying = false;
 
-        // Event listeners.
-        this.playPauseButton.addEventListener('click', this.togglePlay.bind(this));
-        this.volumeSlider.addEventListener('input', this.adjustVolume.bind(this));
-        this.castButton.addEventListener('click', this.castButtonClick.bind(this));
+        // Binding methods to this instance
+        this.togglePlay = this.togglePlay.bind(this);
+        this.adjustVolume = this.adjustVolume.bind(this);
+        this.castButtonClick = this.castButtonClick.bind(this);
+        this.updateRadioInfo = this.updateRadioInfo.bind(this);
+
+        // Event listeners
+        this.playPauseButton.addEventListener('click', this.togglePlay);
+        this.volumeSlider.addEventListener('input', this.adjustVolume);
+        this.castButton.addEventListener('click', this.castButtonClick);
 
         // Load volume from cookie or set default.
         this.volumeSlider.value = this.getVolumeFromCookie() || 0.5;
@@ -26,21 +32,28 @@ class RadioPlayer {
 
         // Update combined info (now-playing and DJ info) every 5 seconds.
         this.updateRadioInfo();
-        setInterval(this.updateRadioInfo.bind(this), 5000);
+        setInterval(this.updateRadioInfo, 5000);
 
         // Initialize Cast SDK and Media Session API.
         this.initializeCastSDK();
         this.setupMediaSession();
     }
 
-    // Function to check if a string is a valid URL
-    isValidUrl(url) {
-        try {
-            new URL(url);
-            return true;
-        } catch (error) {
-            return false;
+    // Toggle play/pause functionality
+    togglePlay() {
+        if (this.isPlaying) {
+            this.radioPlayer.pause();
+            this.isPlaying = false;
+        } else {
+            this.radioPlayer.play();
+            this.isPlaying = true;
         }
+    }
+
+    // Adjust volume functionality
+    adjustVolume() {
+        this.radioPlayer.volume = this.volumeSlider.value;
+        this.setVolumeCookie(this.volumeSlider.value);
     }
 
     // Combined function to update now-playing and DJ info
@@ -91,7 +104,7 @@ class RadioPlayer {
             }
 
             // Now fetch the casting metadata
-            const castingResponse = await fetch('https://radiocdn.pages.dev/xerosradio/api/casting/xerosradio.json');
+            const castingResponse = await fetch('https://xerosradioapi.global.ssl.fastly.net/api/xerosradio/metadatacasting');
             if (!castingResponse.ok) {
                 throw new Error('Error fetching casting metadata');
             }
@@ -186,18 +199,16 @@ class RadioPlayer {
 
     // Load media to Cast device
     loadMediaToCast() {
-        const session = cast.framework.CastContext.getInstance().getCurrentSession();
-        if (session) {
-            const mediaInfo = new chrome.cast.media.MediaInfo(this.radioPlayer.src);
-            mediaInfo.metadata = new chrome.cast.media.GenericMediaMetadata();
-            mediaInfo.metadata.title = "XerosRadio";
-            mediaInfo.metadata.subtitle = "Live Stream";
+        const mediaInfo = new chrome.cast.media.MediaInfo(this.radioPlayer.src, 'audio/mp3');
+        mediaInfo.metadata = new chrome.cast.media.GenericMediaMetadata();
+        mediaInfo.metadata.title = "XerosRadio";
+        mediaInfo.metadata.subtitle = "Live Stream";
 
-            const request = new chrome.cast.media.LoadRequest(mediaInfo);
-            session.loadMedia(request)
-                .then(() => console.log('Media loaded successfully to Cast device'))
-                .catch((error) => console.error('Error loading media:', error));
-        }
+        const request = new chrome.cast.media.LoadRequest(mediaInfo);
+        const castSession = cast.framework.CastContext.getInstance().getSession();
+        castSession.loadMedia(request)
+            .then(() => console.log('Media loaded successfully to Cast device'))
+            .catch((error) => console.error('Error loading media:', error));
     }
 
     // Play media
