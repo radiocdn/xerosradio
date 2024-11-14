@@ -11,7 +11,7 @@ class RadioPlayer {
         this.volumeSlider = document.getElementById('volumeSlider');
         this.castButton = document.getElementById('castButton');
         this.isPlaying = false;
-
+        
         this.playPauseButton.addEventListener('click', this.togglePlay.bind(this));
         this.volumeSlider.addEventListener('input', this.adjustVolume.bind(this));
         this.castButton.addEventListener('click', this.castButtonClick.bind(this));
@@ -22,7 +22,6 @@ class RadioPlayer {
         this.updateRadioInfo();
         setInterval(this.updateRadioInfo.bind(this), 5000);
 
-        this.initializeCastSDK();
         this.setupMediaSession();
     }
 
@@ -48,7 +47,7 @@ class RadioPlayer {
             this.albumArtwork.src = artwork200;
             this.updateMediaMetadata(artist, title, artwork200, artwork200);
 
-            if (this.isCasting()) this.updateCastMetadata(artist, title, artwork200);
+            if (this.isCasting()) this.updateCastMetadataOnCast();
 
             if (djLiveStatus) {
                 this.djInfoElement.textContent = djName;
@@ -71,6 +70,39 @@ class RadioPlayer {
             console.error('Fout:', error);
             this.djInfoElement.textContent = 'XerosRadio niet beschikbaar.';
             this.artworkElement.innerHTML = `<img src="https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit" alt="XerosRadio" draggable="false" loading="lazy" style="width: 200px; height: 200px;">`;
+        }
+    }
+
+    async updateCastMetadataOnCast() {
+        const url = 'https://xerosradioapi.global.ssl.fastly.net/api/xerosradio/metadatacasting/';
+        const fetchOptions = { method: 'GET', cache: 'no-cache' };
+        
+        try {
+            const response = await fetch(url, fetchOptions);
+            if (!response.ok) throw new Error('Verzoek mislukt voor casting metadata.');
+
+            const data = await response.json();
+            const { logo_url, background_url, title, title2 } = data;
+
+            // Update metadata for casting session
+            const session = cast.framework.CastContext.getInstance().getCurrentSession();
+            if (session) {
+                const media = session.media;
+                if (media) {
+                    media.metadata.title = title;
+                    media.metadata.subtitle = title2;
+                    media.metadata.images = [
+                        new chrome.cast.Image(logo_url),
+                        new chrome.cast.Image(background_url)
+                    ];
+
+                    media.updateMetadata()
+                        .then(() => console.log('Casting metadata updated.'))
+                        .catch(error => console.error('Error updating casting metadata:', error));
+                }
+            }
+        } catch (error) {
+            console.error('Fout:', error);
         }
     }
 
@@ -126,16 +158,12 @@ class RadioPlayer {
         }
     }
 
-    async castButtonClick() {
+    castButtonClick() {
         const castContext = cast.framework.CastContext.getInstance();
         if (castContext) {
-            try {
-                await castContext.requestSession();
-                await this.loadMediaToCast();
-                await this.updateCastMetadataOnCast();
-            } catch (error) {
-                console.error('Error starting Cast session:', error);
-            }
+            castContext.requestSession()
+                .then(() => this.updateCastMetadataOnCast())
+                .catch(error => console.error('Error starting Cast session:', error));
         } else {
             console.error('Cast context is not initialized.');
         }
@@ -143,59 +171,6 @@ class RadioPlayer {
 
     isCasting() {
         return cast.framework.CastContext.getInstance().getCurrentSession() != null;
-    }
-
-    async updateCastMetadataOnCast() {
-        const url = 'https://xerosradioapi.global.ssl.fastly.net/api/xerosradio/metadatacasting/';
-        try {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error('Metadata voor casting niet geladen.');
-            const data = await response.json();
-            
-            const { logo_url, background_url, title, title2 } = data;
-
-            const session = cast.framework.CastContext.getInstance().getCurrentSession();
-            if (session) {
-                const media = session.getMediaSession();
-                if (media) {
-                    const mediaMetadata = new chrome.cast.media.MusicTrackMediaMetadata();
-                    mediaMetadata.title = title;
-                    mediaMetadata.artist = title2;
-                    mediaMetadata.images = [
-                        new chrome.cast.Image(logo_url),
-                        new chrome.cast.Image(background_url)
-                    ];
-                    media.metadata = mediaMetadata;
-
-                    media.updateMetadata()
-                        .then(() => console.log('Updated cast metadata for casting.'))
-                        .catch(error => console.error('Error updating cast metadata:', error));
-                }
-            }
-        } catch (error) {
-            console.error('Error fetching casting metadata:', error);
-        }
-    }
-
-    loadMediaToCast() {
-        const session = cast.framework.CastContext.getInstance().getCurrentSession();
-        if (session) {
-            const mediaInfo = new chrome.cast.media.MediaInfo('https://stream.streamxerosradio.duckdns.org/xerosradio', 'audio/mpeg');
-            mediaInfo.metadata = new chrome.cast.media.MusicTrackMediaMetadata();
-            mediaInfo.metadata.title = this.titleInfo.textContent;
-            mediaInfo.metadata.artist = this.artistInfo.textContent;
-            mediaInfo.metadata.images = [
-                new chrome.cast.Image(this.albumArtwork.src),
-                new chrome.cast.Image('https://res.cloudinary.com/xerosradio/image/upload/w_50,h_50,f_webp,q_auto/XerosRadio_Logo')
-            ];
-
-            const request = new chrome.cast.media.LoadRequest(mediaInfo);
-            request.autoplay = true;
-
-            session.loadMedia(request)
-                .then(() => console.log('Started casting media.'))
-                .catch(error => console.error('Error casting media:', error));
-        }
     }
 
     togglePlay() {
