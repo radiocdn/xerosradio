@@ -142,41 +142,53 @@ class RadioPlayer {
     }
 
     updateCastMetadata(artist, title, artworkUrl) {
-        const session = cast.framework.CastContext.getInstance().getCurrentSession();
-        if (session) {
-            const media = session.media;
-            // If media is already loaded, update metadata without restarting the stream
-            if (media) {
-                media.metadata.title = title;
-                media.metadata.artist = artist;
-                media.metadata.images = [
-                    new chrome.cast.Image(artworkUrl),
-                    new chrome.cast.Image('https://res.cloudinary.com/xerosradio/image/upload/w_50,h_50,f_webp,q_auto/XerosRadio_Logo')
-                ];
+    const session = cast.framework.CastContext.getInstance().getCurrentSession();
+    if (session) {
+        const media = session.getMediaSession();
 
-                media.updateMetadata()
-                    .then(() => console.log('Updated cast metadata without restarting stream.'))
-                    .catch(error => console.error('Error updating cast metadata:', error));
-            } else {
-                // If no media is loaded yet, load the media
-                const mediaInfo = new chrome.cast.media.MediaInfo('https://stream.streamxerosradio.duckdns.org/xerosradio', 'audio/mpeg');
-                mediaInfo.metadata = new chrome.cast.media.MusicTrackMediaMetadata();
-                mediaInfo.metadata.title = title;
-                mediaInfo.metadata.artist = artist;
-                mediaInfo.metadata.images = [
-                    new chrome.cast.Image(artworkUrl),
-                    new chrome.cast.Image('https://res.cloudinary.com/xerosradio/image/upload/w_50,h_50,f_webp,q_auto/XerosRadio_Logo')
-                ];
+        // Check if media is already loaded
+        if (media) {
+            // Only update the metadata without reloading the stream
+            const mediaMetadata = new chrome.cast.media.MusicTrackMediaMetadata();
+            mediaMetadata.title = title;
+            mediaMetadata.artist = artist;
+            mediaMetadata.images = [
+                new chrome.cast.Image(artworkUrl),
+                new chrome.cast.Image('https://res.cloudinary.com/xerosradio/image/upload/w_50,h_50,f_webp,q_auto/XerosRadio_Logo')
+            ];
 
-                const request = new chrome.cast.media.LoadRequest(mediaInfo);
-                request.autoplay = true;
+            media.mediaInfo.metadata = mediaMetadata;
 
-                session.loadMedia(request)
-                    .then(() => console.log('Loaded media on cast device and updated metadata.'))
-                    .catch(error => console.error('Error loading media:', error));
-            }
+            // Update metadata without loading media again
+            media.editTracksInfo(
+                new chrome.cast.media.EditTracksInfoRequest([], mediaMetadata)
+            ).then(() => {
+                console.log('Updated cast metadata without reloading stream.');
+            }).catch(error => {
+                console.error('Error updating cast metadata:', error);
+            });
+        } else {
+            // If media is not yet loaded, create a new load request
+            const mediaInfo = new chrome.cast.media.MediaInfo('https://stream.streamxerosradio.duckdns.org/xerosradio', 'audio/mpeg');
+            mediaInfo.metadata = new chrome.cast.media.MusicTrackMediaMetadata();
+            mediaInfo.metadata.title = title;
+            mediaInfo.metadata.artist = artist;
+            mediaInfo.metadata.images = [
+                new chrome.cast.Image(artworkUrl),
+                new chrome.cast.Image('https://res.cloudinary.com/xerosradio/image/upload/w_50,h_50,f_webp,q_auto/XerosRadio_Logo')
+            ];
+
+            const request = new chrome.cast.media.LoadRequest(mediaInfo);
+            request.autoplay = true;
+
+            session.loadMedia(request)
+                .then(() => {
+                    console.log('Loaded media on cast device and updated metadata.');
+                })
+                .catch(error => console.error('Error loading media:', error));
         }
     }
+}
 
     togglePlay() {
         if (this.isPlaying) {
