@@ -53,11 +53,17 @@ class RadioPlayer {
             const { artist, title, cover_art } = data.current_song;
             const { dj_live_status: djLiveStatus, dj_name: djName, dj_cover: djCover } = data.onair_info;
 
-            const artwork200 = cover_art ? cover_art : 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
+            const artwork200 = cover_art || 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
             this.artistInfo.textContent = artist;
             this.titleInfo.textContent = title;
             this.albumArtwork.src = artwork200;
+
             this.updateMediaMetadata(artist, title, artwork200, artwork200);
+
+            // Update metadata on cast device if casting
+            if (this.isCasting()) {
+                this.updateCastMetadata(artist, title, artwork200);
+            }
 
             if (djLiveStatus) {
                 this.djInfoElement.textContent = djName;
@@ -72,7 +78,7 @@ class RadioPlayer {
                 newImage.style.width = '200px';
                 newImage.style.height = '200px';
                 newImage.addEventListener('contextmenu', (e) => e.preventDefault());
-                
+
                 this.artworkElement.innerHTML = '';
                 this.artworkElement.appendChild(newImage);
             } else {
@@ -140,30 +146,28 @@ class RadioPlayer {
             .catch(error => console.error('Error starting session:', error));
     }
 
-    // Load media to Cast device with Media Session metadata for casting
-    loadMediaToCast() {
+    isCasting() {
+        return cast.framework.CastContext.getInstance().getCurrentSession() != null;
+    }
+
+    updateCastMetadata(artist, title, artworkUrl) {
         const session = cast.framework.CastContext.getInstance().getCurrentSession();
         if (session) {
             const mediaInfo = new chrome.cast.media.MediaInfo('https://stream.streamxerosradio.duckdns.org/xerosradio', 'audio/mpeg');
-
-            // Add metadata including small logo for top-left corner
             mediaInfo.metadata = new chrome.cast.media.MusicTrackMediaMetadata();
-            mediaInfo.metadata.title = this.titleInfo.textContent || 'Live on XerosRadio';
-            mediaInfo.metadata.artist = this.artistInfo.textContent || 'Unknown Artist';
-
-            // Main album artwork and logo in top-left corner
-            const artworkUrl = this.albumArtwork.src || 'https://res.cloudinary.com/xerosradio/image/upload/w_500,h_500,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
+            mediaInfo.metadata.title = title;
+            mediaInfo.metadata.artist = artist;
             mediaInfo.metadata.images = [
-                new chrome.cast.Image(artworkUrl), // Main artwork
-                new chrome.cast.Image('https://res.cloudinary.com/xerosradio/image/upload/w_50,h_50,f_webp,q_auto/XerosRadio_Logo') // Small logo
+                new chrome.cast.Image(artworkUrl),
+                new chrome.cast.Image('https://res.cloudinary.com/xerosradio/image/upload/w_50,h_50,f_webp,q_auto/XerosRadio_Logo')
             ];
 
             const request = new chrome.cast.media.LoadRequest(mediaInfo);
             request.autoplay = true;
 
             session.loadMedia(request)
-                .then(() => console.log('Media loaded successfully to Cast.'))
-                .catch(error => console.error('Error loading media:', error));
+                .then(() => console.log('Updated media metadata on cast device.'))
+                .catch(error => console.error('Error updating cast metadata:', error));
         }
     }
 
