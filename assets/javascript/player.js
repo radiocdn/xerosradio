@@ -142,8 +142,8 @@ class RadioPlayer {
         if (castContext) {
             castContext.requestSession()
                 .then(() => {
-                    this.updateCastMetadata();
                     console.log('Cast session started.');
+                    this.updateCastMetadata();  // Update cast metadata after session starts
                 })
                 .catch(error => console.error('Error starting Cast session:', error));
         } else {
