@@ -155,8 +155,9 @@ class RadioPlayer {
         if (session) {
             const media = session.media;
 
-            // If media is already loaded, update metadata without reloading the stream
+            // If media is already loaded, update metadata without restarting the stream
             if (media) {
+                // Only update metadata without restarting the stream
                 media.metadata.title = title;
                 media.metadata.artist = artist;
                 media.metadata.images = [
@@ -164,11 +165,11 @@ class RadioPlayer {
                     new chrome.cast.Image('https://res.cloudinary.com/xerosradio/image/upload/w_50,h_50,f_webp,q_auto/XerosRadio_Logo')
                 ];
 
-                media.updateMetadata()  // Update the metadata without reloading the media
-                    .then(() => console.log('Cast metadata updated.'))
+                media.updateMetadata()
+                    .then(() => console.log('Updated cast metadata without restarting stream.'))
                     .catch(error => console.error('Error updating cast metadata:', error));
             } else {
-                // If no media is loaded yet, load the media for the first time
+                // If no media is loaded yet, load the media
                 const mediaInfo = new chrome.cast.media.MediaInfo('https://stream.streamxerosradio.duckdns.org/xerosradio', 'audio/mpeg');
                 mediaInfo.metadata = new chrome.cast.media.MusicTrackMediaMetadata();
                 mediaInfo.metadata.title = title;
@@ -182,7 +183,7 @@ class RadioPlayer {
                 request.autoplay = true;
 
                 session.loadMedia(request)
-                    .then(() => console.log('Media loaded on cast device.'))
+                    .then(() => console.log('Loaded media on cast device and updated metadata.'))
                     .catch(error => console.error('Error loading media:', error));
             }
         }
