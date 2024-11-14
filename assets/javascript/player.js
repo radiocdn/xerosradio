@@ -168,8 +168,8 @@ class RadioPlayer {
             const mediaInfo = new chrome.cast.media.MediaInfo('https://stream.streamxerosradio.duckdns.org/xerosradio', 'audio/mpeg');
             // Create MediaMetadata object for custom artwork
             mediaInfo.metadata = new chrome.cast.media.MusicTrackMetadata();
-            mediaInfo.metadata.artist = title;
-            mediaInfo.metadata.title = title2;
+            mediaInfo.metadata.artist = 'XerosRadio';
+            mediaInfo.metadata.title = 'Until It Hurts';
             mediaInfo.metadata.albumName = 'XerosRadio';
             mediaInfo.metadata.artwork = 'https://res.cloudinary.com/xerosradio/image/upload/f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
             
