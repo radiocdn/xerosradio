@@ -68,14 +68,14 @@
         .youtube-icon {
             font-size: 30px;
             cursor: pointer;
-            color: red; /* Set the color to red */
+            color: #FF0000; /* Set the color to red */
             transition: color 0.3s ease; /* Add transition for color change */
         }
 
         .spotify-icon {
             font-size: 30px;
             cursor: pointer;
-            color: green; /* Set the color to green */
+            color: #1DB954; /* Set the color to green */
             transition: color 0.3s ease; /* Add transition for color change */
         }
 
