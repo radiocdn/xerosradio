@@ -82,7 +82,7 @@
         .soundcloud-icon {
             font-size: 30px;
             cursor: pointer;
-            color: orange; /* Set the color to orange */
+            color: #ff5500; /* Set the color to orange */
             transition: color 0.3s ease; /* Add transition for color change */
         }
 
