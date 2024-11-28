@@ -93,6 +93,12 @@
             transition: color 0.3s ease; /* Add transition for color change */
         }
 
+        .soundcloud-icon,
+        .youtube-icon,
+        .spotify-icon {
+            text-shadow: 2px 2px;
+        }
+
 
         .youtube-icon {
             margin-left: 10px; /* Add margin to create spacing */
