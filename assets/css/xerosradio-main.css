@@ -764,3 +764,38 @@ text-decoration: none;
 .article a:hover {
     text-decoration: underline;
 }
+
+/* PART 0 - Setting Up */
+img[data-opt-src] {
+  background-color: #f7f7f7; /*placeholder opacity needs to be set to 0 in the optimole's settings for this to be visible*/
+  will-change: opacity;
+}
+	
+/* PART 1 - Before Lazy Load */	
+img[data-opt-src]:not([data-opt-lazy-loaded]) {
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+/* PART 2 - Upon Lazy Load */
+img[data-opt-lazy-loaded] {
+  animation-name: fade-in;
+  animation-direction: normal;
+  animation-duration: 0.5s;
+  animation-fill-mode: forwards;
+}
+
+	
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+	
+  50% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
