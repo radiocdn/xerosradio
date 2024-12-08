@@ -1,5 +1,5 @@
 /* Add your CSS styles here to customize the appearance of the website of XerosRadio */
-@import url('https://cdn.jsdelivr.net/gh/radiocdn/radiocdn/cdn/fonts/xerosradio.min.css');
+@import url(https://fonts.bunny.net/css?family=sofia-sans:800);
 
 * {
 font-family: 'Sofia Sans', sans-serif;
