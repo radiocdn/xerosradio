@@ -1,0 +1,56 @@
+body {
+    font-family: "Sofia Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 800;
+    font-style: normal;
+    margin: 20px;
+    background: rgb(122,1,254);
+    background: radial-gradient(circle, rgba(122,1,254,1) 15%, rgba(74,85,255,1) 61%, rgba(38,147,255,1) 81%, rgba(38,147,255,1) 88%);
+    background-color: #ffffff;
+    color: white;
+    padding-top: 50px; /* Add padding at the top */
+}
+h1 {
+    color: #ffffff;
+    margin-top: 0;
+}
+.logo {
+    position: absolute;
+    top: 9px;
+    right: 10px;
+    width: 150px;
+}
+#tabs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-top: 50px;
+}
+.tab {
+    padding: 10px 20px;
+    cursor: pointer;
+    background-color: #e7e7e7;
+    border-radius: 5px;
+    color: black;
+    text-align: center;
+}
+.tab.active {
+    background-color: #D6EFFE;
+    color: black;
+}
+.content {
+    display: none;
+    margin-top: 10px;
+}
+.content.active {
+    display: block;
+}
+ol {
+    padding-left: 20px;
+}
+a {
+    color: #000000;
+}
+a:hover {
+    color: #ffffff;
+}
