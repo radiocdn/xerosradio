@@ -1,3 +1,6 @@
+/* Add your CSS styles here to customize the appearance of the website of XerosRadio */
+@import url(https://fonts.bunny.net/css?family=sofia-sans:800);
+
 body {
     font-family: "Sofia Sans", sans-serif;
     font-optical-sizing: auto;
