@@ -2,7 +2,6 @@ class RadioPlayer {
     constructor() {
         // Get the XerosRadio API DOM elements.
         this.radioPlayer = document.getElementById('radioPlayer');
-        this.radioPlayer.setAttribute('preload', 'none');
         this.artistInfo = document.getElementById('artistInfo');
         this.titleInfo = document.getElementById('titleInfo');
         this.albumArtwork = document.getElementById('albumArtwork');
