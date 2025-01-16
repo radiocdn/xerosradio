@@ -47,7 +47,7 @@ class RadioPlayer {
         const url = 'https://xerosradioapi.global.ssl.fastly.net/api/xerosradio/';
         const fetchOptions = {
             method: 'GET',
-            cache: 'force-cache'
+            cache: 'no-cache'
         };
 
         try {
