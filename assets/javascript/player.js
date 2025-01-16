@@ -48,7 +48,7 @@ class RadioPlayer {
         const url = 'https://xerosradioapi.global.ssl.fastly.net/api/xerosradio/';
         const fetchOptions = {
             method: 'GET',
-            cache: 'no-cache'
+            cache: 'force-cache'
         };
 
         try {
@@ -87,7 +87,7 @@ class RadioPlayer {
                 newImage.style.height = '200px';
 
                 // Disable right-click context menu
-                newImage.addEventListener('contextmenu', (e) => e.preventDefault());
+                // newImage.addEventListener('contextmenu', (e) => e.preventDefault());
                 
                 this.artworkElement.innerHTML = '';
                 this.artworkElement.appendChild(newImage);
