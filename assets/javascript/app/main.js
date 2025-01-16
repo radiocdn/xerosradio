@@ -1,30 +1,41 @@
-// Bescherming tegen afbeeldingsdiefstal | XerosRadio
 document.addEventListener('DOMContentLoaded', function () {
-    // Selecteer alle afbeeldingen op de pagina
-    const afbeeldingen = document.querySelectorAll('img');
+    // Functie om de beveiliging toe te voegen aan afbeeldingen
+    function beveiligAfbeeldingen() {
+        // Selecteer alle afbeeldingen op de pagina
+        const afbeeldingen = document.querySelectorAll('img');
 
-    // Voorkom het standaard contextmenu en toon een aangepopt bericht | XerosRadio
-    function toonAangepoptBericht(event) {
-        event.preventDefault();
-        alert('U mag geen afbeeldingen van onze app stelen zonder toestemming!');
-    }
+        // Voorkom het standaard contextmenu en toon een aangepast bericht
+        function toonAangepoptBericht(event) {
+            event.preventDefault();
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: "Afbeeldingen zijn beschermd!",
+                    text: "Het is niet toegestaan om afbeeldingen te downloaden",
+                    confirmButtonText: "Sluiten",
+                    icon: "error",
+                });
+            } else {
+                alert("Afbeeldingen zijn beschermd!"); // Fallback als Swal niet beschikbaar is
+            }
+        }
 
-    // Voeg een eventlistener toe aan elke afbeelding om met rechts klikken om te gaan | XerosRadio
-    afbeeldingen.forEach((img) => {
-        img.addEventListener('contextmenu', toonAangepoptBericht);
+        // Voeg beveiliging toe aan elke afbeelding
+        afbeeldingen.forEach((img) => {
+            // Voorkom contextmenu
+            img.addEventListener('contextmenu', toonAangepoptBericht);
 
-        // Voorkom slepen en kopiëren van afbeeldingen | XerosRadio
-        img.setAttribute('draggable', 'false');
-        img.addEventListener('dragstart', function (e) {
-            e.preventDefault();
+            // Voorkom slepen en kopiëren
+            img.setAttribute('draggable', 'false');
+            img.addEventListener('dragstart', function (e) {
+                e.preventDefault();
+            });
         });
-    });
-});
-
-// Scroll automatisch naar het einde van de chatbox na het laden | XerosRadio
-window.onload = function () {
-    var chatBox = document.getElementById("chatBox");
-    if (chatBox) {
-        chatBox.scrollTop = chatBox.scrollHeight;
     }
-};
+
+    // Beveilig afbeeldingen die al op de pagina staan
+    beveiligAfbeeldingen();
+
+    // Beveilig dynamisch geladen afbeeldingen (bijvoorbeeld via AJAX of SPA)
+    const observer = new MutationObserver(beveiligAfbeeldingen);
+    observer.observe(document.body, { childList: true, subtree: true });
+});
