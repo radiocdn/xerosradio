@@ -17,7 +17,7 @@ async function updateDJInfo() {
     
     const fetchOptions = {
         method: 'GET',
-        cache: 'no-cache'
+        cache: 'force-cache'
     };
 
     try {
@@ -46,7 +46,7 @@ async function updateDJInfo() {
             newImage.style.height = '200px';
 
             // Disable right-click context menu
-            newImage.addEventListener('contextmenu', (e) => e.preventDefault());
+            // newImage.addEventListener('contextmenu', (e) => e.preventDefault());
             
             artworkElement.innerHTML = '';
             artworkElement.appendChild(newImage);
