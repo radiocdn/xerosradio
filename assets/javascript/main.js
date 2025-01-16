@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 Swal.fire({
                     title: "Afbeeldingen zijn beschermd!",
                     text: "Het is niet toegestaan om afbeeldingen te downloaden",
+                    confirmButtonText: "Sluiten",
                     icon: "error",
                 });
             } else {
