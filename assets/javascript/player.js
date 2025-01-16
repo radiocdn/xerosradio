@@ -85,9 +85,6 @@ class RadioPlayer {
                 newImage.style.opacity = 1;
                 newImage.style.width = '200px';
                 newImage.style.height = '200px';
-
-                // Disable right-click context menu
-                // newImage.addEventListener('contextmenu', (e) => e.preventDefault());
                 
                 this.artworkElement.innerHTML = '';
                 this.artworkElement.appendChild(newImage);
