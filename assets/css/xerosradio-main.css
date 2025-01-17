@@ -796,6 +796,38 @@ img[data-opt-lazy-loaded] {
   }
 
   100% {
-    opacity: 1;
-  }
+
+.newyeartimerxerosradio {
+    position: relative;
+    width: 100%;
+    min-width: 500px; /* Ensure minimum width of 500px */
+    padding-bottom: 40%; /* Maintain 5:2 aspect ratio (200px height / 500px width = 0.4) */
+    height: 0;
+    overflow: hidden;
+    box-sizing: border-box;
 }
+
+.newyeartimerxerosradio iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+    object-fit: cover; /* Ensures the iframe content covers the aspect ratio */
+}
+
+/* Adjustments for mobile */
+@media (max-width: 767px) {
+    .newyeartimerxerosradio {
+        padding-bottom: 50%; /* Slightly less vertical space on mobile */
+    }
+
+    .newyeartimerxerosradio iframe {
+        width: 100%;
+        height: 100%;
+        transform: scale(0.85); /* Zoom out more to fit the content better */
+        transform-origin: center center; /* Keeps the scaling centered */
+    }
+}	
