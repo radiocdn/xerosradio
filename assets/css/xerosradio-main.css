@@ -2,367 +2,832 @@
 @import url(https://fonts.bunny.net/css?family=sofia-sans:800);
 
 * {
-  font-family: 'Sofia Sans', sans-serif;
-  box-sizing: border-box;
-  font-weight: 800;
+font-family: 'Sofia Sans', sans-serif;
+box-sizing: border-box;
+font-weight: 800;
 }
 
 body {
-  background: radial-gradient(circle, rgba(122, 1, 254, 1) 15%, rgba(74, 85, 255, 1) 61%, rgba(38, 147, 255, 1) 88%);
-  color: #ffffff;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-  margin: 0;
-  padding: 0;
-  text-align: center;
+background: rgb(122,1,254);
+background: radial-gradient(circle, rgba(122,1,254,1) 15%, rgba(74,85,255,1) 61%, rgba(38,147,255,1) 81%, rgba(38,147,255,1) 88%);
+background-color: #ffffff;
+color: #ffffff;
+text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+font-family: 'Sofia Sans', sans-serif;
+font-weight: 800;
+text-align: center;
+text-decoration: none;
+margin: 0;
+padding: 0;
 }
 
 .container {
-  max-width: 800px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  opacity: 0;
-  animation: fadeIn 1s ease-in forwards;
+max-width: 800px;
 }
 
-h1, h2, h3, h4, p, b {
-  font-weight: 800;
+h1,h2,h3,h4,p,b {
+font-weight: 800;
 }
 
 img {
-  width: 100%;
-  height: auto;
+width: 100%;
+height: auto;
 }
 
 .navbar {
-  color: white;
-  background-color: #008cff;
+color: white;
+background-color: #008cff; /* Updated navbar color */
 }
 
 .navbar-brand img {
-  width: 100%;
-  max-width: 80px;
-  height: auto;
+width: 100%;
+max-width: 80px; /* Adjust the maximum width as needed */
+height: auto;
 }
 
 .navbar-toggler {
-  border: none;
+border: none;
+outline: none;
+}
+
+.navbar-toggler:focus {
+outline: none;
+}
+
+.navbar-toggler-icon {
+display: none; /* Hide the default Bootstrap icon */
 }
 
 .fa-bars {
-  color: #b703ff;
-  font-size: 24px;
+color: #b703ff; /* Updated navbar toggle icon color */
+font-size: 24px;
 }
 
 .navbar-nav .nav-link {
-  color: #fff;
-}
-
-#artwork img {
-  border-radius: 50%;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+color: #fff;
 }
 
 /* Nu Live Artwork */
+#artwork img {
+border-radius: 50%;
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow effect */
+} 
+
+/* Nieuws Text */
 .NieuwsText {
-  background-color: #008cff;
-  text-align: center;
-  color: white;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-  opacity: 0;
-  animation: fadeIn 1s ease-in forwards;
+background-color: #008cff;
+text-align: center;
+color: white;
+text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+/* Set initial styles for the element */
+opacity: 0;
+/* Define the animation properties */
+animation-name: fadeIn;
+animation-duration: 1s;
+animation-timing-function: ease-in;
+animation-fill-mode: forwards;  
 }
 
+/* OnAir Handeler */
 .onairhandler {
-  opacity: 0;
-  animation: fadeIn 1s ease-in forwards;
+/* Set initial styles for the element */
+opacity: 0;
+/* Define the animation properties */
+animation-name: fadeIn;
+animation-duration: 1s;
+animation-timing-function: ease-in;
+animation-fill-mode: forwards;
 }
 
+/* DJs Title */
 .djstitle {
-  color: white;
-  opacity: 0;
-  animation: fadeIn 1s ease-in forwards;
+color: white;
+/* Set initial styles for the element */
+opacity: 0;
+/* Define the animation properties */
+animation-name: fadeIn;
+animation-duration: 1s;
+animation-timing-function: ease-in;
+animation-fill-mode: forwards;
 }
 
+/* Privacy Beleid | Text */
 .privacybeleidtext {
-  color: white;
-  text-align: center;
-  opacity: 0;
-  animation: fadeIn 1s ease-in forwards;
+color: white;
+text-align: center;
+/* Set initial styles for the element */
+opacity: 0;
+/* Define the animation properties */
+animation-name: fadeIn;
+animation-duration: 1s;
+animation-timing-function: ease-in;
+animation-fill-mode: forwards;
 }
 
+/* XerosRadio Playlist */
 .xerosradioplaylist {
-  opacity: 0;
-  animation: fadeIn 1s ease-in forwards;
+/* Set initial styles for the element */
+opacity: 0;
+/* Define the animation properties */
+animation-name: fadeIn;
+animation-duration: 1s;
+animation-timing-function: ease-in;
+animation-fill-mode: forwards;
 }
 
+/* Main Title Playlist */
 .MainTitlePlaylist {
-  color: white;
-  text-align: center;
-  opacity: 0;
-  animation: fadeIn 1s ease-in forwards;
+color: white;
+text-align: center;
+/* Set initial styles for the element */
+opacity: 0;
+/* Define the animation properties */
+animation-name: fadeIn;
+animation-duration: 1s;
+animation-timing-function: ease-in;
+animation-fill-mode: forwards;
 }
 
+/* Main Title OverOns */
 .MainTitleOverons {
-  color: white;
-  text-align: center;
-  opacity: 0;
-  animation: fadeIn 1s ease-in forwards;
+color: white; /* Comma was missing here */
+text-align: center;
+/* Set initial styles for the element */
+opacity: 0;
+/* Define the animation properties */
+animation-name: fadeIn;
+animation-duration: 1s;
+animation-timing-function: ease-in;
+animation-fill-mode: forwards;
 }
 
+/* Main Title Nieuws */
 .MainTitleNieuws {
-  color: white;
-  text-align: center;
-  opacity: 0;
-  animation: fadeIn 1s ease-in forwards;
+color: white; /* Comma was missing here */
+text-align: center;
+/* Set initial styles for the element */
+opacity: 0;
+/* Define the animation properties */
+animation-name: fadeIn;
+animation-duration: 1s;
+animation-timing-function: ease-in;
+animation-fill-mode: forwards;
 }
 
+/* Main Content */
 .content {
-  color: white;
-  text-align: center;
-  opacity: 0;
-  animation: fadeIn 1s ease-in forwards;
+color: white; /* Comma was missing here */
+text-align: center;
+/* Set initial styles for the element */
+opacity: 0;
+/* Define the animation properties */
+animation-name: fadeIn;
+animation-duration: 1s;
+animation-timing-function: ease-in;
+animation-fill-mode: forwards;
 }
 
+/* Container */
+.container {
+/* Set initial styles for the element */
+opacity: 0;
+/* Define the animation properties */
+animation-name: fadeIn;
+animation-duration: 1s;
+animation-timing-function: ease-in;
+animation-fill-mode: forwards;
+}
+
+/* Nieuws */
 .Nieuws {
-  text-align: center;
-  opacity: 0;
-  animation: fadeIn 1s ease-in forwards;
+text-align: center;
+/* Set initial styles for the element */
+opacity: 0;
+/* Define the animation properties */
+animation-name: fadeIn;
+animation-duration: 1s;
+animation-timing-function: ease-in;
+animation-fill-mode: forwards;
 }
 
+/* XerosRadio FADE */
 .radioplayerxerosradio {
-  opacity: 0;
-  animation: fadeIn 1s ease-in forwards;
+/* Set initial styles for the element */
+opacity: 0;
+/* Define the animation properties */
+animation-name: fadeIn;
+animation-duration: 1s;
+animation-timing-function: ease-in;
+animation-fill-mode: forwards;
 }
 
+/* Iframe */
 iframe {
-  border: none;
-  margin: 0;
-  padding: 0;
+border: none;
+margin: 0;
+padding: 0;
 }
 
+/* Container */
+.container {
+display: flex;
+justify-content: center;
+align-items: center;
+}
+
+/* Box */
 .box {
-  width: 200px;
-  text-align: center;
-  color: black;
-  text-shadow: 1px 1px 2px rgb(0, 174, 255);
-  background-color: #ffffff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  margin: 10px;
+width: 200px;
+text-align: center;
+color: black; /* Semicolon was missing here */
+text-shadow: 1px 1px 2px rgb(0, 174, 255);
+background-color: #ffffff;
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+padding: 20px;
+margin: 10px;
 }
 
+/* Box | IMG */
 .box img {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  margin-bottom: 10px;
+width: 100px;
+height: 100px;
+border-radius: 50%;
+margin-bottom: 10px;
 }
 
-.box h2, .box p {
-  color: black;
-  transition: color 0.3s ease;
+/* Box | h2 */
+.box h2 {
+color: black; /* Semicolon was missing here */
+font-size: 18px;
+text-decoration: none;
+margin-bottom: 5px;
+transition: color 0.3s ease; /* Add transition for color change */
 }
 
-.box h2:hover, .box p:hover {
-  color: rgb(0, 174, 255);
+/* Box | p */
+.box p {
+color: black; /* Semicolon was missing here */
+font-size: 14px;
+text-decoration: none;
+transition: color 0.3s ease; /* Add transition for color change */
 }
 
-#feed-feed-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
+/* Box Hover Effect */
+.box h2:hover,
+.box p:hover {
+color: rgb(0, 174, 255);
+}
+
+/* Fade in Animation */
+@keyframes fadeIn {
+from {
+  opacity: 0;
+}
+to {
+  opacity: 1;
+}
+}
+
+/* Smaller Screens */
+@media (max-width: 600px) {
+.container {
+    flex-direction: column; /* Change to column for mobile */
+}
+.box {
+    width: 90%; /* Adjust width for smaller screens */
+}
+}
+
+/* Current Dj Onair Balloon */
+.on-air-balloon {
+text-align: center;  
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.226); /* Shadow for the balloon */
+text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Text shadow properties */
+background-color: rgb(255, 0, 0);
+color: white;
+padding: 10px;
+border-radius: 20px;
+display: inline-block;
+position: relative;
+-webkit-user-select: none; /* Safari */
+-ms-user-select: none; /* IE 10 and IE 11 */
+user-select: none; /* Standard syntax */
+}
+
+/* Current Dj Onair Balloon | Before */
+.on-air-balloon::before {
+content: "";
+position: absolute;
+top: 100%;
+left: 50%;
+margin-left: -10px;
+border-width: 10px;
+border-style: solid;
+border-color: red transparent transparent transparent;
+}
+
+/* Radio player container XerosRadio */
+.radioPlayer {
+background-color: #008cff;
+border-radius: 10px;
+max-width: 400px;
+margin: 0 auto;
+padding: 15px;
+display: flex;
+flex-direction: column;
+align-items: center;
+}
+
+/* Now Playing section XerosRadio */
+#nowPlaying {
+margin-top: 10px;
+color: #ffffff;
+text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Text shadow properties */
+display: flex;
+flex-direction: row;
+align-items: center;
+text-align: left;
+-webkit-user-select: none; /* Safari */
+-ms-user-select: none; /* IE 10 and IE 11 */
+user-select: none; /* Standard syntax */
+}
+
+/* Album Artwork XerosRadio */
+#albumArtwork {
+max-width: 100px;
+height: 100px;
+width: 100px;
+margin-right: 10px;
+border-radius: 10px; /* Rounded corners */
+box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Artist and Title Info XerosRadio */
+.info-container {
+flex-grow: 1;
+}
+
+#artistInfo, #titleInfo {
+font-size: 16px;
+color: #fff;
+}
+
+/* Player Controls XerosRadio */
+.player-controls {
+display: flex;
+justify-content: center;
+align-items: center;
+margin-top: 10px;
+}
+
+/* Play/Pause Button XerosRadio */
+#playPauseButton {
+font-size: 24px; /* Larger play button XeroSRadio */
+color: #fff;
+cursor: pointer;
+margin: 0 20px;
+border: none;
+border-radius: 50%; /* Rounded corners for play button XerosRadio */
+padding: 5px;
+}
+
+/* Chromecast Button */
+#castButton {
+font-size: 24px; /* Larger play button XeroSRadio */
+color: #fff;
+cursor: pointer;
+margin: 0 20px;
+border: none;
+border-radius: 50%; /* Rounded corners for play button XerosRadio */
+padding: 5px;
+}
+
+/* Volume Slider */
+#volumeSlider {
+width: 70%;
+}
+
+#cb-cookie-banner {
+position: fixed;
+bottom: 0;
+left: 0;
+width: 100%;
+z-index: 999;
+border-radius: 0;
+display: none;
+}
+
+/* Center the buttonxerosradio */
+.buttonxerosradiomain {
+display: flex;
+justify-content: center;
+align-items: center;
+/* Set initial styles for the element */
+opacity: 0;
+/* Define the animation properties */
+animation-name: fadeIn;
+animation-duration: 1s;
+animation-timing-function: ease-in;
+animation-fill-mode: forwards;    
+}
+
+/* Style for the xerosradiobuttons */
+.xerosradiobutton {
+padding: 10px 20px;
+background-color: #00a8db;
+color: white;
+border: none;
+cursor: pointer;
+margin: 5px;
+text-decoration: none; /* Remove the default underline for anchor elements */
+transition: opacity 0.3s ease; /* Add a fade effect on hover */
+text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Hover effect - fade the button */
+.xerosradiobutton:hover {
+opacity: 0.7;
+color:#ad00cf;
+text-decoration: none;
+}
+
+.xeros-container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
   border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#newsList {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.newsItem {
+  width: calc(50% - 10px); /* Bereken de breedte van elk nieuwsitem (50% - marge) */
+  margin-bottom: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.newsItem img {
+  width: 100%;
+  height: auto;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.newsItem .content {
   padding: 20px;
 }
 
-.feed-article {
-  background: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 15px;
-  transition: transform 0.3s, box-shadow 0.3s;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.feed-article:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.feed-article h2 {
-  margin: 0 0 10px;
-  font-size: 1.2em;
+.newsItem h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  font-size: 18px;
   color: #333;
 }
 
-.feed-date {
-  font-size: 0.9em;
+.newsItem p {
+  margin: 0;
+  font-size: 14px;
   color: #666;
-  margin: 0 0 10px;
+  line-height: 1.5;
+}
+
+@supports (-webkit-touch-callout: none) {
+  .hide-on-ios {
+    display: none;
+  }
+}
+.appen-naar-de-studio-button {
+    background-color: #9003fc;
+    color: white;
+    border: none;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+}
+
+.appen-naar-de-studio-button .icon {
+    margin-right: 0.5rem;
+}
+
+/* Unieke naamgeving door een voorvoegsel te gebruiken */
+.feed-body {
+    line-height: 1.6;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+.feed-container {
+    width: 90%;
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+
+#feed-feed-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.feed-article {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.feed-article:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.feed-article h2 {
+    margin: 0 0 10px;
+    font-size: 1.2em;
+    color: #333;
+}
+
+.feed-date {
+    font-size: 0.9em;
+    color: #666;
+    margin: 0 0 10px;
 }
 
 .feed-read-more {
-  display: inline-block;
-  padding: 8px 15px;
-  font-size: 0.9em;
-  color: #007bff;
-  text-decoration: none;
-  border: 1px solid #007bff;
-  border-radius: 4px;
-  transition: background-color 0.3s, color 0.3s;
+    display: inline-block;
+    padding: 8px 15px;
+    font-size: 0.9em;
+    color: #007bff;
+    text-decoration: none;
+    border: 1px solid #007bff;
+    border-radius: 4px;
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .feed-read-more:hover {
-  background-color: #007bff;
-  color: #fff;
+    background-color: #007bff;
+    color: #fff;
 }
 
 .feed-article-image {
-  max-width: 100%;
-  height: auto;
-  border-radius: 4px;
-  margin: 10px 0;
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+    margin: 10px 0;
+    user-drag: none;
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
 }
 
 .feed-description {
-  font-size: 0.9em;
-  color: #555;
-  transition: max-height 0.3s ease;
-  overflow: hidden;
-  width: 100%;
+    font-size: 0.9em;
+    color: #555;
+    transition: max-height 0.3s ease;
+    overflow: hidden;
+    width: 100%;
 }
 
 #feed-load-more {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  font-size: 1em;
-  color: #fff;
-  background-color: #007bff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  margin-top: 20px;
+    display: block;
+    width: 100%;
+    padding: 10px;
+    font-size: 1em;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 20px;
 }
 
 #feed-load-more:hover {
-  background-color: #0056b3;
+    background-color: #0056b3;
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+#feed-loader {
+    display: none;
+    margin: 20px auto;
+    text-align: center;
 }
 
-@media (max-width: 600px) {
-  .container {
-    flex-direction: column;
-  }
-  .box {
-    width: 90%;
-  }
+#feed-loader::after {
+    content: '';
+    display: block;
+    width: 50px;
+    height: 50px;
+    border: 5px solid #007bff;
+    border-radius: 50%;
+    border-top: 5px solid transparent;
+    animation: spin 1s linear infinite;
 }
 
-.radioPlayer {
-  background-color: #008cff;
-  border-radius: 10px;
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 15px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-#nowPlaying {
-  margin-top: 10px;
-  color: #ffffff;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  text-align: left;
-}
-
-#albumArtwork {
-  max-width: 100px;
-  height: 100px;
-  margin-right: 10px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-}
-
-#playPauseButton, #castButton {
-  font-size: 24px;
-  color: #fff;
-  cursor: pointer;
-  margin: 0 20px;
-  border: none;
-  border-radius: 50%;
-  padding: 5px;
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 .xeros-footer {
-  display: flex;
-  justify-content: center;
-  padding: 50px 0;
-  color: white;
+    display: flex;
+    justify-content: center;
+    padding: 50px 0;
+    color: white;
 }
 
 .xeros-footer-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: start;
-  width: 90%;
-  max-width: 1200px;
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    width: 90%;
+    max-width: 1200px;
 }
 
 .xeros-tiktok-container, .xeros-instagram-container {
-  background-color: white;
-  border-radius: 10px;
-  padding: 20px;
-  width: 45%;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  color: black;
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    width: 45%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    color: black;
+}
+
+.xeros-tiktok-container h3, .xeros-instagram-container h3 {
+    font-size: 1.5em;
+    margin-bottom: 15px;
+    color: #0d1b2a; /* Donkere tekstkleur */
+}
+
+.xeros-tiktok-link, .xeros-instagram-link {
+    text-decoration: none;
+    color: #007bff; /* Blauwe links */
+    display: inline-block;
+    margin-top: 10px;
+    font-weight: bold;
 }
 
 .xeros-tiktok-btn {
-  background-color: #ff4b5c;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  text-align: center;
-  margin-top: 15px;
-  text-decoration: none;
+    background-color: #ff4b5c; /* Rood voor de TikTok-knop */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block;
+    margin-top: 15px;
+    text-align: center;
+    text-decoration: none;
 }
 
 .xeros-tiktok-btn:hover {
-  background-color: #ff1e39;
+    background-color: #ff1e39;
 }
 
 .xeros-instagram-feed img {
-  width: 100%;
-  border-radius: 5px;
+    width: 100%;
+    border-radius: 5px;
+    margin-top: 10px;
 }
 
 @media (max-width: 768px) {
-  .xeros-footer-container {
+    .xeros-footer-container {
     flex-direction: column;
     align-items: center;
-  }
-  .xeros-tiktok-container, .xeros-instagram-container {
+}
+  
+.xeros-tiktok-container, .xeros-instagram-container {
     width: 90%;
     margin-bottom: 20px;
-  }
 }
+
+.article {
+    color: black;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 10px 0;
+    background-color: #fff;
+    margin: 20px;
+}
+  
+.article img {
+    max-width: 500px;
+    height: auto;
+    border-radius: 4px;
+    margin: 10px 0;
+    user-drag: none;
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    border-radius: 5px;
+}
+  
+.article h2 {
+    margin: 0;
+    font-size: 1.5em;
+}
+  
+.article p {
+    margin: 10px 0;
+}
+  
+.article a {
+    color: #007BFF;
+    text-decoration: none;
+}
+  
+.article a:hover {
+    text-decoration: underline;
+}
+
+/* PART 0 - Setting Up */
+img[data-opt-src] {
+  background-color: #f7f7f7; /*placeholder opacity needs to be set to 0 in the optimole's settings for this to be visible*/
+  will-change: opacity;
+}
+	
+/* PART 1 - Before Lazy Load */	
+img[data-opt-src]:not([data-opt-lazy-loaded]) {
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+/* PART 2 - Upon Lazy Load */
+img[data-opt-lazy-loaded] {
+  animation-name: fade-in;
+  animation-direction: normal;
+  animation-duration: 0.5s;
+  animation-fill-mode: forwards;
+}
+
+	
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+	
+  50% {
+    opacity: 0;
+  }
+
+  100% {
+
+.newyeartimerxerosradio {
+    position: relative;
+    width: 100%;
+    min-width: 500px; /* Ensure minimum width of 500px */
+    padding-bottom: 40%; /* Maintain 5:2 aspect ratio (200px height / 500px width = 0.4) */
+    height: 0;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.newyeartimerxerosradio iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    display: block;
+    object-fit: cover; /* Ensures the iframe content covers the aspect ratio */
+}
+
+/* Adjustments for mobile */
+@media (max-width: 767px) {
+    .newyeartimerxerosradio {
+        padding-bottom: 50%; /* Slightly less vertical space on mobile */
+    }
+
+    .newyeartimerxerosradio iframe {
+        width: 100%;
+        height: 100%;
+        transform: scale(0.85); /* Zoom out more to fit the content better */
+        transform-origin: center center; /* Keeps the scaling centered */
+    }
+}	
