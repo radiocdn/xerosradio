@@ -18,32 +18,15 @@ function showErrorMessage() {
 // Functie om het artikel in HTML weer te geven
 function displayArticle(article) {
     const container = document.getElementById('articles-container');
-    const articleDiv = document.createElement('div');
-    articleDiv.classList.add('article');
-
+    
     const fallbackImage = 'https://res.cloudinary.com/xerosradio/image/upload/f_webp,q_auto/XerosRadio_Logo'; // Standaard fallback-afbeelding
 
-    articleDiv.innerHTML = `
-        <article>
-            <header>
-                <h2>${article.title || 'Geen titel beschikbaar'}</h2>
-            </header>
-            <figure>
-                <img 
-                    src="${article.image || fallbackImage}" 
-                    alt="${article.title || 'Artikel afbeelding'}" 
-                    loading="lazy"
-                >
-            </figure>
-            <p>${article.description || 'Geen beschrijving beschikbaar.'}</p>
-            <footer>
-                <time datetime="${article.pubDate}">
-                    <strong>Gepubliceerd op:</strong> ${article.pubDate ? new Date(article.pubDate).toLocaleString('nl-NL') : 'Niet beschikbaar'}
-                </time>
-            </footer>
-        </article>
+    container.innerHTML = `
+        <h2>${article.title || 'Geen titel beschikbaar'}</h2>
+        <img src="${article.image || fallbackImage}" alt="${article.title || 'Artikel afbeelding'}" loading="lazy">
+        <p>${article.description || 'Geen beschrijving beschikbaar.'}</p>
+        <p><strong>Gepubliceerd op:</strong> ${article.pubDate ? new Date(article.pubDate).toLocaleString('nl-NL') : 'Niet beschikbaar'}</p>
     `;
-    container.appendChild(articleDiv);
 }
 
 // Functie om het artikel op te halen en weer te geven
