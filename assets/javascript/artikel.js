@@ -47,7 +47,7 @@ function updateMetaTags(article) {
     // Update Twitter Card meta tags
     const metaTwitterTitle = document.querySelector('meta[name="twitter:title"]');
     const metaTwitterDescription = document.querySelector('meta[name="twitter:description"]');
-    const metaTwitterImage = document.querySelector('meta[name="twitter:image"]');
+    const metaTwitterImage = document.querySelector('meta[name="twitter:image:src"]');
 
     if (metaTwitterTitle) {
         metaTwitterTitle.setAttribute('content', article.title);
