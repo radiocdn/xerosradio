@@ -1,18 +1,37 @@
 // Function to get article ID from the URL parameters
 function getArticleIdFromUrl() {
     const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get('id'); // Pas 'id' aan als de query-parameter anders is
+    return urlParams.get('id');
 }
 
 // Construct the article URL using the retrieved ID
 const articleId = getArticleIdFromUrl();
-
-// Redirect if no article ID is provided
 if (!articleId) {
-    window.location.href = '/'; // Redirect naar de hoofdpagina indien geen ID
+    window.location.href = '/'; // Redirect naar home als er geen ID is
 }
 
 const articleUrl = `https://xerosradioapi.global.ssl.fastly.net/api/xerosradio/nieuws/?article=${articleId}`;
+const CACHE_KEY = `news_article_${articleId}`;
+const CACHE_EXPIRATION_KEY = `${CACHE_KEY}_expires`;
+const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 uur in milliseconden
+
+// Function to get cached article if valid
+function getCachedArticle() {
+    const cachedData = localStorage.getItem(CACHE_KEY);
+    const cacheExpiration = localStorage.getItem(CACHE_EXPIRATION_KEY);
+
+    if (cachedData && cacheExpiration && Date.now() < parseInt(cacheExpiration, 10)) {
+        console.log("✅ Laden vanuit cache");
+        return JSON.parse(cachedData);
+    }
+    return null;
+}
+
+// Function to save article to cache
+function cacheArticle(article) {
+    localStorage.setItem(CACHE_KEY, JSON.stringify(article));
+    localStorage.setItem(CACHE_EXPIRATION_KEY, (Date.now() + CACHE_DURATION).toString());
+}
 
 // **1. Zet alvast placeholder metadata (voordat de API is geladen)**
 document.title = "Laden... | XerosRadio Nieuws";
@@ -43,14 +62,22 @@ Object.entries(metaTags).forEach(([property, content]) => {
     metaTag.setAttribute("content", content);
 });
 
-// **2. Haal het artikel op en werk de metadata snel bij**
+// **2. Haal het artikel op (uit cache of API)**
 async function fetchArticle(url) {
+    const cachedArticle = getCachedArticle();
+    if (cachedArticle) {
+        displayArticle(cachedArticle);
+        updateMetaTags(cachedArticle);
+        return;
+    }
+
     try {
-        const response = await fetch(url, { cache: "no-store" }); // Voorkom caching vertraging
+        const response = await fetch(url);
         if (!response.ok) {
             throw new Error('Artikel niet gevonden.');
         }
         const article = await response.json();
+        cacheArticle(article); // Opslaan in cache voor 24 uur
         updateMetaTags(article);
         displayArticle(article);
     } catch (error) {
