@@ -1,7 +1,7 @@
 // Function to get article ID from the URL parameters
 function getArticleIdFromUrl() {
     const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get('id'); // Replace 'id' with your query parameter key if needed
+    return urlParams.get('id'); // Pas 'id' aan als de query-parameter anders is
 }
 
 // Construct the article URL using the retrieved ID
@@ -9,55 +9,44 @@ const articleId = getArticleIdFromUrl();
 
 // Redirect if no article ID is provided
 if (!articleId) {
-    window.location.href = '/'; // Redirect to root URL if no article ID
+    window.location.href = '/'; // Redirect naar de hoofdpagina indien geen ID
 }
 
 const articleUrl = `https://xerosradioapi.global.ssl.fastly.net/api/xerosradio/nieuws/?article=${articleId}`;
 
 // Function to update metadata for SEO
 function updateMetaTags(article) {
-    // Update page title
-    document.title = article.title;
+    document.title = article.title || 'XerosRadio Nieuws';
     
-    // Update meta description for SEO
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
-        metaDescription.setAttribute('content', article.description);
+        metaDescription.setAttribute('content', article.description || 'Lees het laatste nieuws op XerosRadio.');
     }
 
-    // Update Open Graph meta tags for better social media sharing
-    const metaOgTitle = document.querySelector('meta[property="og:title"]');
-    const metaOgDescription = document.querySelector('meta[property="og:description"]');
-    const metaOgImage = document.querySelector('meta[property="og:image"]');
-    const metaOgUrl = document.querySelector('meta[property="og:url"]');
+    // Open Graph meta tags
+    const metaOgTags = {
+        'og:title': article.title || 'XerosRadio Nieuws',
+        'og:description': article.description || 'Lees het laatste nieuws op XerosRadio.',
+        'og:image': article.image || 'https://res.cloudinary.com/xerosradio/image/upload/f_webp,q_auto/XerosRadio_Logo',
+        'og:url': window.location.href
+    };
 
-    if (metaOgTitle) {
-        metaOgTitle.setAttribute('content', article.title);
-    }
-    if (metaOgDescription) {
-        metaOgDescription.setAttribute('content', article.description);
-    }
-    if (metaOgImage) {
-        metaOgImage.setAttribute('content', article.image);
-    }
-    if (metaOgUrl) {
-        metaOgUrl.setAttribute('content', window.location.href);
-    }
+    Object.entries(metaOgTags).forEach(([property, content]) => {
+        const metaTag = document.querySelector(`meta[property="${property}"]`);
+        if (metaTag) metaTag.setAttribute('content', content);
+    });
 
-    // Update Twitter Card meta tags
-    const metaTwitterTitle = document.querySelector('meta[name="twitter:title"]');
-    const metaTwitterDescription = document.querySelector('meta[name="twitter:description"]');
-    const metaTwitterImage = document.querySelector('meta[name="twitter:image:src"]');
+    // Twitter meta tags
+    const metaTwitterTags = {
+        'twitter:title': article.title || 'XerosRadio Nieuws',
+        'twitter:description': article.description || 'Lees het laatste nieuws op XerosRadio.',
+        'twitter:image:src': article.image || 'https://res.cloudinary.com/xerosradio/image/upload/f_webp,q_auto/XerosRadio_Logo'
+    };
 
-    if (metaTwitterTitle) {
-        metaTwitterTitle.setAttribute('content', article.title);
-    }
-    if (metaTwitterDescription) {
-        metaTwitterDescription.setAttribute('content', article.description);
-    }
-    if (metaTwitterImage) {
-        metaTwitterImage.setAttribute('content', article.image);
-    }
+    Object.entries(metaTwitterTags).forEach(([name, content]) => {
+        const metaTag = document.querySelector(`meta[name="${name}"]`);
+        if (metaTag) metaTag.setAttribute('content', content);
+    });
 }
 
 // Function to fetch and display the article
@@ -65,37 +54,52 @@ async function fetchArticle(url) {
     try {
         const response = await fetch(url);
         if (!response.ok) {
-            throw new Error('Network response was not ok');
+            if (response.status === 404) throw new Error('Artikel niet gevonden.');
+            if (response.status === 500) throw new Error('Serverfout. Probeer later opnieuw.');
+            throw new Error('Kon het artikel niet laden.');
         }
         const data = await response.json();
         displayArticle(data);
     } catch (error) {
         console.error('Error fetching article:', error);
-        displayError('Sorry, we could not load the article. Please try again later.');
+        displayError(error.message);
     }
 }
 
 // Function to display the article in HTML
 function displayArticle(article) {
-    // Update SEO meta tags before displaying content
     updateMetaTags(article);
 
     const container = document.getElementById('articles-container');
+    if (!container) return;
+
     const articleDiv = document.createElement('div');
     articleDiv.classList.add('article');
 
-    articleDiv.innerHTML = `
-        <h2>${article.title}</h2>
-        <img src="${article.image}" alt="${article.title}" loading="lazy">
-        <p>${article.description}</p>
-        <p><strong>Gepubliceerd om:</strong> ${new Date(article.pubDate).toLocaleString()}</p>
-    `;
+    // Voorkom XSS door innerHTML niet direct met gebruikersgegevens te vullen
+    const articleTitle = document.createElement('h2');
+    articleTitle.textContent = article.title;
+
+    const articleImage = document.createElement('img');
+    articleImage.src = article.image || 'https://res.cloudinary.com/xerosradio/image/upload/f_webp,q_auto/XerosRadio_Logo';
+    articleImage.alt = article.title || 'Artikel afbeelding';
+    articleImage.loading = 'lazy';
+
+    const articleDescription = document.createElement('p');
+    articleDescription.textContent = article.description;
+
+    const articleDate = document.createElement('p');
+    articleDate.innerHTML = `<strong>Gepubliceerd op:</strong> ${new Date(article.pubDate).toLocaleString()}`;
+
+    articleDiv.append(articleTitle, articleImage, articleDescription, articleDate);
     container.appendChild(articleDiv);
 }
 
 // Function to show error message in case of fetch failure
 function displayError(message) {
     const container = document.getElementById('articles-container');
+    if (!container) return;
+
     const errorDiv = document.createElement('div');
     errorDiv.classList.add('error');
     errorDiv.innerHTML = `<p>${message}</p>`;
@@ -105,5 +109,5 @@ function displayError(message) {
 // Fetch the article if an ID is present
 if (articleId) {
     fetchArticle(articleUrl);
-    console.log('Artikel Geladen');
+    console.log('Artikel geladen');
 }
