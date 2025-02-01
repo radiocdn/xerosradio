@@ -14,75 +14,86 @@ if (!articleId) {
 
 const articleUrl = `https://xerosradioapi.global.ssl.fastly.net/api/xerosradio/nieuws/?article=${articleId}`;
 
-// Function to update metadata for SEO
-function updateMetaTags(article) {
-    document.title = article.title || 'XerosRadio Nieuws';
-    
-    const metaDescription = document.querySelector('meta[name="description"]');
-    if (metaDescription) {
-        metaDescription.setAttribute('content', article.description || 'Lees het laatste nieuws op XerosRadio.');
+// **1. Zet alvast placeholder metadata (voordat de API is geladen)**
+document.title = "Laden... | XerosRadio Nieuws";
+const defaultImage = "https://res.cloudinary.com/xerosradio/image/upload/f_webp,q_auto/XerosRadio_Logo";
+
+const metaTags = {
+    'description': "XerosRadio Nieuwsartikel aan het laden...",
+    'og:title': "Laden... | XerosRadio Nieuws",
+    'og:description': "Dit artikel is momenteel aan het laden.",
+    'og:image': defaultImage,
+    'og:url': window.location.href,
+    'twitter:title': "Laden... | XerosRadio Nieuws",
+    'twitter:description': "Dit artikel is momenteel aan het laden.",
+    'twitter:image:src': defaultImage
+};
+
+Object.entries(metaTags).forEach(([property, content]) => {
+    let metaTag = document.querySelector(`meta[name="${property}"], meta[property="${property}"]`);
+    if (!metaTag) {
+        metaTag = document.createElement("meta");
+        if (property.startsWith("og:") || property.startsWith("twitter:")) {
+            metaTag.setAttribute("property", property);
+        } else {
+            metaTag.setAttribute("name", property);
+        }
+        document.head.appendChild(metaTag);
     }
+    metaTag.setAttribute("content", content);
+});
 
-    // Open Graph meta tags
-    const metaOgTags = {
-        'og:title': article.title || 'XerosRadio Nieuws',
-        'og:description': article.description || 'Lees het laatste nieuws op XerosRadio.',
-        'og:image': article.image || 'https://res.cloudinary.com/xerosradio/image/upload/f_webp,q_auto/XerosRadio_Logo',
-        'og:url': window.location.href
-    };
-
-    Object.entries(metaOgTags).forEach(([property, content]) => {
-        const metaTag = document.querySelector(`meta[property="${property}"]`);
-        if (metaTag) metaTag.setAttribute('content', content);
-    });
-
-    // Twitter meta tags
-    const metaTwitterTags = {
-        'twitter:title': article.title || 'XerosRadio Nieuws',
-        'twitter:description': article.description || 'Lees het laatste nieuws op XerosRadio.',
-        'twitter:image:src': article.image || 'https://res.cloudinary.com/xerosradio/image/upload/f_webp,q_auto/XerosRadio_Logo'
-    };
-
-    Object.entries(metaTwitterTags).forEach(([name, content]) => {
-        const metaTag = document.querySelector(`meta[name="${name}"]`);
-        if (metaTag) metaTag.setAttribute('content', content);
-    });
-}
-
-// Function to fetch and display the article
+// **2. Haal het artikel op en werk de metadata snel bij**
 async function fetchArticle(url) {
     try {
-        const response = await fetch(url);
+        const response = await fetch(url, { cache: "no-store" }); // Voorkom caching vertraging
         if (!response.ok) {
-            if (response.status === 404) throw new Error('Artikel niet gevonden.');
-            if (response.status === 500) throw new Error('Serverfout. Probeer later opnieuw.');
-            throw new Error('Kon het artikel niet laden.');
+            throw new Error('Artikel niet gevonden.');
         }
-        const data = await response.json();
-        displayArticle(data);
+        const article = await response.json();
+        updateMetaTags(article);
+        displayArticle(article);
     } catch (error) {
         console.error('Error fetching article:', error);
-        displayError(error.message);
+        displayError("Dit artikel kon niet geladen worden.");
     }
 }
 
-// Function to display the article in HTML
-function displayArticle(article) {
-    updateMetaTags(article);
+// **3. Update metadata zodra de API geladen is**
+function updateMetaTags(article) {
+    document.title = article.title || "XerosRadio Nieuws";
 
+    const updatedTags = {
+        'description': article.description || "Lees het laatste nieuws op XerosRadio.",
+        'og:title': article.title || "XerosRadio Nieuws",
+        'og:description': article.description || "Lees het laatste nieuws op XerosRadio.",
+        'og:image': article.image || defaultImage,
+        'og:url': window.location.href,
+        'twitter:title': article.title || "XerosRadio Nieuws",
+        'twitter:description': article.description || "Lees het laatste nieuws op XerosRadio.",
+        'twitter:image:src': article.image || defaultImage
+    };
+
+    Object.entries(updatedTags).forEach(([property, content]) => {
+        const metaTag = document.querySelector(`meta[name="${property}"], meta[property="${property}"]`);
+        if (metaTag) metaTag.setAttribute("content", content);
+    });
+}
+
+// **4. Artikel tonen**
+function displayArticle(article) {
     const container = document.getElementById('articles-container');
     if (!container) return;
 
     const articleDiv = document.createElement('div');
     articleDiv.classList.add('article');
 
-    // Voorkom XSS door innerHTML niet direct met gebruikersgegevens te vullen
     const articleTitle = document.createElement('h2');
     articleTitle.textContent = article.title;
 
     const articleImage = document.createElement('img');
-    articleImage.src = article.image || 'https://res.cloudinary.com/xerosradio/image/upload/f_webp,q_auto/XerosRadio_Logo';
-    articleImage.alt = article.title || 'Artikel afbeelding';
+    articleImage.src = article.image || defaultImage;
+    articleImage.alt = article.title || "Artikel afbeelding";
     articleImage.loading = 'lazy';
 
     const articleDescription = document.createElement('p');
@@ -95,7 +106,7 @@ function displayArticle(article) {
     container.appendChild(articleDiv);
 }
 
-// Function to show error message in case of fetch failure
+// **5. Foutmelding tonen**
 function displayError(message) {
     const container = document.getElementById('articles-container');
     if (!container) return;
@@ -106,8 +117,6 @@ function displayError(message) {
     container.appendChild(errorDiv);
 }
 
-// Fetch the article if an ID is present
-if (articleId) {
-    fetchArticle(articleUrl);
-    console.log('Artikel geladen');
-}
+// **6. Direct starten met laden**
+fetchArticle(articleUrl);
+console.log('Artikel laden gestart...');
