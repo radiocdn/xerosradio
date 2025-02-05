@@ -28,11 +28,7 @@ class RadioPlayer {
         setInterval(this.updateRadioInfo.bind(this), 5000);
 
         // Initialize Cast SDK and Media Session API.
-        if (window['__onGCastApiAvailable']) {
-            this.initializeCastSDK();
-        } else {
-            console.error('Cast SDK not available.');
-        }
+        this.initializeCastSDK();
         this.setupMediaSession();
     }
 
@@ -89,8 +85,7 @@ class RadioPlayer {
                 newImage.style.width = '200px';
                 newImage.style.height = '200px';
                 
-                const djCoverUrl = this.isValidUrl(djCover) ? djCover : 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
-                this.artworkElement.innerHTML = `<img src="${djCoverUrl}" alt="XerosRadio Nonstop Muziek" draggable="false" loading="lazy" style="width: 200px; height: 200px;">`;
+                this.artworkElement.innerHTML = '';
                 this.artworkElement.appendChild(newImage);
             } else {
                 this.djInfoElement.textContent = 'Nonstop Muziek';
