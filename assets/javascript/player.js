@@ -58,7 +58,7 @@ class RadioPlayer {
 
             const data = await response.json();
             // Extract now-playing and DJ info
-            const { artist, title, cover_art, cover_art200x200 } = data.current_song;
+            const { artist, title, cover_art200x200 } = data.current_song;
             const { dj_live_status: djLiveStatus, dj_name: djName, dj_cover: djCover } = data.onair_info;
 
             // Update now-playing information
@@ -66,7 +66,7 @@ class RadioPlayer {
             this.artistInfo.textContent = artist;
             this.titleInfo.textContent = title;
             this.albumArtwork.src = artwork200;
-            this.updateMediaMetadata(artist, title, artwork200, cover_art);
+            this.updateMediaMetadata(artist, title, artwork200, artwork200);
 
             // Update DJ information
             if (djLiveStatus) {
