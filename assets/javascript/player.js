@@ -58,11 +58,11 @@ class RadioPlayer {
 
             const data = await response.json();
             // Extract now-playing and DJ info
-            const { artist, title, cover_art } = data.current_song;
+            const { artist, title, cover_art, cover_art200x200 } = data.current_song;
             const { dj_live_status: djLiveStatus, dj_name: djName, dj_cover: djCover } = data.onair_info;
 
             // Update now-playing information
-            const artwork200 = cover_art ? cover_art : 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
+            const artwork200 = cover_art200x200 ? cover_art200x200 : 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
             this.artistInfo.textContent = artist;
             this.titleInfo.textContent = title;
             this.albumArtwork.src = artwork200;
