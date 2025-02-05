@@ -66,7 +66,7 @@ class RadioPlayer {
             this.artistInfo.textContent = artist;
             this.titleInfo.textContent = title;
             this.albumArtwork.src = artwork200;
-            this.updateMediaMetadata(artist, title, artwork200, artwork200);
+            this.updateMediaMetadata(artist, title, artwork200, cover_art);
 
             // Update DJ information
             if (djLiveStatus) {
@@ -137,8 +137,8 @@ class RadioPlayer {
                 title: title,
                 artist: artist,
                 artwork: [
-                    { src: artworkUrl500, sizes: '500x500', type: 'image/webp' },
-                    { src: artworkUrl200, sizes: '200x200', type: 'image/webp' }
+                    { src: artworkUrl200, sizes: '200x200', type: 'image/webp' },
+                    { src: artworkUrl500, sizes: '500x500', type: 'image/webp' }
                 ]
             });
         }
