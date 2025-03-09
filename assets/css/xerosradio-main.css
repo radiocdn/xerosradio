@@ -719,7 +719,7 @@ text-decoration: none;
     align-items: center;
 }
   
-.xeros-tiktok-container, .xeros-instagram-container {
+.xeros-tiktok-container, .xeros-instagram-container, .xeros-facebook-container {
     width: 90%;
     margin-bottom: 20px;
 }
