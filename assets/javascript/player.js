@@ -43,7 +43,7 @@ class RadioPlayer {
 
     // Function to start EventSource connection
     startEventSource() {
-        const eventSource = new EventSource('https://xerosradioapi.global.ssl.fastly.net/api/xerosradio/updates'); // Replace with the actual SSE endpoint
+        const eventSource = new EventSource('https://xerosradioapi.global.ssl.fastly.net/api/xerosradio'); // Replace with the actual SSE endpoint
 
         eventSource.onmessage = (event) => {
             try {
