@@ -23,13 +23,12 @@ class RadioPlayer {
         this.volumeSlider.value = this.getVolumeFromCookie() || 0.5;
         this.radioPlayer.volume = this.volumeSlider.value;
 
-        // Update combined info (now-playing and DJ info) every 5 seconds.
-        this.updateRadioInfo();
-        setInterval(this.updateRadioInfo.bind(this), 5000);
-
         // Initialize Cast SDK and Media Session API.
         this.initializeCastSDK();
         this.setupMediaSession();
+
+        // Start listening for real-time updates using EventSource.
+        this.startEventSource();
     }
 
     // Function to check if a string is a valid URL
@@ -42,58 +41,57 @@ class RadioPlayer {
         }
     }
 
-    // Combined function to update now-playing and DJ info
-    async updateRadioInfo() {
-        const url = 'https://xerosradioapi.global.ssl.fastly.net/api/xerosradio/';
-        const fetchOptions = {
-            method: 'GET',
-            cache: 'no-cache'
+    // Function to start EventSource connection
+    startEventSource() {
+        const eventSource = new EventSource('https://xerosradioapi.global.ssl.fastly.net/api/xerosradio/updates'); // Replace with the actual SSE endpoint
+
+        eventSource.onmessage = (event) => {
+            try {
+                const data = JSON.parse(event.data);
+
+                // Extract now-playing and DJ info
+                const { artist, title, cover_art200x200 } = data.current_song;
+                const { dj_live_status: djLiveStatus, dj_name: djName, dj_cover: djCover } = data.onair_info;
+
+                // Update now-playing information
+                const artwork200 = cover_art200x200 ? cover_art200x200 : 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
+                this.artistInfo.textContent = artist;
+                this.titleInfo.textContent = title;
+                this.albumArtwork.src = artwork200;
+                this.updateMediaMetadata(artist, title, artwork200, artwork200);
+
+                // Update DJ information
+                if (djLiveStatus) {
+                    this.djInfoElement.textContent = djName;
+                    const artworkUrl = this.isValidUrl(djCover) ? djCover : 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
+
+                    const newImage = new Image();
+                    newImage.src = artworkUrl;
+                    newImage.onerror = () => {
+                        newImage.src = 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit'; // Fallback image
+                    };
+                    newImage.draggable = false;
+                    newImage.loading = 'lazy';
+                    newImage.alt = 'XerosRadio DJ';
+                    newImage.style.opacity = 1;
+                    newImage.style.width = '200px';
+                    newImage.style.height = '200px';
+                    
+                    this.artworkElement.innerHTML = '';
+                    this.artworkElement.appendChild(newImage);
+                } else {
+                    this.djInfoElement.textContent = 'Nonstop Muziek';
+                    this.artworkElement.innerHTML = `<img src="${djCover}" alt="XerosRadio Nonstop Muziek" draggable="false" loading="lazy" style="width: 200px; height: 200px;">`;
+                }
+            } catch (error) {
+                this.handleError(error);
+            }
         };
 
-        try {
-            const response = await fetch(url, fetchOptions);
-            if (!response.ok) {
-                throw new Error('Het verzoek aan de XerosRadio Servers is mislukt. Probeer het later opnieuw.');
-            }
-
-            const data = await response.json();
-            // Extract now-playing and DJ info
-            const { artist, title, cover_art200x200 } = data.current_song;
-            const { dj_live_status: djLiveStatus, dj_name: djName, dj_cover: djCover } = data.onair_info;
-
-            // Update now-playing information
-            const artwork200 = cover_art200x200 ? cover_art200x200 : 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
-            this.artistInfo.textContent = artist;
-            this.titleInfo.textContent = title;
-            this.albumArtwork.src = artwork200;
-            this.updateMediaMetadata(artist, title, artwork200, artwork200);
-
-            // Update DJ information
-            if (djLiveStatus) {
-                this.djInfoElement.textContent = djName;
-                const artworkUrl = this.isValidUrl(djCover) ? djCover : 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
-
-                const newImage = new Image();
-                newImage.src = artworkUrl;
-                newImage.onerror = () => {
-                    newImage.src = 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit'; // Fallback image
-                };
-                newImage.draggable = false;
-                newImage.loading = 'lazy';
-                newImage.alt = 'XerosRadio DJ';
-                newImage.style.opacity = 1;
-                newImage.style.width = '200px';
-                newImage.style.height = '200px';
-                
-                this.artworkElement.innerHTML = '';
-                this.artworkElement.appendChild(newImage);
-            } else {
-                this.djInfoElement.textContent = 'Nonstop Muziek';
-                this.artworkElement.innerHTML = `<img src="${djCover}" alt="XerosRadio Nonstop Muziek" draggable="false" loading="lazy" style="width: 200px; height: 200px;">`;
-            }
-        } catch (error) {
+        eventSource.onerror = (error) => {
+            console.error('EventSource error:', error);
             this.handleError(error);
-        }
+        };
     }
 
     // Handle errors gracefully
