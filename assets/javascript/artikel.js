@@ -126,8 +126,17 @@ function displayArticle(article) {
     const articleDescription = document.createElement('p');
     articleDescription.textContent = article.description;
 
+    const formattedDate = new Intl.DateTimeFormat('nl-NL', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    }).format(new Date(article.pubDate));
+
     const articleDate = document.createElement('p');
-    articleDate.innerHTML = `<strong>Gepubliceerd op:</strong> ${new Date(article.pubDate).toLocaleString()}`;
+    articleDate.innerHTML = `<strong>Gepubliceerd op:</strong> ${formattedDate}`;
 
     articleDiv.append(articleTitle, articleImage, articleDescription, articleDate);
     container.appendChild(articleDiv);
