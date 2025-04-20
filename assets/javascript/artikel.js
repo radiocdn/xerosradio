@@ -1,10 +1,10 @@
-// Function to get article ID from the URL parameters
+// Functie om artikel-ID uit de URL te halen
 function getArticleIdFromUrl() {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get('id');
 }
 
-// Construct the article URL using the retrieved ID
+// Artikel-ID ophalen
 const articleId = getArticleIdFromUrl();
 if (!articleId) {
     window.location.href = '/'; // Redirect naar home als er geen ID is
@@ -13,13 +13,12 @@ if (!articleId) {
 const articleUrl = `https://xerosradioapi.global.ssl.fastly.net/api/xerosradio/nieuws/?article=${articleId}`;
 const CACHE_KEY = `news_article_${articleId}`;
 const CACHE_EXPIRATION_KEY = `${CACHE_KEY}_expires`;
-const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 uur in milliseconden
+const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 uur
 
-// Function to get cached article if valid
+// Cache ophalen
 function getCachedArticle() {
     const cachedData = localStorage.getItem(CACHE_KEY);
     const cacheExpiration = localStorage.getItem(CACHE_EXPIRATION_KEY);
-
     if (cachedData && cacheExpiration && Date.now() < parseInt(cacheExpiration, 10)) {
         console.log("✅ Laden vanuit cache");
         return JSON.parse(cachedData);
@@ -27,13 +26,13 @@ function getCachedArticle() {
     return null;
 }
 
-// Function to save article to cache
+// Artikel in cache opslaan
 function cacheArticle(article) {
     localStorage.setItem(CACHE_KEY, JSON.stringify(article));
     localStorage.setItem(CACHE_EXPIRATION_KEY, (Date.now() + CACHE_DURATION).toString());
 }
 
-// **1. Zet alvast placeholder metadata (voordat de API is geladen)**
+// Placeholder metadata
 document.title = "Laden... | XerosRadio Nieuws";
 const defaultImage = "https://res.cloudinary.com/xerosradio/image/upload/f_webp,q_auto/XerosRadio_Logo";
 
@@ -62,7 +61,7 @@ Object.entries(metaTags).forEach(([property, content]) => {
     metaTag.setAttribute("content", content);
 });
 
-// **2. Haal het artikel op (uit cache of API)**
+// Artikel ophalen
 async function fetchArticle(url) {
     const cachedArticle = getCachedArticle();
     if (cachedArticle) {
@@ -77,7 +76,7 @@ async function fetchArticle(url) {
             throw new Error('Artikel niet gevonden.');
         }
         const article = await response.json();
-        cacheArticle(article); // Opslaan in cache voor 24 uur
+        cacheArticle(article);
         updateMetaTags(article);
         displayArticle(article);
     } catch (error) {
@@ -86,7 +85,7 @@ async function fetchArticle(url) {
     }
 }
 
-// **3. Update metadata zodra de API geladen is**
+// Metadata bijwerken
 function updateMetaTags(article) {
     document.title = article.title || "XerosRadio Nieuws";
 
@@ -107,7 +106,32 @@ function updateMetaTags(article) {
     });
 }
 
-// **4. Artikel tonen**
+// Eerste letter hoofdletter
+function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+// Datum formatteren in Nederlands met hoofdletters voor dag + maand
+function formatDutchDate(dateStr) {
+    const date = new Date(dateStr);
+    const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+    const dateParts = new Intl.DateTimeFormat('nl-NL', options).formatToParts(date);
+
+    let formatted = "";
+    dateParts.forEach(part => {
+        if (part.type === 'weekday' || part.type === 'month') {
+            formatted += capitalize(part.value);
+        } else {
+            formatted += part.value;
+        }
+    });
+
+    const timeOptions = { hour: '2-digit', minute: '2-digit' };
+    const time = new Intl.DateTimeFormat('nl-NL', timeOptions).format(date);
+    return `${formatted} ${time}`;
+}
+
+// Artikel tonen
 function displayArticle(article) {
     const container = document.getElementById('articles-container');
     if (!container) return;
@@ -126,15 +150,7 @@ function displayArticle(article) {
     const articleDescription = document.createElement('p');
     articleDescription.textContent = article.description;
 
-    const formattedDate = new Intl.DateTimeFormat('nl-NL', {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-    }).format(new Date(article.pubDate));
-
+    const formattedDate = formatDutchDate(article.pubDate);
     const articleDate = document.createElement('p');
     articleDate.innerHTML = `<strong>Gepubliceerd op:</strong> ${formattedDate}`;
 
@@ -142,7 +158,7 @@ function displayArticle(article) {
     container.appendChild(articleDiv);
 }
 
-// **5. Foutmelding tonen**
+// Foutmelding
 function displayError(message) {
     const container = document.getElementById('articles-container');
     if (!container) return;
@@ -153,6 +169,6 @@ function displayError(message) {
     container.appendChild(errorDiv);
 }
 
-// **6. Direct starten met laden**
+// Start laden
 fetchArticle(articleUrl);
 console.log('Artikel laden gestart...');
