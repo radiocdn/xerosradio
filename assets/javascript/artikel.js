@@ -61,6 +61,45 @@ Object.entries(metaTags).forEach(([property, content]) => {
     metaTag.setAttribute("content", content);
 });
 
+// Eerste letter hoofdletter
+function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+// Datum formatteren in Nederlands met hoofdletters voor dag + maand
+function formatDutchDate(dateStr) {
+    const date = new Date(dateStr);
+    if (isNaN(date)) return "Onbekende datum";
+
+    const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+    const dateParts = new Intl.DateTimeFormat('nl-NL', options).formatToParts(date);
+
+    let formatted = "";
+    dateParts.forEach(part => {
+        if (part.type === 'weekday' || part.type === 'month') {
+            formatted += capitalize(part.value);
+        } else {
+            formatted += part.value;
+        }
+    });
+
+    const timeOptions = { hour: '2-digit', minute: '2-digit' };
+    const time = new Intl.DateTimeFormat('nl-NL', timeOptions).format(date);
+    return `${formatted} ${time}`;
+}
+
+// Loading indicator
+function showLoading() {
+    const container = document.getElementById('articles-container');
+    if (!container) return;
+    container.innerHTML = `<p class="loading">Artikel wordt geladen...</p>`;
+}
+
+function hideLoading() {
+    const loading = document.querySelector('.loading');
+    if (loading) loading.remove();
+}
+
 // Artikel ophalen
 async function fetchArticle(url) {
     const cachedArticle = getCachedArticle();
@@ -70,18 +109,29 @@ async function fetchArticle(url) {
         return;
     }
 
+    showLoading();
+
     try {
         const response = await fetch(url);
         if (!response.ok) {
-            throw new Error('Artikel niet gevonden.');
+            if (response.status === 404) {
+                throw new Error("Artikel niet gevonden.");
+            } else {
+                throw new Error("Serverfout: probeer het later opnieuw.");
+            }
         }
         const article = await response.json();
         cacheArticle(article);
         updateMetaTags(article);
+        hideLoading();
         displayArticle(article);
     } catch (error) {
+        hideLoading();
         console.error('Error fetching article:', error);
-        displayError("Dit artikel kon niet geladen worden.");
+        const userFriendlyMessage = error.message.includes('Artikel niet gevonden')
+            ? "Het artikel bestaat niet of is verwijderd."
+            : "Er ging iets mis met het laden. Controleer je internetverbinding of probeer het later opnieuw.";
+        displayError(userFriendlyMessage);
     }
 }
 
@@ -104,31 +154,6 @@ function updateMetaTags(article) {
         const metaTag = document.querySelector(`meta[name="${property}"], meta[property="${property}"]`);
         if (metaTag) metaTag.setAttribute("content", content);
     });
-}
-
-// Eerste letter hoofdletter
-function capitalize(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-}
-
-// Datum formatteren in Nederlands met hoofdletters voor dag + maand
-function formatDutchDate(dateStr) {
-    const date = new Date(dateStr);
-    const options = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-    const dateParts = new Intl.DateTimeFormat('nl-NL', options).formatToParts(date);
-
-    let formatted = "";
-    dateParts.forEach(part => {
-        if (part.type === 'weekday' || part.type === 'month') {
-            formatted += capitalize(part.value);
-        } else {
-            formatted += part.value;
-        }
-    });
-
-    const timeOptions = { hour: '2-digit', minute: '2-digit' };
-    const time = new Intl.DateTimeFormat('nl-NL', timeOptions).format(date);
-    return `${formatted} ${time}`;
 }
 
 // Artikel tonen
