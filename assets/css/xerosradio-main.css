@@ -2,241 +2,462 @@
 @import url(https://fonts.bunny.net/css?family=sofia-sans:800);
 
 * {
-    font-family: 'Sofia Sans', sans-serif;
-    box-sizing: border-box;
-    font-weight: 800;
+font-family: 'Sofia Sans', sans-serif;
+box-sizing: border-box;
+font-weight: 800;
 }
 
 body {
-    background: radial-gradient(circle, rgba(122,1,254,1) 15%, rgba(74,85,255,1) 61%, rgba(38,147,255,1) 81%, rgba(38,147,255,1) 88%);
-    color: #ffffff;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-    text-align: center;
-    margin: 0;
-    padding: 0;
-}
-
-h1, h2, h3, h4, p, b {
-    font-weight: 800;
-}
-
-img {
-    width: 100%;
-    height: auto;
-}
-
-.navbar {
-    color: white;
-    background-color: #008cff;
-}
-
-.navbar-brand img {
-    max-width: 80px;
-    height: auto;
-}
-
-.navbar-toggler {
-    border: none;
-    outline: none;
-}
-
-.fa-bars {
-    color: #b703ff;
-    font-size: 24px;
-}
-
-.navbar-nav .nav-link {
-    color: #fff;
-}
-
-#artwork img {
-    border-radius: 50%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-/* Fade-in Animation */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-.NieuwsText, .onairhandler, .djstitle, .privacybeleidtext, .xerosradioplaylist, 
-.MainTitlePlaylist, .MainTitleOverons, .MainTitleNieuws, .content, .container, 
-.Nieuws, .radioplayerxerosradio, .buttonxerosradiomain {
-    opacity: 0;
-    animation: fadeIn 1s ease-in forwards;
-}
-
-iframe {
-    border: none;
-    margin: 0;
-    padding: 0;
+background: rgb(122,1,254);
+background: radial-gradient(circle, rgba(122,1,254,1) 15%, rgba(74,85,255,1) 61%, rgba(38,147,255,1) 81%, rgba(38,147,255,1) 88%);
+background-color: #ffffff;
+color: #ffffff;
+text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+font-family: 'Sofia Sans', sans-serif;
+font-weight: 800;
+text-align: center;
+text-decoration: none;
+margin: 0;
+padding: 0;
 }
 
 .container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    max-width: 800px;
+max-width: 800px;
 }
 
+h1,h2,h3,h4,p,b {
+font-weight: 800;
+}
+
+img {
+width: 100%;
+height: auto;
+}
+
+.navbar {
+color: white;
+background-color: #008cff; /* Updated navbar color */
+}
+
+.navbar-brand img {
+width: 100%;
+max-width: 80px; /* Adjust the maximum width as needed */
+height: auto;
+}
+
+.navbar-toggler {
+border: none;
+outline: none;
+}
+
+.navbar-toggler:focus {
+outline: none;
+}
+
+.navbar-toggler-icon {
+display: none; /* Hide the default Bootstrap icon */
+}
+
+.fa-bars {
+color: #b703ff; /* Updated navbar toggle icon color */
+font-size: 24px;
+}
+
+.navbar-nav .nav-link {
+color: #fff;
+}
+
+/* Nu Live Artwork */
+#artwork img {
+border-radius: 50%;
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow effect */
+} 
+
+/* Nieuws Text */
+.NieuwsText {
+background-color: #008cff;
+text-align: center;
+color: white;
+text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+/* Set initial styles for the element */
+opacity: 0;
+/* Define the animation properties */
+animation-name: fadeIn;
+animation-duration: 1s;
+animation-timing-function: ease-in;
+animation-fill-mode: forwards;  
+}
+
+/* OnAir Handeler */
+.onairhandler {
+/* Set initial styles for the element */
+opacity: 0;
+/* Define the animation properties */
+animation-name: fadeIn;
+animation-duration: 1s;
+animation-timing-function: ease-in;
+animation-fill-mode: forwards;
+}
+
+/* DJs Title */
+.djstitle {
+color: white;
+/* Set initial styles for the element */
+opacity: 0;
+/* Define the animation properties */
+animation-name: fadeIn;
+animation-duration: 1s;
+animation-timing-function: ease-in;
+animation-fill-mode: forwards;
+}
+
+/* Privacy Beleid | Text */
+.privacybeleidtext {
+color: white;
+text-align: center;
+/* Set initial styles for the element */
+opacity: 0;
+/* Define the animation properties */
+animation-name: fadeIn;
+animation-duration: 1s;
+animation-timing-function: ease-in;
+animation-fill-mode: forwards;
+}
+
+/* XerosRadio Playlist */
+.xerosradioplaylist {
+/* Set initial styles for the element */
+opacity: 0;
+/* Define the animation properties */
+animation-name: fadeIn;
+animation-duration: 1s;
+animation-timing-function: ease-in;
+animation-fill-mode: forwards;
+}
+
+/* Main Title Playlist */
+.MainTitlePlaylist {
+color: white;
+text-align: center;
+/* Set initial styles for the element */
+opacity: 0;
+/* Define the animation properties */
+animation-name: fadeIn;
+animation-duration: 1s;
+animation-timing-function: ease-in;
+animation-fill-mode: forwards;
+}
+
+/* Main Title OverOns */
+.MainTitleOverons {
+color: white; /* Comma was missing here */
+text-align: center;
+/* Set initial styles for the element */
+opacity: 0;
+/* Define the animation properties */
+animation-name: fadeIn;
+animation-duration: 1s;
+animation-timing-function: ease-in;
+animation-fill-mode: forwards;
+}
+
+/* Main Title Nieuws */
+.MainTitleNieuws {
+color: white; /* Comma was missing here */
+text-align: center;
+/* Set initial styles for the element */
+opacity: 0;
+/* Define the animation properties */
+animation-name: fadeIn;
+animation-duration: 1s;
+animation-timing-function: ease-in;
+animation-fill-mode: forwards;
+}
+
+/* Main Content */
+.content {
+color: white; /* Comma was missing here */
+text-align: center;
+/* Set initial styles for the element */
+opacity: 0;
+/* Define the animation properties */
+animation-name: fadeIn;
+animation-duration: 1s;
+animation-timing-function: ease-in;
+animation-fill-mode: forwards;
+}
+
+/* Container */
+.container {
+/* Set initial styles for the element */
+opacity: 0;
+/* Define the animation properties */
+animation-name: fadeIn;
+animation-duration: 1s;
+animation-timing-function: ease-in;
+animation-fill-mode: forwards;
+}
+
+/* Nieuws */
+.Nieuws {
+text-align: center;
+/* Set initial styles for the element */
+opacity: 0;
+/* Define the animation properties */
+animation-name: fadeIn;
+animation-duration: 1s;
+animation-timing-function: ease-in;
+animation-fill-mode: forwards;
+}
+
+/* XerosRadio FADE */
+.radioplayerxerosradio {
+/* Set initial styles for the element */
+opacity: 0;
+/* Define the animation properties */
+animation-name: fadeIn;
+animation-duration: 1s;
+animation-timing-function: ease-in;
+animation-fill-mode: forwards;
+}
+
+/* Iframe */
+iframe {
+border: none;
+margin: 0;
+padding: 0;
+}
+
+/* Container */
+.container {
+display: flex;
+justify-content: center;
+align-items: center;
+}
+
+/* Box */
 .box {
-    width: 200px;
-    text-align: center;
-    color: black;
-    text-shadow: 1px 1px 2px rgb(0, 174, 255);
-    background-color: #ffffff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    margin: 10px;
+width: 200px;
+text-align: center;
+color: black; /* Semicolon was missing here */
+text-shadow: 1px 1px 2px rgb(0, 174, 255);
+background-color: #ffffff;
+box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+padding: 20px;
+margin: 10px;
 }
 
+/* Box | IMG */
 .box img {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    margin-bottom: 10px;
+width: 100px;
+height: 100px;
+border-radius: 50%;
+margin-bottom: 10px;
 }
 
-.box h2, .box p {
-    color: black;
-    font-size: 14px;
-    transition: color 0.3s ease;
+/* Box | h2 */
+.box h2 {
+color: black; /* Semicolon was missing here */
+font-size: 18px;
+text-decoration: none;
+margin-bottom: 5px;
+transition: color 0.3s ease; /* Add transition for color change */
 }
 
-.box h2:hover, .box p:hover {
-    color: rgb(0, 174, 255);
+/* Box | p */
+.box p {
+color: black; /* Semicolon was missing here */
+font-size: 14px;
+text-decoration: none;
+transition: color 0.3s ease; /* Add transition for color change */
 }
 
+/* Box Hover Effect */
+.box h2:hover,
+.box p:hover {
+color: rgb(0, 174, 255);
+}
+
+/* Fade in Animation */
+@keyframes fadeIn {
+from {
+  opacity: 0;
+}
+to {
+  opacity: 1;
+}
+}
+
+/* Smaller Screens */
 @media (max-width: 600px) {
-    .container {
-        flex-direction: column;
-    }
-    .box {
-        width: 90%;
-    }
+.container {
+    flex-direction: column; /* Change to column for mobile */
+}
+.box {
+    width: 90%; /* Adjust width for smaller screens */
+}
 }
 
+/* Current Dj Onair Balloon */
 .on-air-balloon {
-    text-align: center;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.226);
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    background-color: rgb(255, 0, 0);
-    color: white;
-    padding: 10px;
-    border-radius: 20px;
-    display: inline-block;
-    position: relative;
-    user-select: none;
+text-align: center;  
+box-shadow: 0 4px 6px rgba(0, 0, 0, 0.226); /* Shadow for the balloon */
+text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Text shadow properties */
+background-color: rgb(255, 0, 0);
+color: white;
+padding: 10px;
+border-radius: 20px;
+display: inline-block;
+position: relative;
+-webkit-user-select: none; /* Safari */
+-ms-user-select: none; /* IE 10 and IE 11 */
+user-select: none; /* Standard syntax */
 }
 
+/* Current Dj Onair Balloon | Before */
 .on-air-balloon::before {
-    content: "";
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    margin-left: -10px;
-    border-width: 10px;
-    border-style: solid;
-    border-color: red transparent transparent transparent;
+content: "";
+position: absolute;
+top: 100%;
+left: 50%;
+margin-left: -10px;
+border-width: 10px;
+border-style: solid;
+border-color: red transparent transparent transparent;
 }
 
+/* Radio player container XerosRadio */
 .radioPlayer {
-    background-color: #008cff;
-    border-radius: 10px;
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+background-color: #008cff;
+border-radius: 10px;
+max-width: 400px;
+margin: 0 auto;
+padding: 15px;
+display: flex;
+flex-direction: column;
+align-items: center;
 }
 
+/* Now Playing section XerosRadio */
 #nowPlaying {
-    margin-top: 10px;
-    color: #ffffff;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    text-align: left;
-    user-select: none;
+margin-top: 10px;
+color: #ffffff;
+text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Text shadow properties */
+display: flex;
+flex-direction: row;
+align-items: center;
+text-align: left;
+-webkit-user-select: none; /* Safari */
+-ms-user-select: none; /* IE 10 and IE 11 */
+user-select: none; /* Standard syntax */
 }
 
+/* Album Artwork XerosRadio */
 #albumArtwork {
-    max-width: 100px;
-    height: 100px;
-    margin-right: 10px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+max-width: 100px;
+height: 100px;
+width: 100px;
+margin-right: 10px;
+border-radius: 10px; /* Rounded corners */
+box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
+/* Artist and Title Info XerosRadio */
 .info-container {
-    flex-grow: 1;
+flex-grow: 1;
 }
 
 #artistInfo, #titleInfo {
-    font-size: 16px;
-    color: #fff;
+font-size: 16px;
+color: #fff;
 }
 
+/* Player Controls XerosRadio */
 .player-controls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 10px;
+display: flex;
+justify-content: center;
+align-items: center;
+margin-top: 10px;
 }
 
-#playPauseButton, #castButton {
-    font-size: 24px;
-    color: #fff;
-    cursor: pointer;
-    margin: 0 20px;
-    border: none;
-    border-radius: 50%;
-    padding: 5px;
+/* Play/Pause Button XerosRadio */
+#playPauseButton {
+font-size: 24px; /* Larger play button XeroSRadio */
+color: #fff;
+cursor: pointer;
+margin: 0 20px;
+border: none;
+border-radius: 50%; /* Rounded corners for play button XerosRadio */
+padding: 5px;
 }
 
+/* Chromecast Button */
+#castButton {
+font-size: 24px; /* Larger play button XeroSRadio */
+color: #fff;
+cursor: pointer;
+margin: 0 20px;
+border: none;
+border-radius: 50%; /* Rounded corners for play button XerosRadio */
+padding: 5px;
+}
+
+/* Volume Slider */
 #volumeSlider {
-    width: 70%;
+width: 70%;
 }
 
 #cb-cookie-banner {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    z-index: 999;
-    display: none;
+position: fixed;
+bottom: 0;
+left: 0;
+width: 100%;
+z-index: 999;
+border-radius: 0;
+display: none;
 }
 
+/* Center the buttonxerosradio */
+.buttonxerosradiomain {
+display: flex;
+justify-content: center;
+align-items: center;
+/* Set initial styles for the element */
+opacity: 0;
+/* Define the animation properties */
+animation-name: fadeIn;
+animation-duration: 1s;
+animation-timing-function: ease-in;
+animation-fill-mode: forwards;    
+}
+
+/* Style for the xerosradiobuttons */
 .xerosradiobutton {
-    padding: 10px 20px;
-    background-color: #00a8db;
-    color: white;
-    border: none;
-    cursor: pointer;
-    margin: 5px;
-    text-decoration: none;
-    transition: opacity 0.3s ease;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+padding: 10px 20px;
+background-color: #00a8db;
+color: white;
+border: none;
+cursor: pointer;
+margin: 5px;
+text-decoration: none; /* Remove the default underline for anchor elements */
+transition: opacity 0.3s ease; /* Add a fade effect on hover */
+text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
+/* Hover effect - fade the button */
 .xerosradiobutton:hover {
-    opacity: 0.7;
-    color: #ad00cf;
+opacity: 0.7;
+color:#ad00cf;
+text-decoration: none;
 }
 
 .xeros-container {
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 #newsList {
@@ -575,9 +796,6 @@ img[data-opt-lazy-loaded] {
   }
 
   100% {
-    opacity: 1;
-  }
-}
 
 .newyeartimerxerosradio {
     position: relative;
@@ -612,4 +830,4 @@ img[data-opt-lazy-loaded] {
         transform: scale(0.85); /* Zoom out more to fit the content better */
         transform-origin: center center; /* Keeps the scaling centered */
     }
-}
+}	
