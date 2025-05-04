@@ -6,7 +6,7 @@ on:
       - main
 
 permissions:
-  contents: read
+  contents: write  # <--- nodig om te committen/pushen
 
 jobs:
   minify:
@@ -19,9 +19,17 @@ jobs:
       - name: Auto Minify
         uses: nizarmah/auto-minify@v3.0.0
         with:
-          directory: ./assets                # minify files from here
-          output: ./dist/minified            # minified files go here
-          overwrite: false                   # don't touch originals
+          directory: ./assets
+          output: ./dist/minified
+          overwrite: false
           maxdepth: 3
           js_engine: babel
           css_engine: lightning
+
+      - name: Commit and Push Minified Files
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add dist/minified
+          git commit -m "Auto-minified files"
+          git push
