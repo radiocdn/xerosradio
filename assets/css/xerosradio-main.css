@@ -765,95 +765,6 @@ text-decoration: none;
     text-decoration: underline;
 }
 
-/* Improved responsiveness for smaller screens */
-@media (max-width: 768px) {
-  body {
-    font-size: 14px; /* Adjust font size for tablets */
-    padding: 10px;
-  }
-
-  .container {
-    max-width: 100%; /* Allow full width on smaller screens */
-    padding: 10px;
-  }
-
-  .navbar-brand img {
-    max-width: 60px; /* Reduce logo size for tablets */
-  }
-
-  .box {
-    width: 100%; /* Full width for boxes on smaller screens */
-    margin: 10px 0;
-  }
-
-  .newsItem {
-    width: 100%; /* Full width for news items */
-    margin-bottom: 15px;
-  }
-
-  .radioPlayer {
-    max-width: 100%; /* Full width for the radio player */
-    padding: 10px;
-  }
-
-  #albumArtwork {
-    max-width: 80px; /* Reduce album artwork size */
-    height: 80px;
-  }
-
-  .xeros-footer-container {
-    flex-direction: column; /* Stack footer sections vertically */
-    align-items: center;
-  }
-
-  .xeros-tiktok-container, .xeros-instagram-container, .xeros-facebook-container {
-    width: 100%; /* Full width for footer sections */
-    margin-bottom: 20px;
-  }
-}
-
-@media (max-width: 480px) {
-  body {
-    font-size: 12px; /* Further reduce font size for mobile */
-  }
-
-  .navbar {
-    flex-direction: column; /* Stack navbar items vertically */
-    text-align: center;
-  }
-
-  .navbar-nav .nav-link {
-    padding: 5px 0; /* Reduce padding for navbar links */
-  }
-
-  .box img {
-    width: 80px; /* Smaller images in boxes */
-    height: 80px;
-  }
-
-  .newsItem h3 {
-    font-size: 16px; /* Adjust font size for news titles */
-  }
-
-  .newsItem p {
-    font-size: 12px; /* Adjust font size for news descriptions */
-  }
-
-  .appen-naar-de-studio-button {
-    font-size: 1rem; /* Reduce button font size */
-    padding: 0.4rem 0.8rem;
-  }
-
-  .newyeartimerxerosradio {
-    padding-bottom: 60%; /* Adjust aspect ratio for mobile */
-  }
-
-  .newyeartimerxerosradio iframe {
-    transform: scale(0.75); /* Further zoom out for better fit */
-  }
-}
-}
-
 /* PART 0 - Setting Up */
 img[data-opt-src] {
   background-color: #f7f7f7; /*placeholder opacity needs to be set to 0 in the optimole's settings for this to be visible*/
@@ -885,66 +796,6 @@ img[data-opt-lazy-loaded] {
   }
 
   100% {
-    opacity: 1;
-  }
-}
-
-/* Fixed incomplete CSS rule above */
-
-/* Fixed missing semicolon in .box, .box h2, .box p */
-.box {
-  color: black; /* Semicolon was missing here */
-  /* ...existing code... */
-}
-
-.box h2 {
-  color: black; /* Semicolon was missing here */
-  /* ...existing code... */
-}
-
-.box p {
-  color: black; /* Semicolon was missing here */
-  /* ...existing code... */
-}
-
-/* Fixed missing commas in .MainTitleOverons, .MainTitleNieuws, .content */
-.MainTitleOverons {
-  color: white; /* Comma was missing here */
-  /* ...existing code... */
-}
-
-.MainTitleNieuws {
-  color: white; /* Comma was missing here */
-  /* ...existing code... */
-}
-
-.content {
-  color: white; /* Comma was missing here */
-  /* ...existing code... */
-}
-
-/* Fixed missing closing bracket for .article */
-.article {
-  /* ...existing code... */
-}
-
-/* Fixed missing closing bracket for @media query */
-@media (max-width: 768px) {
-  .xeros-footer-container {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .xeros-tiktok-container, .xeros-instagram-container, .xeros-facebook-container {
-    width: 90%;
-    margin-bottom: 20px;
-  }
-}
-
-/* Fixed missing closing bracket for .newyeartimerxerosradio iframe */
-.newyeartimerxerosradio iframe {
-  /* ...existing code... */
-}
 
 .newyeartimerxerosradio {
     position: relative;
@@ -979,4 +830,4 @@ img[data-opt-lazy-loaded] {
         transform: scale(0.85); /* Zoom out more to fit the content better */
         transform-origin: center center; /* Keeps the scaling centered */
     }
-}
+}	
