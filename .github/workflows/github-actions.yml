@@ -1,4 +1,4 @@
-- name: Auto Minify
+  name: Auto Minify
   uses: nizarmah/auto-minify@v3.0.0
   with:
     directory: . # Or specify your target directory
