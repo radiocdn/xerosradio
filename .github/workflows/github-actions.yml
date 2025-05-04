@@ -1,22 +1,18 @@
-name: Auto Minify Workflow
-
-on:
-  push:
-    branches:
-      - main  # or your default branch
+on: [push]
 
 jobs:
   minify:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: check out the repository
+        uses: actions/checkout@v4
 
-      - name: Auto Minify
-        uses: nizarmah/auto-minify@v3.0.0
+      - name: replace js and css files with minified ones
+        uses: nizarmah/auto-minify@v3
         with:
           overwrite: true
-          maxdepth: 2
-          js_engine: babel
-          css_engine: lightning
+
+      - name: auto commit the minified files
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "bot: Add auto minified files"
