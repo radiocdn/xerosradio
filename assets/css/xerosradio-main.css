@@ -2,509 +2,356 @@
 @import url(https://fonts.bunny.net/css?family=sofia-sans:800);
 
 * {
-font-family: 'Sofia Sans', sans-serif;
-box-sizing: border-box;
-font-weight: 800;
+    font-family: 'Sofia Sans', sans-serif;
+    box-sizing: border-box;
+    font-weight: 800;
 }
 
 body {
-background: rgb(122,1,254);
-background: radial-gradient(circle, rgba(122,1,254,1) 15%, rgba(74,85,255,1) 61%, rgba(38,147,255,1) 81%, rgba(38,147,255,1) 88%);
-background-color: #ffffff;
-color: #ffffff;
-text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-font-family: 'Sofia Sans', sans-serif;
-font-weight: 800;
-text-align: center;
-text-decoration: none;
-margin: 0;
-padding: 0;
+    background: rgb(122, 1, 254);
+    background: radial-gradient(circle, rgba(122, 1, 254, 1) 15%, rgba(74, 85, 255, 1) 61%, rgba(38, 147, 255, 1) 81%, rgba(38, 147, 255, 1) 88%);
+    color: #ffffff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    margin: 0;
+    padding: 0;
 }
 
+/* Container */
 .container {
-max-width: 800px;
+    max-width: 800px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-h1,h2,h3,h4,p,b {
-font-weight: 800;
+/* Typography */
+h1, h2, h3, h4, p, b {
+    font-weight: 800;
 }
 
 img {
-width: 100%;
-height: auto;
+    width: 100%;
+    height: auto;
 }
 
+/* Navbar styles */
 .navbar {
-color: white;
-background-color: #008cff; /* Updated navbar color */
+    color: white;
+    background-color: #008cff; /* Updated navbar color */
 }
 
 .navbar-brand img {
-width: 100%;
-max-width: 80px; /* Adjust the maximum width as needed */
-height: auto;
+    width: 100%;
+    max-width: 80px; /* Adjust the maximum width as needed */
+    height: auto;
 }
 
 .navbar-toggler {
-border: none;
-outline: none;
+    border: none;
+    outline: none;
 }
 
 .navbar-toggler:focus {
-outline: none;
+    outline: none;
 }
 
 .navbar-toggler-icon {
-display: none; /* Hide the default Bootstrap icon */
+    display: none; /* Hide the default Bootstrap icon */
 }
 
 .fa-bars {
-color: #b703ff; /* Updated navbar toggle icon color */
-font-size: 24px;
+    color: #b703ff; /* Updated navbar toggle icon color */
+    font-size: 24px;
 }
 
 .navbar-nav .nav-link {
-color: #fff;
+    color: #fff;
 }
 
-/* Nu Live Artwork */
+/* Artwork Styling */
 #artwork img {
-border-radius: 50%;
-box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow effect */
-} 
-
-/* Nieuws Text */
-.NieuwsText {
-background-color: #008cff;
-text-align: center;
-color: white;
-text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-/* Set initial styles for the element */
-opacity: 0;
-/* Define the animation properties */
-animation-name: fadeIn;
-animation-duration: 1s;
-animation-timing-function: ease-in;
-animation-fill-mode: forwards;  
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow effect */
 }
 
-/* OnAir Handeler */
-.onairhandler {
-/* Set initial styles for the element */
-opacity: 0;
-/* Define the animation properties */
-animation-name: fadeIn;
-animation-duration: 1s;
-animation-timing-function: ease-in;
-animation-fill-mode: forwards;
+/* Text styles for Nieuws and other elements */
+.NieuwsText,
+.privacybeleidtext,
+.djstitle,
+.xerosradioplaylist,
+.MainTitlePlaylist,
+.MainTitleOverons,
+.MainTitleNieuws,
+.content,
+.Nieuws,
+.onairhandler,
+.radioPlayer,
+.buttonxerosradiomain {
+    color: white;
+    text-align: center;
+    opacity: 0;
+    animation-name: fadeIn;
+    animation-duration: 1s;
+    animation-timing-function: ease-in;
+    animation-fill-mode: forwards;
 }
 
-/* DJs Title */
-.djstitle {
-color: white;
-/* Set initial styles for the element */
-opacity: 0;
-/* Define the animation properties */
-animation-name: fadeIn;
-animation-duration: 1s;
-animation-timing-function: ease-in;
-animation-fill-mode: forwards;
+/* Fade in Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
-/* Privacy Beleid | Text */
-.privacybeleidtext {
-color: white;
-text-align: center;
-/* Set initial styles for the element */
-opacity: 0;
-/* Define the animation properties */
-animation-name: fadeIn;
-animation-duration: 1s;
-animation-timing-function: ease-in;
-animation-fill-mode: forwards;
-}
-
-/* XerosRadio Playlist */
-.xerosradioplaylist {
-/* Set initial styles for the element */
-opacity: 0;
-/* Define the animation properties */
-animation-name: fadeIn;
-animation-duration: 1s;
-animation-timing-function: ease-in;
-animation-fill-mode: forwards;
-}
-
-/* Main Title Playlist */
-.MainTitlePlaylist {
-color: white;
-text-align: center;
-/* Set initial styles for the element */
-opacity: 0;
-/* Define the animation properties */
-animation-name: fadeIn;
-animation-duration: 1s;
-animation-timing-function: ease-in;
-animation-fill-mode: forwards;
-}
-
-/* Main Title OverOns */
-.MainTitleOverons {
-color: white; /* Comma was missing here */
-text-align: center;
-/* Set initial styles for the element */
-opacity: 0;
-/* Define the animation properties */
-animation-name: fadeIn;
-animation-duration: 1s;
-animation-timing-function: ease-in;
-animation-fill-mode: forwards;
-}
-
-/* Main Title Nieuws */
-.MainTitleNieuws {
-color: white; /* Comma was missing here */
-text-align: center;
-/* Set initial styles for the element */
-opacity: 0;
-/* Define the animation properties */
-animation-name: fadeIn;
-animation-duration: 1s;
-animation-timing-function: ease-in;
-animation-fill-mode: forwards;
-}
-
-/* Main Content */
-.content {
-color: white; /* Comma was missing here */
-text-align: center;
-/* Set initial styles for the element */
-opacity: 0;
-/* Define the animation properties */
-animation-name: fadeIn;
-animation-duration: 1s;
-animation-timing-function: ease-in;
-animation-fill-mode: forwards;
-}
-
-/* Container */
-.container {
-/* Set initial styles for the element */
-opacity: 0;
-/* Define the animation properties */
-animation-name: fadeIn;
-animation-duration: 1s;
-animation-timing-function: ease-in;
-animation-fill-mode: forwards;
-}
-
-/* Nieuws */
-.Nieuws {
-text-align: center;
-/* Set initial styles for the element */
-opacity: 0;
-/* Define the animation properties */
-animation-name: fadeIn;
-animation-duration: 1s;
-animation-timing-function: ease-in;
-animation-fill-mode: forwards;
-}
-
-/* XerosRadio FADE */
-.radioplayerxerosradio {
-/* Set initial styles for the element */
-opacity: 0;
-/* Define the animation properties */
-animation-name: fadeIn;
-animation-duration: 1s;
-animation-timing-function: ease-in;
-animation-fill-mode: forwards;
-}
-
-/* Iframe */
-iframe {
-border: none;
-margin: 0;
-padding: 0;
-}
-
-/* Container */
-.container {
-display: flex;
-justify-content: center;
-align-items: center;
-}
-
-/* Box */
+/* Box styles */
 .box {
-width: 200px;
-text-align: center;
-color: black; /* Semicolon was missing here */
-text-shadow: 1px 1px 2px rgb(0, 174, 255);
-background-color: #ffffff;
-box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-padding: 20px;
-margin: 10px;
+    width: 200px;
+    text-align: center;
+    color: black; /* Fixed missing semicolon */
+    text-shadow: 1px 1px 2px rgb(0, 174, 255);
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin: 10px;
 }
 
 /* Box | IMG */
 .box img {
-width: 100px;
-height: 100px;
-border-radius: 50%;
-margin-bottom: 10px;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 10px;
 }
 
 /* Box | h2 */
 .box h2 {
-color: black; /* Semicolon was missing here */
-font-size: 18px;
-text-decoration: none;
-margin-bottom: 5px;
-transition: color 0.3s ease; /* Add transition for color change */
+    color: black; /* Fixed missing semicolon */
+    font-size: 18px;
+    text-decoration: none;
+    margin-bottom: 5px;
+    transition: color 0.3s ease; /* Add transition for color change */
 }
 
 /* Box | p */
 .box p {
-color: black; /* Semicolon was missing here */
-font-size: 14px;
-text-decoration: none;
-transition: color 0.3s ease; /* Add transition for color change */
+    color: black; /* Fixed missing semicolon */
+    font-size: 14px;
+    text-decoration: none;
+    transition: color 0.3s ease; /* Add transition for color change */
 }
 
 /* Box Hover Effect */
 .box h2:hover,
 .box p:hover {
-color: rgb(0, 174, 255);
+    color: rgb(0, 174, 255);
 }
 
-/* Fade in Animation */
-@keyframes fadeIn {
-from {
-  opacity: 0;
-}
-to {
-  opacity: 1;
-}
-}
-
-/* Smaller Screens */
+/* Media Queries for Responsive Design */
 @media (max-width: 600px) {
-.container {
-    flex-direction: column; /* Change to column for mobile */
-}
-.box {
-    width: 90%; /* Adjust width for smaller screens */
-}
+    .container {
+        flex-direction: column; /* Change to column for mobile */
+    }
+    
+    .box {
+        width: 90%; /* Adjust width for smaller screens */
+    }
 }
 
 /* Current Dj Onair Balloon */
 .on-air-balloon {
-text-align: center;  
-box-shadow: 0 4px 6px rgba(0, 0, 0, 0.226); /* Shadow for the balloon */
-text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Text shadow properties */
-background-color: rgb(255, 0, 0);
-color: white;
-padding: 10px;
-border-radius: 20px;
-display: inline-block;
-position: relative;
--webkit-user-select: none; /* Safari */
--ms-user-select: none; /* IE 10 and IE 11 */
-user-select: none; /* Standard syntax */
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.226); /* Shadow for the balloon */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Text shadow properties */
+    background-color: rgb(255, 0, 0);
+    color: white;
+    padding: 10px;
+    border-radius: 20px;
+    display: inline-block;
+    position: relative;
+    user-select: none; /* Prevent selection */
 }
 
 /* Current Dj Onair Balloon | Before */
 .on-air-balloon::before {
-content: "";
-position: absolute;
-top: 100%;
-left: 50%;
-margin-left: -10px;
-border-width: 10px;
-border-style: solid;
-border-color: red transparent transparent transparent;
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -10px;
+    border-width: 10px;
+    border-style: solid;
+    border-color: red transparent transparent transparent;
 }
 
 /* Radio player container XerosRadio */
 .radioPlayer {
-background-color: #008cff;
-border-radius: 10px;
-max-width: 400px;
-margin: 0 auto;
-padding: 15px;
-display: flex;
-flex-direction: column;
-align-items: center;
+    background-color: #008cff;
+    border-radius: 10px;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 /* Now Playing section XerosRadio */
 #nowPlaying {
-margin-top: 10px;
-color: #ffffff;
-text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Text shadow properties */
-display: flex;
-flex-direction: row;
-align-items: center;
-text-align: left;
--webkit-user-select: none; /* Safari */
--ms-user-select: none; /* IE 10 and IE 11 */
-user-select: none; /* Standard syntax */
+    margin-top: 10px;
+    color: #ffffff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Text shadow properties */
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    text-align: left;
+    user-select: none; /* Prevent selection */
 }
 
 /* Album Artwork XerosRadio */
 #albumArtwork {
-max-width: 100px;
-height: 100px;
-width: 100px;
-margin-right: 10px;
-border-radius: 10px; /* Rounded corners */
-box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    max-width: 100px;
+    height: 100px;
+    width: 100px;
+    margin-right: 10px;
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 /* Artist and Title Info XerosRadio */
 .info-container {
-flex-grow: 1;
+    flex-grow: 1;
 }
 
-#artistInfo, #titleInfo {
-font-size: 16px;
-color: #fff;
+#artistInfo,
+#titleInfo {
+    font-size: 16px;
+    color: #fff;
 }
 
 /* Player Controls XerosRadio */
 .player-controls {
-display: flex;
-justify-content: center;
-align-items: center;
-margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 10px;
 }
 
 /* Play/Pause Button XerosRadio */
-#playPauseButton {
-font-size: 24px; /* Larger play button XeroSRadio */
-color: #fff;
-cursor: pointer;
-margin: 0 20px;
-border: none;
-border-radius: 50%; /* Rounded corners for play button XerosRadio */
-padding: 5px;
-}
-
-/* Chromecast Button */
+#playPauseButton,
 #castButton {
-font-size: 24px; /* Larger play button XeroSRadio */
-color: #fff;
-cursor: pointer;
-margin: 0 20px;
-border: none;
-border-radius: 50%; /* Rounded corners for play button XerosRadio */
-padding: 5px;
+    font-size: 24px; /* Larger play button */
+    color: #fff;
+    cursor: pointer;
+    margin: 0 20px;
+    border: none;
+    border-radius: 50%; /* Rounded corners for play button */
+    padding: 5px;
 }
 
 /* Volume Slider */
 #volumeSlider {
-width: 70%;
+    width: 70%;
 }
 
+/* Cookie Banner */
 #cb-cookie-banner {
-position: fixed;
-bottom: 0;
-left: 0;
-width: 100%;
-z-index: 999;
-border-radius: 0;
-display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 999;
+    border-radius: 0;
+    display: none;
 }
 
-/* Center the buttonxerosradio */
+/* Center the button xerosradio */
 .buttonxerosradiomain {
-display: flex;
-justify-content: center;
-align-items: center;
-/* Set initial styles for the element */
-opacity: 0;
-/* Define the animation properties */
-animation-name: fadeIn;
-animation-duration: 1s;
-animation-timing-function: ease-in;
-animation-fill-mode: forwards;    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0; /* Set initial styles for the element */
+    animation-name: fadeIn;
+    animation-duration: 1s;
+    animation-timing-function: ease-in;
+    animation-fill-mode: forwards;    
 }
 
 /* Style for the xerosradiobuttons */
 .xerosradiobutton {
-padding: 10px 20px;
-background-color: #00a8db;
-color: white;
-border: none;
-cursor: pointer;
-margin: 5px;
-text-decoration: none; /* Remove the default underline for anchor elements */
-transition: opacity 0.3s ease; /* Add a fade effect on hover */
-text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    padding: 10px 20px;
+    background-color: #00a8db;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin: 5px;
+    text-decoration: none; /* Remove the default underline for anchor elements */
+    transition: opacity 0.3s ease; /* Add a fade effect on hover */
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 /* Hover effect - fade the button */
 .xerosradiobutton:hover {
-opacity: 0.7;
-color:#ad00cf;
-text-decoration: none;
+    opacity: 0.7;
+    color: #ad00cf;
+    text-decoration: none;
 }
 
+/* XerosContainer */
 .xeros-container {
-  max-width: 800px;
-  margin: 20px auto;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
+/* News List */
 #newsList {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
 }
 
+/* News Item */
 .newsItem {
-  width: calc(50% - 10px); /* Bereken de breedte van elk nieuwsitem (50% - marge) */
-  margin-bottom: 20px;
-  background-color: #fff;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    width: calc(50% - 10px); /* Calculate the width of each news item (50% - margin) */
+    margin-bottom: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
 
 .newsItem img {
-  width: 100%;
-  height: auto;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
+    width: 100%;
+    height: auto;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
 }
 
 .newsItem .content {
-  padding: 20px;
+    padding: 20px;
 }
 
 .newsItem h3 {
-  margin-top: 0;
-  margin-bottom: 10px;
-  font-size: 18px;
-  color: #333;
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: #333;
 }
 
 .newsItem p {
-  margin: 0;
-  font-size: 14px;
-  color: #666;
-  line-height: 1.5;
+    margin: 0;
+    font-size: 14px;
+    color: #666;
+    line-height: 1.5;
 }
 
-@supports (-webkit-touch-callout: none) {
-  .hide-on-ios {
-    display: none;
-  }
-}
+/* Button Styling */
 .appen-naar-de-studio-button {
     background-color: #9003fc;
     color: white;
@@ -520,7 +367,7 @@ text-decoration: none;
     margin-right: 0.5rem;
 }
 
-/* Unieke naamgeving door een voorvoegsel te gebruiken */
+/* Feed Body */
 .feed-body {
     line-height: 1.6;
     color: #333;
@@ -532,6 +379,7 @@ text-decoration: none;
     box-sizing: border-box;
 }
 
+/* Feed Container */
 .feed-container {
     width: 90%;
     max-width: 1200px;
@@ -539,6 +387,7 @@ text-decoration: none;
     padding: 20px;
 }
 
+/* Feed Items Layout */
 #feed-feed-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -547,6 +396,7 @@ text-decoration: none;
     padding: 20px;
 }
 
+/* Feed Article */
 .feed-article {
     background: #fff;
     border: 1px solid #ddd;
@@ -564,6 +414,7 @@ text-decoration: none;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
+/* Feed Article Titles and Date */
 .feed-article h2 {
     margin: 0 0 10px;
     font-size: 1.2em;
@@ -576,6 +427,7 @@ text-decoration: none;
     margin: 0 0 10px;
 }
 
+/* Read More Button */
 .feed-read-more {
     display: inline-block;
     padding: 8px 15px;
@@ -592,18 +444,16 @@ text-decoration: none;
     color: #fff;
 }
 
+/* Feed Article Image */
 .feed-article-image {
     max-width: 100%;
     height: auto;
     border-radius: 4px;
     margin: 10px 0;
     user-drag: none;
-    -webkit-user-drag: none;
-    -khtml-user-drag: none;
-    -moz-user-drag: none;
-    -o-user-drag: none;
 }
 
+/* Feed Description */
 .feed-description {
     font-size: 0.9em;
     color: #555;
@@ -612,6 +462,7 @@ text-decoration: none;
     width: 100%;
 }
 
+/* Load More Button */
 #feed-load-more {
     display: block;
     width: 100%;
@@ -630,6 +481,7 @@ text-decoration: none;
     background-color: #0056b3;
 }
 
+/* Loader Styles */
 #feed-loader {
     display: none;
     margin: 20px auto;
@@ -652,6 +504,7 @@ text-decoration: none;
     100% { transform: rotate(360deg); }
 }
 
+/* Footer Styles */
 .xeros-footer {
     display: flex;
     justify-content: center;
@@ -667,7 +520,9 @@ text-decoration: none;
     max-width: 1200px;
 }
 
-.xeros-tiktok-container, .xeros-instagram-container, .xerosradio-facebook-container {
+.xeros-tiktok-container,
+.xeros-instagram-container,
+.xerosradio-facebook-container {
     background-color: white;
     border-radius: 10px;
     padding: 20px;
@@ -676,22 +531,27 @@ text-decoration: none;
     color: black;
 }
 
-.xeros-tiktok-container h3, .xeros-instagram-container h3, .xeros-facebook-container h3 {
+.xeros-tiktok-container h3,
+.xeros-instagram-container h3,
+.xeros-facebook-container h3 {
     font-size: 1.5em;
     margin-bottom: 15px;
-    color: #0d1b2a; /* Donkere tekstkleur */
+    color: #0d1b2a; /* Dark text color */
 }
 
-.xeros-tiktok-link, .xeros-instagram-link, .xeros-facebook-link {
+.xeros-tiktok-link,
+.xeros-instagram-link,
+.xeros-facebook-link {
     text-decoration: none;
-    color: #007bff; /* Blauwe links */
+    color: #007bff; /* Blue links */
     display: inline-block;
     margin-top: 10px;
     font-weight: bold;
 }
 
+/* TikTok Button */
 .xeros-tiktok-btn {
-    background-color: #ff4b5c; /* Rood voor de TikTok-knop */
+    background-color: #ff4b5c; /* Red for the TikTok button */
     color: white;
     border: none;
     padding: 10px 20px;
@@ -707,96 +567,97 @@ text-decoration: none;
     background-color: #ff1e39;
 }
 
+/* Instagram Feed Images */
 .xeros-instagram-feed img {
     width: 100%;
     border-radius: 5px;
     margin-top: 10px;
 }
 
+/* Adjustments for Mobile */
 @media (max-width: 768px) {
     .xeros-footer-container {
-    flex-direction: column;
-    align-items: center;
-}
-  
-.xeros-tiktok-container, .xeros-instagram-container, .xeros-facebook-container {
-    width: 90%;
-    margin-bottom: 20px;
-}
+        flex-direction: column;
+        align-items: center;
+    }
 
-.article {
-    color: black;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 15px;
-    margin: 10px 0;
-    background-color: #fff;
-    margin: 20px;
-}
-  
-.article img {
-    max-width: 500px;
-    height: auto;
-    border-radius: 4px;
-    margin: 10px 0;
-    user-drag: none;
-    -webkit-user-drag: none;
-    -khtml-user-drag: none;
-    -moz-user-drag: none;
-    -o-user-drag: none;
-    border-radius: 5px;
-}
-  
-.article h2 {
-    margin: 0;
-    font-size: 1.5em;
-}
-  
-.article p {
-    margin: 10px 0;
-}
-  
-.article a {
-    color: #007BFF;
-    text-decoration: none;
-}
-  
-.article a:hover {
-    text-decoration: underline;
+    .xeros-tiktok-container,
+    .xeros-instagram-container,
+    .xeros-facebook-container {
+        width: 90%;
+        margin-bottom: 20px;
+    }
+
+    .article {
+        color: black;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 15px;
+        margin: 10px 0;
+        background-color: #fff;
+        margin: 20px;
+    }
+
+    .article img {
+        max-width: 500px;
+        height: auto;
+        border-radius: 4px;
+        margin: 10px 0;
+        user-drag: none;
+    }
+
+    .article h2 {
+        margin: 0;
+        font-size: 1.5em;
+    }
+
+    .article p {
+        margin: 10px 0;
+    }
+
+    .article a {
+        color: #007BFF;
+        text-decoration: none;
+    }
+
+    .article a:hover {
+        text-decoration: underline;
+    }
 }
 
 /* PART 0 - Setting Up */
 img[data-opt-src] {
-  background-color: #f7f7f7; /*placeholder opacity needs to be set to 0 in the optimole's settings for this to be visible*/
-  will-change: opacity;
+    background-color: #f7f7f7; /* Placeholder opacity needs to be set to 0 in the optimole's settings for this to be visible */
+    will-change: opacity;
 }
-	
-/* PART 1 - Before Lazy Load */	
+
+/* PART 1 - Before Lazy Load */
 img[data-opt-src]:not([data-opt-lazy-loaded]) {
-  filter: none !important;
-  opacity: 1 !important;
+    filter: none !important;
+    opacity: 1 !important;
 }
 
 /* PART 2 - Upon Lazy Load */
 img[data-opt-lazy-loaded] {
-  animation-name: fade-in;
-  animation-direction: normal;
-  animation-duration: 0.5s;
-  animation-fill-mode: forwards;
+    animation-name: fade-in;
+    animation-direction: normal;
+    animation-duration: 0.5s;
+    animation-fill-mode: forwards;
 }
 
-	
 @keyframes fade-in {
-  0% {
-    opacity: 0;
-  }
-	
-  50% {
-    opacity: 0;
-  }
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
 
-  100% {
-
+/* New Year Timer XerosRadio */
 .newyeartimerxerosradio {
     position: relative;
     width: 100%;
@@ -818,7 +679,7 @@ img[data-opt-lazy-loaded] {
     object-fit: cover; /* Ensures the iframe content covers the aspect ratio */
 }
 
-/* Adjustments for mobile */
+/* Adjustments for mobile regarding the New Year timer */
 @media (max-width: 767px) {
     .newyeartimerxerosradio {
         padding-bottom: 50%; /* Slightly less vertical space on mobile */
@@ -830,4 +691,4 @@ img[data-opt-lazy-loaded] {
         transform: scale(0.85); /* Zoom out more to fit the content better */
         transform-origin: center center; /* Keeps the scaling centered */
     }
-}	
+}
