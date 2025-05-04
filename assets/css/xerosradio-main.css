@@ -679,7 +679,7 @@ img[data-opt-lazy-loaded] {
     object-fit: cover; /* Ensures the iframe content covers the aspect ratio */
 }
 
-/* Adjustments for mobile regarding the New Year timer */
+/* Adjustments for mobile regarding the timer */
 @media (max-width: 767px) {
     .newyeartimerxerosradio {
         padding-bottom: 50%; /* Slightly less vertical space on mobile */
