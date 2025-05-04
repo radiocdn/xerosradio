@@ -13,14 +13,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Auto Minify
         uses: nizarmah/auto-minify@v3.0.0
         with:
-          output: ./dist/minified       # Where to save minified files
-          overwrite: false              # Don't overwrite original
+          directory: ./assets                # minify files from here
+          output: ./dist/minified            # minified files go here
+          overwrite: false                   # don't touch originals
           maxdepth: 3
           js_engine: babel
           css_engine: lightning
