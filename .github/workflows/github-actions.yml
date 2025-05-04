@@ -1,5 +1,22 @@
-  name: Auto Minify
-  uses: nizarmah/auto-minify@v3.0.0
-  with:
-    directory: . # Or specify your target directory
-    overwrite: true
+name: Auto Minify Workflow
+
+on:
+  push:
+    branches:
+      - main  # or your default branch
+
+jobs:
+  minify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Auto Minify
+        uses: nizarmah/auto-minify@v3.0.0
+        with:
+          overwrite: true
+          maxdepth: 2
+          js_engine: babel
+          css_engine: lightning
