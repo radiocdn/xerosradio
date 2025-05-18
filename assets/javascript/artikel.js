@@ -10,7 +10,7 @@ if (!articleId) {
     window.location.href = '/'; // Redirect naar home als er geen ID is
 }
 
-const articleUrl = `https://xerosradioapi.global.ssl.fastly.net/api/xerosradio/nieuws/?article=${articleId}`;
+const articleUrl = `https://xerosradioweb.global.ssl.fastly.net/api/xerosradio/nieuws/?article=${articleId}`;
 const CACHE_KEY = `news_article_${articleId}`;
 const CACHE_EXPIRATION_KEY = `${CACHE_KEY}_expires`;
 const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 uur
