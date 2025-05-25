@@ -9,9 +9,8 @@ class RadioPlayer {
         this.playPauseButton = document.getElementById('playPauseButton');
         this.volumeSlider = document.getElementById('volumeSlider');
         this.castButton = document.getElementById('castButton');
-
         this.isPlaying = false;
-        this.retryDelay = 3000; // 3 seconden wachten voor herverbinden
+        this.userPaused = false; // Nieuw: bijhouden of de gebruiker zelf pauzeerde
 
         this.playPauseButton.addEventListener('click', this.togglePlay.bind(this));
         this.volumeSlider.addEventListener('input', this.adjustVolume.bind(this));
@@ -25,50 +24,32 @@ class RadioPlayer {
 
         this.initializeCastSDK();
         this.setupMediaSession();
-        this.addRecoveryListeners(); // <- BELANGRIJK
-    }
 
-    addRecoveryListeners() {
-        this.radioPlayer.addEventListener('error', () => this.recoverPlayback('error'));
-        this.radioPlayer.addEventListener('stalled', () => this.recoverPlayback('stalled'));
-        this.radioPlayer.addEventListener('ended', () => this.recoverPlayback('ended'));
+        // 🔁 Events voor reconnect
+        this.radioPlayer.addEventListener('error', this.handleStreamError.bind(this));
+        this.radioPlayer.addEventListener('stalled', this.handleStreamError.bind(this));
+        this.radioPlayer.addEventListener('ended', this.handleStreamError.bind(this));
+        this.radioPlayer.addEventListener('pause', this.handlePause.bind(this)); // optioneel
 
-        // Als audio zonder fout gewoon stopt
-        setInterval(() => {
-            if (this.isPlaying && this.radioPlayer.paused && this.radioPlayer.readyState < 2) {
-                this.recoverPlayback('paused unexpectedly');
-            }
-        }, 5000);
-    }
-
-    recoverPlayback(reason) {
-        console.warn(`⚠️ Stream onderbroken (${reason}). Poging tot hervatten...`);
-        this.radioPlayer.load(); // opnieuw laden
-        setTimeout(() => {
-            this.playMedia();
-        }, this.retryDelay);
+        this.reconnectDelay = 3000; // ms
     }
 
     isValidUrl(url) {
         try {
             new URL(url);
             return true;
-        } catch {
+        } catch (error) {
             return false;
         }
     }
 
     async updateRadioInfo() {
         const url = 'https://xerosradioapi.global.ssl.fastly.net/api/xerosradio/';
-        const fetchOptions = {
-            method: 'GET',
-            cache: 'no-cache'
-        };
+        const fetchOptions = { method: 'GET', cache: 'no-cache' };
 
         try {
             const response = await fetch(url, fetchOptions);
-            if (!response.ok) throw new Error('Het verzoek aan de XerosRadio Servers is mislukt.');
-
+            if (!response.ok) throw new Error('Verzoek aan de XerosRadio Servers is mislukt.');
             const data = await response.json();
             const { artist, title, cover_art200x200 } = data.current_song;
             const { dj_live_status, dj_name, dj_cover } = data.onair_info;
@@ -82,7 +63,6 @@ class RadioPlayer {
             if (dj_live_status) {
                 this.djInfoElement.textContent = dj_name;
                 const artworkUrl = this.isValidUrl(dj_cover) ? dj_cover : 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
-
                 const newImage = new Image();
                 newImage.src = artworkUrl;
                 newImage.onerror = () => {
@@ -91,10 +71,8 @@ class RadioPlayer {
                 newImage.draggable = false;
                 newImage.loading = 'lazy';
                 newImage.alt = 'XerosRadio DJ';
-                newImage.style.opacity = 1;
                 newImage.style.width = '200px';
                 newImage.style.height = '200px';
-
                 this.artworkElement.innerHTML = '';
                 this.artworkElement.appendChild(newImage);
             } else {
@@ -108,7 +86,7 @@ class RadioPlayer {
 
     handleError(error) {
         console.error('Fout:', error);
-        this.djInfoElement.textContent = 'XerosRadio is momenteel niet beschikbaar.';
+        this.djInfoElement.textContent = 'XerosRadio is momenteel niet beschikbaar. Probeer het later opnieuw.';
         this.artworkElement.innerHTML = `<img src="https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit" alt="XerosRadio" draggable="false" loading="lazy" style="width: 200px; height: 200px;">`;
     }
 
@@ -139,8 +117,8 @@ class RadioPlayer {
     updateMediaMetadata(artist, title, artworkUrl200, artworkUrl500) {
         if ('mediaSession' in navigator) {
             navigator.mediaSession.metadata = new MediaMetadata({
-                title: title,
-                artist: artist,
+                title,
+                artist,
                 artwork: [
                     { src: artworkUrl500, sizes: '500x500', type: 'image/webp' },
                     { src: artworkUrl200, sizes: '200x200', type: 'image/webp' }
@@ -177,19 +155,22 @@ class RadioPlayer {
 
     togglePlay() {
         if (this.isPlaying) {
+            this.userPaused = true;
             this.pauseMedia();
         } else {
+            this.userPaused = false;
             this.playMedia();
         }
-        this.updatePlayPauseButton();
     }
 
     playMedia() {
+        this.radioPlayer.src = 'https://stream.streamxerosradio.duckdns.org/xerosradio'; // zorg voor verse bron
         this.radioPlayer.play().then(() => {
             this.isPlaying = true;
             this.updatePlayPauseButton();
-        }).catch((err) => {
-            console.warn('Kon stream niet starten:', err);
+        }).catch(err => {
+            console.error('Fout bij afspelen:', err);
+            setTimeout(() => this.playMedia(), this.reconnectDelay);
         });
     }
 
@@ -219,9 +200,20 @@ class RadioPlayer {
         return cookie ? parseFloat(cookie.split('=')[1]) : null;
     }
 
-    seek(seconds) {
-        this.radioPlayer.currentTime += seconds;
+    handleStreamError() {
+        if (!this.userPaused) {
+            console.warn('Stream onderbroken. Poging tot opnieuw verbinden...');
+            setTimeout(() => this.playMedia(), this.reconnectDelay);
+        }
+    }
+
+    handlePause() {
+        if (!this.userPaused && !this.radioPlayer.ended) {
+            console.warn('Speler gepauzeerd (mogelijk door fout). Probeer opnieuw te verbinden...');
+            setTimeout(() => this.playMedia(), this.reconnectDelay);
+        }
     }
 }
 
+// Start
 const radioPlayer = new RadioPlayer();
