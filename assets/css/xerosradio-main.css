@@ -958,3 +958,13 @@ img[data-opt-lazy-loaded] {
         transform-origin: center center; /* Keeps the scaling centered */
     }
 }
+
+
+.appen-naar-de-studio-button {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.appen-naar-de-studio-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
