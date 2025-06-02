@@ -1,11 +1,10 @@
 /* Add your CSS styles here to customize the appearance of the website of XerosRadio website */
+@import url(https://fonts.bunny.net/css?family=sofia-sans:800);
 
 .fade-in {
     opacity: 0;
     animation: fadeIn 1s ease-in forwards;
 }
-
-@import url(https://fonts.bunny.net/css?family=sofia-sans:800);
 
 * {
     font-family: 'Sofia Sans', sans-serif;
