@@ -102,8 +102,6 @@ img {
     animation: fadeIn 1s ease-in forwards;
 }
 
-@import url(https://fonts.bunny.net/css?family=sofia-sans:800);
-
 * {
     font-family: 'Sofia Sans', sans-serif;
     box-sizing: border-box;
