@@ -703,6 +703,7 @@ img[data-opt-lazy-loaded] {
 /* Playlist */
         .playlist-container {
             text-align: center;
+            color: black;
       }
 
         .playlist-item {
