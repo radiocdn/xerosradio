@@ -11,8 +11,8 @@ class RadioPlayer {
         this.castButton = document.getElementById('castButton');
         this.isPlaying = false;
         this.userPaused = false;
-
         this.defaultImage = 'https://res.cloudinary.com/xerosradio/image/upload/w_500,h_500,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
+        this.streamUrl = 'https://stream.streamxerosradio.duckdns.org/xerosradio';
 
         this.playPauseButton.addEventListener('click', this.togglePlay.bind(this));
         this.volumeSlider.addEventListener('input', this.adjustVolume.bind(this));
@@ -48,9 +48,8 @@ class RadioPlayer {
         const url = 'https://xerosradioapiprd.global.ssl.fastly.net/';
         try {
             const response = await fetch(url, { method: 'GET', cache: 'no-cache' });
-            if (!response.ok) throw new Error('Verzoek aan de XerosRadio Servers is mislukt.');
+            if (!response.ok) throw new Error('Fout bij ophalen data');
             const data = await response.json();
-
             const { artist, title, cover_art200x200 } = data.current_song;
             const { dj_live_status, dj_name, dj_cover } = data.onair_info;
 
@@ -59,25 +58,25 @@ class RadioPlayer {
             this.titleInfo.textContent = title;
             this.albumArtwork.src = artwork200;
 
+            this.updateMediaMetadata();
+
             if (dj_live_status) {
                 this.djInfoElement.textContent = dj_name;
                 const artworkUrl = this.isValidUrl(dj_cover) ? dj_cover : this.defaultImage;
-                const img = new Image();
-                img.src = artworkUrl;
-                img.onerror = () => { img.src = this.defaultImage; };
-                img.alt = 'XerosRadio DJ';
-                img.style.width = '200px';
-                img.style.height = '200px';
-                img.draggable = false;
-                img.loading = 'lazy';
+                const newImage = new Image();
+                newImage.src = artworkUrl;
+                newImage.onerror = () => { newImage.src = this.defaultImage; };
+                newImage.draggable = false;
+                newImage.loading = 'lazy';
+                newImage.alt = 'XerosRadio DJ';
+                newImage.style.width = '200px';
+                newImage.style.height = '200px';
                 this.artworkElement.innerHTML = '';
-                this.artworkElement.appendChild(img);
+                this.artworkElement.appendChild(newImage);
             } else {
                 this.djInfoElement.textContent = 'Nonstop Muziek';
-                this.artworkElement.innerHTML = `<img src="${this.defaultImage}" alt="Nonstop Muziek" draggable="false" loading="lazy" style="width: 200px; height: 200px;">`;
+                this.artworkElement.innerHTML = `<img src="${this.defaultImage}" alt="XerosRadio Nonstop Muziek" draggable="false" loading="lazy" style="width: 200px; height: 200px;">`;
             }
-
-            this.updateMediaMetadata();
         } catch (error) {
             this.handleError(error);
         }
@@ -86,28 +85,53 @@ class RadioPlayer {
     handleError(error) {
         console.error('Fout:', error);
         this.djInfoElement.textContent = 'XerosRadio is momenteel niet beschikbaar.';
-        this.artworkElement.innerHTML = `<img src="${this.defaultImage}" alt="XerosRadio" style="width:200px;height:200px;" draggable="false" loading="lazy">`;
+        this.artworkElement.innerHTML = `<img src="${this.defaultImage}" alt="XerosRadio" draggable="false" loading="lazy" style="width: 200px; height: 200px;">`;
     }
 
     initializeCastSDK() {
         window['__onGCastApiAvailable'] = isAvailable => {
             if (isAvailable) {
-                const context = cast.framework.CastContext.getInstance();
-                context.setOptions({
+                const castContext = cast.framework.CastContext.getInstance();
+                castContext.setOptions({
                     receiverApplicationId: chrome.cast.media.DEFAULT_MEDIA_RECEIVER_APP_ID,
                     autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
                 });
-                context.addEventListener(
+                castContext.addEventListener(
                     cast.framework.CastContextEventType.SESSION_STATE_CHANGED,
-                    e => this.handleCastSessionState(e)
+                    event => this.handleCastSessionState(event)
                 );
             }
         };
     }
 
+    setupMediaSession() {
+        if ('mediaSession' in navigator) {
+            navigator.mediaSession.setActionHandler('play', this.playMedia.bind(this));
+            navigator.mediaSession.setActionHandler('pause', this.pauseMedia.bind(this));
+            navigator.mediaSession.setActionHandler('stop', this.pauseMedia.bind(this));
+        }
+    }
+
+    updateMediaMetadata() {
+        if ('mediaSession' in navigator) {
+            const artist = this.artistInfo.textContent || 'XerosRadio';
+            const title = this.titleInfo.textContent || 'Bij XerosRadio zit je goed';
+            const artwork = this.albumArtwork?.src || this.defaultImage;
+
+            navigator.mediaSession.metadata = new MediaMetadata({
+                title,
+                artist,
+                artwork: [
+                    { src: artwork, sizes: '500x500', type: 'image/webp' }
+                ]
+            });
+        }
+    }
+
     handleCastSessionState(event) {
         if (event.sessionState === cast.framework.SessionState.SESSION_STARTED) {
             this.pauseMedia();
+            setTimeout(() => this.loadMediaToCast(), 1000); // kleine delay voor stabiliteit
         } else if (event.sessionState === cast.framework.SessionState.SESSION_ENDED) {
             this.playMedia();
         }
@@ -123,39 +147,18 @@ class RadioPlayer {
     loadMediaToCast() {
         const session = cast.framework.CastContext.getInstance().getCurrentSession();
         if (session) {
-            const mediaInfo = new chrome.cast.media.MediaInfo('https://stream.streamxerosradio.duckdns.org/xerosradio', 'audio/mpeg');
-
-            const metadata = new chrome.cast.media.MusicTrackMediaMetadata();
-            metadata.title = 'Bij XerosRadio zit je goed. Altijd online de beste Nederlandstalige geheime zender en piraten hits. 24 uur per dag de mooiste muziek.';
-            metadata.artist = 'XerosRadio';
-            metadata.images = [{ url: this.defaultImage }];
-
-            mediaInfo.metadata = metadata;
+            const mediaInfo = new chrome.cast.media.MediaInfo(this.streamUrl, 'audio/mpeg');
+            mediaInfo.metadata = new chrome.cast.media.MusicTrackMediaMetadata();
+            mediaInfo.metadata.title = 'Bij XerosRadio zit je goed. Altijd online de beste Nederlandstalige geheime zender en piraten hits. 24 uur per dag de mooiste muziek.';
+            mediaInfo.metadata.artist = 'XerosRadio';
+            mediaInfo.metadata.images = [
+                { url: this.defaultImage }
+            ];
 
             const request = new chrome.cast.media.LoadRequest(mediaInfo);
             session.loadMedia(request)
-                .then(() => console.log('Cast gestart met vaste metadata.'))
+                .then(() => console.log('Cast gestart'))
                 .catch(error => console.error('Fout bij casten:', error));
-        }
-    }
-
-    setupMediaSession() {
-        if ('mediaSession' in navigator) {
-            navigator.mediaSession.setActionHandler('play', this.playMedia.bind(this));
-            navigator.mediaSession.setActionHandler('pause', this.pauseMedia.bind(this));
-            navigator.mediaSession.setActionHandler('stop', this.pauseMedia.bind(this));
-        }
-    }
-
-    updateMediaMetadata() {
-        if ('mediaSession' in navigator) {
-            navigator.mediaSession.metadata = new MediaMetadata({
-                title: 'Bij XerosRadio zit je goed. Altijd online de beste Nederlandstalige geheime zender en piraten hits. 24 uur per dag de mooiste muziek.',
-                artist: 'XerosRadio',
-                artwork: [
-                    { src: this.defaultImage, sizes: '500x500', type: 'image/webp' }
-                ]
-            });
         }
     }
 
@@ -170,7 +173,7 @@ class RadioPlayer {
     }
 
     playMedia() {
-        this.radioPlayer.src = 'https://stream.streamxerosradio.duckdns.org/xerosradio';
+        this.radioPlayer.src = this.streamUrl;
         this.radioPlayer.play().then(() => {
             this.isPlaying = true;
             this.updatePlayPauseButton();
@@ -196,30 +199,30 @@ class RadioPlayer {
     }
 
     saveVolumeToCookie(volume) {
-        const d = new Date();
-        d.setFullYear(d.getFullYear() + 1);
-        document.cookie = `volume=${volume}; expires=${d.toUTCString()}; path=/`;
+        const expiration = new Date();
+        expiration.setFullYear(expiration.getFullYear() + 1);
+        document.cookie = `volume=${volume}; expires=${expiration.toUTCString()}; path=/`;
     }
 
     getVolumeFromCookie() {
-        const cookie = document.cookie.split(';').find(c => c.trim().startsWith('volume='));
-        return cookie ? parseFloat(cookie.split('=')[1]) : null;
+        const match = document.cookie.split(';').find(c => c.trim().startsWith('volume='));
+        return match ? parseFloat(match.split('=')[1]) : null;
     }
 
     handleStreamError() {
         if (!this.userPaused) {
-            console.warn('Stream onderbroken. Probeer opnieuw...');
+            console.warn('Stream onderbroken. Herstart...');
             setTimeout(() => this.playMedia(), this.reconnectDelay);
         }
     }
 
     handlePause() {
         if (!this.userPaused && !this.radioPlayer.ended) {
-            console.warn('Speler gepauzeerd. Automatisch hervatten...');
+            console.warn('Pauze zonder gebruikersinput. Herstart...');
             setTimeout(() => this.playMedia(), this.reconnectDelay);
         }
     }
 }
 
-// Start
+// Initialisatie
 const radioPlayer = new RadioPlayer();
