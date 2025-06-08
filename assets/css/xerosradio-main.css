@@ -701,10 +701,10 @@ img[data-opt-lazy-loaded] {
 }
 
 /* Playlist */
-        .playlist-container {
+        .xerosradioplaylist {
             text-align: center;
             color: black;
-      }
+        }
 
         .playlist-item {
             position: relative; /* Added relative positioning for overlay */
