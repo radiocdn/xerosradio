@@ -701,6 +701,10 @@ img[data-opt-lazy-loaded] {
 }
 
 /* Playlist */
+        .playlist-container {
+            text-align: center;
+      }
+
         .playlist-item {
             position: relative; /* Added relative positioning for overlay */
             background-color: #fff;
