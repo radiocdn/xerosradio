@@ -10,13 +10,14 @@ class RadioPlayer {
         this.volumeSlider = document.getElementById('volumeSlider');
         this.castButton = document.getElementById('castButton');
         this.isPlaying = false;
-        this.userPaused = false; // Nieuw: bijhouden of de gebruiker zelf pauzeerde
+        this.userPaused = false;
 
         this.playPauseButton.addEventListener('click', this.togglePlay.bind(this));
         this.volumeSlider.addEventListener('input', this.adjustVolume.bind(this));
         this.castButton.addEventListener('click', this.castButtonClick.bind(this));
 
-        this.volumeSlider.value = this.getVolumeFromCookie() || 0.5;
+        const savedVolume = parseFloat(this.getVolumeFromCookie());
+        this.volumeSlider.value = isNaN(savedVolume) ? 0.5 : savedVolume;
         this.radioPlayer.volume = this.volumeSlider.value;
 
         this.updateRadioInfo();
@@ -25,20 +26,19 @@ class RadioPlayer {
         this.initializeCastSDK();
         this.setupMediaSession();
 
-        // 🔁 Events voor reconnect
         this.radioPlayer.addEventListener('error', this.handleStreamError.bind(this));
         this.radioPlayer.addEventListener('stalled', this.handleStreamError.bind(this));
         this.radioPlayer.addEventListener('ended', this.handleStreamError.bind(this));
-        this.radioPlayer.addEventListener('pause', this.handlePause.bind(this)); // optioneel
+        this.radioPlayer.addEventListener('pause', this.handlePause.bind(this));
 
-        this.reconnectDelay = 3000; // ms
+        this.reconnectDelay = 3000;
     }
 
     isValidUrl(url) {
         try {
             new URL(url);
             return true;
-        } catch (error) {
+        } catch {
             return false;
         }
     }
@@ -62,7 +62,9 @@ class RadioPlayer {
 
             if (dj_live_status) {
                 this.djInfoElement.textContent = dj_name;
-                const artworkUrl = this.isValidUrl(dj_cover) ? dj_cover : 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
+                const artworkUrl = this.isValidUrl(dj_cover)
+                    ? dj_cover
+                    : 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
                 const newImage = new Image();
                 newImage.src = artworkUrl;
                 newImage.onerror = () => {
@@ -77,7 +79,12 @@ class RadioPlayer {
                 this.artworkElement.appendChild(newImage);
             } else {
                 this.djInfoElement.textContent = 'Nonstop Muziek';
-                this.artworkElement.innerHTML = `<img src="${dj_cover}" alt="XerosRadio Nonstop Muziek" draggable="false" loading="lazy" style="width: 200px; height: 200px;">`;
+                const artworkUrl = this.isValidUrl(dj_cover)
+                    ? dj_cover
+                    : 'https://res.cloudinary.com/xerosradio/image/upload/w_200,h_200,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
+                this.artworkElement.innerHTML = `
+                    <img src="${artworkUrl}" alt="XerosRadio Nonstop Muziek" draggable="false" loading="lazy" style="width: 200px; height: 200px;">
+                `;
             }
         } catch (error) {
             this.handleError(error);
@@ -146,6 +153,12 @@ class RadioPlayer {
         const session = cast.framework.CastContext.getInstance().getCurrentSession();
         if (session) {
             const mediaInfo = new chrome.cast.media.MediaInfo('https://stream.streamxerosradio.duckdns.org/xerosradio', 'audio/mpeg');
+            mediaInfo.metadata = new chrome.cast.media.MusicTrackMediaMetadata();
+            mediaInfo.metadata.title = this.titleInfo.textContent;
+            mediaInfo.metadata.artist = this.artistInfo.textContent;
+            mediaInfo.metadata.images = [
+                { url: this.albumArtwork.src }
+            ];
             const request = new chrome.cast.media.LoadRequest(mediaInfo);
             session.loadMedia(request)
                 .then(() => console.log('Media loaded successfully.'))
@@ -164,7 +177,7 @@ class RadioPlayer {
     }
 
     playMedia() {
-        this.radioPlayer.src = 'https://stream.streamxerosradio.duckdns.org/xerosradio'; // zorg voor verse bron
+        this.radioPlayer.src = 'https://stream.streamxerosradio.duckdns.org/xerosradio';
         this.radioPlayer.play().then(() => {
             this.isPlaying = true;
             this.updatePlayPauseButton();
