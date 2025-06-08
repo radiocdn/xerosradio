@@ -701,7 +701,6 @@ img[data-opt-lazy-loaded] {
 
 /* Playlist */
         .xerosradioplaylist {
-            text-align: center;
             color: black;
         }
 
@@ -716,6 +715,7 @@ img[data-opt-lazy-loaded] {
             align-items: center;
             justify-content: space-between; /* Align Spotify and YouTube icons */
             transition: background-color 0.3s ease; /* Smooth transition on hover */
+            text-align: left;
         }
 
         .playlist-item:hover {
