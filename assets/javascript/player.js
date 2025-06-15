@@ -49,6 +49,7 @@ class RadioPlayer {
         try {
             const response = await fetch(url, { method: 'GET', cache: 'no-cache' });
             if (!response.ok) throw new Error('Fout bij ophalen data');
+
             const data = await response.json();
             const { artist, title, cover_art200x200 } = data.current_song;
             const { dj_live_status, dj_name, dj_cover } = data.onair_info;
@@ -62,6 +63,7 @@ class RadioPlayer {
 
             if (dj_live_status) {
                 this.djInfoElement.textContent = dj_name;
+
                 const artworkUrl = this.isValidUrl(dj_cover) ? dj_cover : this.defaultImage;
                 const newImage = new Image();
                 newImage.src = artworkUrl;
@@ -71,11 +73,16 @@ class RadioPlayer {
                 newImage.alt = 'XerosRadio DJ';
                 newImage.style.width = '200px';
                 newImage.style.height = '200px';
+
                 this.artworkElement.innerHTML = '';
                 this.artworkElement.appendChild(newImage);
             } else {
                 this.djInfoElement.textContent = 'Nonstop Muziek';
-                this.artworkElement.innerHTML = <img src="${this.defaultImage}" alt="XerosRadio Nonstop Muziek" draggable="false" loading="lazy" style="width: 200px; height: 200px;">;
+                this.artworkElement.innerHTML = `
+                    <img src="${this.defaultImage}" alt="XerosRadio Nonstop Muziek"
+                        draggable="false" loading="lazy"
+                        style="width: 200px; height: 200px;">
+                `;
             }
         } catch (error) {
             this.handleError(error);
@@ -85,7 +92,11 @@ class RadioPlayer {
     handleError(error) {
         console.error('Fout:', error);
         this.djInfoElement.textContent = 'XerosRadio is momenteel niet beschikbaar.';
-        this.artworkElement.innerHTML = <img src="${this.defaultImage}" alt="XerosRadio" draggable="false" loading="lazy" style="width: 200px; height: 200px;">;
+        this.artworkElement.innerHTML = `
+            <img src="${this.defaultImage}" alt="XerosRadio"
+                draggable="false" loading="lazy"
+                style="width: 200px; height: 200px;">
+        `;
     }
 
     initializeCastSDK() {
@@ -174,13 +185,15 @@ class RadioPlayer {
 
     playMedia() {
         this.radioPlayer.src = this.streamUrl;
-        this.radioPlayer.play().then(() => {
-            this.isPlaying = true;
-            this.updatePlayPauseButton();
-        }).catch(err => {
-            console.error('Fout bij afspelen:', err);
-            setTimeout(() => this.playMedia(), this.reconnectDelay);
-        });
+        this.radioPlayer.play()
+            .then(() => {
+                this.isPlaying = true;
+                this.updatePlayPauseButton();
+            })
+            .catch(err => {
+                console.error('Fout bij afspelen:', err);
+                setTimeout(() => this.playMedia(), this.reconnectDelay);
+            });
     }
 
     pauseMedia() {
@@ -201,7 +214,7 @@ class RadioPlayer {
     saveVolumeToCookie(volume) {
         const expiration = new Date();
         expiration.setFullYear(expiration.getFullYear() + 1);
-        document.cookie = volume=${volume}; expires=${expiration.toUTCString()}; path=/;
+        document.cookie = `volume=${volume}; expires=${expiration.toUTCString()}; path=/;`;
     }
 
     getVolumeFromCookie() {
