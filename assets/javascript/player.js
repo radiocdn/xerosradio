@@ -13,10 +13,10 @@ class RadioPlayer {
         this.userPaused = false;
         this.defaultImage = 'https://res.cloudinary.com/xerosradio/image/upload/w_500,h_500,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
         this.streamUrl = 'https://stream.streamxerosradio.duckdns.org/xerosradio';
-        this.reconnectDelay = 3000;
 
         this.playPauseButton.addEventListener('click', this.togglePlay.bind(this));
         this.volumeSlider.addEventListener('input', this.adjustVolume.bind(this));
+        this.castButton.addEventListener('click', this.castButtonClick.bind(this));
 
         this.volumeSlider.value = this.getVolumeFromCookie() || 0.5;
         this.radioPlayer.volume = this.volumeSlider.value;
@@ -24,28 +24,15 @@ class RadioPlayer {
         this.updateRadioInfo();
         setInterval(this.updateRadioInfo.bind(this), 5000);
 
-        // Init cast button only if supported and NOT Apple device (Safari/iOS)
-        if (this.supportsChromecast() && !this.isAppleDevice()) {
-            this.castButton.addEventListener('click', this.castButtonClick.bind(this));
-            this.initializeCastSDK();
-        } else {
-            this.castButton.style.display = 'none';
-        }
-
+        this.initializeCastSDK();
         this.setupMediaSession();
 
         this.radioPlayer.addEventListener('error', this.handleStreamError.bind(this));
         this.radioPlayer.addEventListener('stalled', this.handleStreamError.bind(this));
         this.radioPlayer.addEventListener('ended', this.handleStreamError.bind(this));
         this.radioPlayer.addEventListener('pause', this.handlePause.bind(this));
-    }
 
-    isAppleDevice() {
-        return /iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent) && !window.MSStream;
-    }
-
-    supportsChromecast() {
-        return window.chrome && window.cast && cast && cast.framework;
+        this.reconnectDelay = 3000;
     }
 
     isValidUrl(url) {
@@ -62,6 +49,7 @@ class RadioPlayer {
         try {
             const response = await fetch(url, { method: 'GET', cache: 'no-cache' });
             if (!response.ok) throw new Error('Fout bij ophalen data');
+
             const data = await response.json();
             const { artist, title, cover_art200x200 } = data.current_song;
             const { dj_live_status, dj_name, dj_cover } = data.onair_info;
@@ -75,6 +63,7 @@ class RadioPlayer {
 
             if (dj_live_status) {
                 this.djInfoElement.textContent = dj_name;
+
                 const artworkUrl = this.isValidUrl(dj_cover) ? dj_cover : this.defaultImage;
                 const newImage = new Image();
                 newImage.src = artworkUrl;
@@ -84,11 +73,16 @@ class RadioPlayer {
                 newImage.alt = 'XerosRadio DJ';
                 newImage.style.width = '200px';
                 newImage.style.height = '200px';
+
                 this.artworkElement.innerHTML = '';
                 this.artworkElement.appendChild(newImage);
             } else {
                 this.djInfoElement.textContent = 'Nonstop Muziek';
-                this.artworkElement.innerHTML = `<img src="${this.defaultImage}" alt="XerosRadio Nonstop Muziek" draggable="false" loading="lazy" style="width: 200px; height: 200px;">`;
+                this.artworkElement.innerHTML = `
+                    <img src="${this.defaultImage}" alt="XerosRadio Nonstop Muziek"
+                        draggable="false" loading="lazy"
+                        style="width: 200px; height: 200px;">
+                `;
             }
         } catch (error) {
             this.handleError(error);
@@ -98,7 +92,11 @@ class RadioPlayer {
     handleError(error) {
         console.error('Fout:', error);
         this.djInfoElement.textContent = 'XerosRadio is momenteel niet beschikbaar.';
-        this.artworkElement.innerHTML = `<img src="${this.defaultImage}" alt="XerosRadio" draggable="false" loading="lazy" style="width: 200px; height: 200px;">`;
+        this.artworkElement.innerHTML = `
+            <img src="${this.defaultImage}" alt="XerosRadio"
+                draggable="false" loading="lazy"
+                style="width: 200px; height: 200px;">
+        `;
     }
 
     initializeCastSDK() {
@@ -187,13 +185,15 @@ class RadioPlayer {
 
     playMedia() {
         this.radioPlayer.src = this.streamUrl;
-        this.radioPlayer.play().then(() => {
-            this.isPlaying = true;
-            this.updatePlayPauseButton();
-        }).catch(err => {
-            console.error('Fout bij afspelen:', err);
-            setTimeout(() => this.playMedia(), this.reconnectDelay);
-        });
+        this.radioPlayer.play()
+            .then(() => {
+                this.isPlaying = true;
+                this.updatePlayPauseButton();
+            })
+            .catch(err => {
+                console.error('Fout bij afspelen:', err);
+                setTimeout(() => this.playMedia(), this.reconnectDelay);
+            });
     }
 
     pauseMedia() {
