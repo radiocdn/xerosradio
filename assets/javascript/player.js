@@ -13,26 +13,33 @@ class RadioPlayer {
         this.userPaused = false;
         this.defaultImage = 'https://res.cloudinary.com/xerosradio/image/upload/w_500,h_500,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
         this.streamUrl = 'https://stream.streamxerosradio.duckdns.org/xerosradio';
+        this.reconnectDelay = 3000;
+        this.isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
-        this.playPauseButton.addEventListener('click', this.togglePlay.bind(this));
-        this.volumeSlider.addEventListener('input', this.adjustVolume.bind(this));
-        this.castButton.addEventListener('click', this.castButtonClick.bind(this));
+        // Stel audio bron vooraf in om iOS te laten voorbereiden
+        this.radioPlayer.src = this.streamUrl;
 
+        // Volume
         this.volumeSlider.value = this.getVolumeFromCookie() || 0.5;
         this.radioPlayer.volume = this.volumeSlider.value;
+
+        // Event Listeners
+        this.playPauseButton.addEventListener('click', () => {
+            console.log('Play button clicked!');
+            this.togglePlay();
+        });
+        this.volumeSlider.addEventListener('input', this.adjustVolume.bind(this));
+        this.castButton.addEventListener('click', this.castButtonClick.bind(this));
+        this.radioPlayer.addEventListener('error', this.handleStreamError.bind(this));
+        this.radioPlayer.addEventListener('stalled', this.handleStreamError.bind(this));
+        this.radioPlayer.addEventListener('ended', this.handleStreamError.bind(this));
+        this.radioPlayer.addEventListener('pause', this.handlePause.bind(this));
 
         this.updateRadioInfo();
         setInterval(this.updateRadioInfo.bind(this), 5000);
 
         this.initializeCastSDK();
         this.setupMediaSession();
-
-        this.radioPlayer.addEventListener('error', this.handleStreamError.bind(this));
-        this.radioPlayer.addEventListener('stalled', this.handleStreamError.bind(this));
-        this.radioPlayer.addEventListener('ended', this.handleStreamError.bind(this));
-        this.radioPlayer.addEventListener('pause', this.handlePause.bind(this));
-
-        this.reconnectDelay = 3000;
     }
 
     isValidUrl(url) {
@@ -131,7 +138,7 @@ class RadioPlayer {
     handleCastSessionState(event) {
         if (event.sessionState === cast.framework.SessionState.SESSION_STARTED) {
             this.pauseMedia();
-            setTimeout(() => this.loadMediaToCast(), 1000); // kleine delay voor stabiliteit
+            setTimeout(() => this.loadMediaToCast(), 1000);
         } else if (event.sessionState === cast.framework.SessionState.SESSION_ENDED) {
             this.playMedia();
         }
@@ -173,13 +180,14 @@ class RadioPlayer {
     }
 
     playMedia() {
-        this.radioPlayer.src = this.streamUrl;
         this.radioPlayer.play().then(() => {
             this.isPlaying = true;
             this.updatePlayPauseButton();
         }).catch(err => {
             console.error('Fout bij afspelen:', err);
-            setTimeout(() => this.playMedia(), this.reconnectDelay);
+            if (!this.isIOS) {
+                setTimeout(() => this.playMedia(), this.reconnectDelay);
+            }
         });
     }
 
@@ -210,14 +218,14 @@ class RadioPlayer {
     }
 
     handleStreamError() {
-        if (!this.userPaused) {
+        if (!this.userPaused && !this.isIOS) {
             console.warn('Stream onderbroken. Herstart...');
             setTimeout(() => this.playMedia(), this.reconnectDelay);
         }
     }
 
     handlePause() {
-        if (!this.userPaused && !this.radioPlayer.ended) {
+        if (!this.userPaused && !this.radioPlayer.ended && !this.isIOS) {
             console.warn('Pauze zonder gebruikersinput. Herstart...');
             setTimeout(() => this.playMedia(), this.reconnectDelay);
         }
