@@ -631,6 +631,50 @@ img {
     }
 }
 
+
+/* Artikelweergave styling verbeterd voor desktop */
+.article-container {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: #ffffff;
+    color: #000000;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.article-container img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.article-container h1,
+.article-container h2,
+.article-container h3 {
+    color: #111;
+    margin-top: 20px;
+}
+
+.article-container p {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+/* Op grotere schermen beperken we de afbeeldinggrootte */
+@media (min-width: 768px) {
+    .article-container img {
+        max-width: 600px;
+        display: block;
+        margin: 0 auto 20px auto;
+    }
+}
+
+
 /* PART 0 - Setting Up */
 img[data-opt-src] {
     background-color: #f7f7f7; /* Placeholder opacity needs to be set to 0 in the optimole's settings for this to be visible */
