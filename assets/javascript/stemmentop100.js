@@ -15,7 +15,7 @@ let currentTrack = null;
 
 document.getElementById('searchBtn').addEventListener('click', () => {
   const query = document.getElementById('searchInput').value;
-  fetch(`https://api.allorigins.win/raw?url=https://api.deezer.com/search?q=${encodeURIComponent(query)}&output=jsonp`)
+  fetch(`https://php.streamxerosradio.duckdns.org/proxy/?url=https://api.deezer.com/search?q=${encodeURIComponent(query)}&output=jsonp`)
     .then(response => response.text())
     .then(data => {
       const json = JSON.parse(data.match(/{.*}/s)[0]);
