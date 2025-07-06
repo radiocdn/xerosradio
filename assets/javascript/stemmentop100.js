@@ -15,7 +15,7 @@ let currentTrack = null;
 
 document.getElementById('searchBtn').addEventListener('click', () => {
   const query = document.getElementById('searchInput').value;
-  fetch(`https://php.streamxerosradio.duckdns.org/api/xerosradio/search/?q=${encodeURIComponent(query)}`)
+  fetch(`https://xerosradiocdn.global.ssl.fastly.net/api/xerosradio/search/?q=${encodeURIComponent(query)}`)
     .then(response => response.json())
     .then(json => {
       resultsEl.innerHTML = '';
