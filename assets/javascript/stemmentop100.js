@@ -189,7 +189,7 @@ voteForm.addEventListener('submit', async (e) => {
   const votesToSend = voteList.map(t => t.name);
 
   try {
-    const res = await fetch('https://xerosradiocdn.global.ssl.fastly.net/api/vote.php', {
+    const res = await fetch('https://xerosradiocdn.global.ssl.fastly.net/api/xerosradio/vote/', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, votes: votesToSend })
