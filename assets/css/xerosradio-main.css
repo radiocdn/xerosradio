@@ -1,6 +1,10 @@
 /* Add your CSS styles here to customize the appearance of the website of XerosRadio website */
 @import url(https://fonts.bunny.net/css?family=sofia-sans:800);
 
+html {
+  scroll-behavior: smooth;
+}
+
 * {
     font-family: 'Sofia Sans', sans-serif;
     box-sizing: border-box;
