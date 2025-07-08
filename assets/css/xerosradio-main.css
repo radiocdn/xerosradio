@@ -456,6 +456,10 @@ img {
     transition: background-color 0.3s, color 0.3s;
 }
 
+button {
+  text-decoration: none; /* verwijdert onderstreping */
+}
+
 .feed-read-more:hover {
     background-color: #007bff;
     color: #fff;
