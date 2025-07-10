@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const container = document.getElementById("playlist-container");
     const apiURL = "https://xerosradioapiprd.global.ssl.fastly.net/playlist";
-    const fallbackImage = "https://res.cloudinary.com/xerosradio/image/upload/f_webp,q_auto/XerosRadio_Logo";
+    const fallbackImage = "https://res.cloudinary.com/xerosradio/image/upload/f_webp,q_auto,w_200,h_200/XerosRadio_Logo_Achtergrond_Wit";
 
     // Utility to create element with class and optional innerHTML
     function createElement(tag, className = "", innerHTML = "") {
