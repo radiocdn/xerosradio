@@ -14,6 +14,11 @@ class RadioPlayer {
         this.defaultImage = 'https://res.cloudinary.com/xerosradio/image/upload/w_500,h_500,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
         this.streamUrl = 'https://stream.streamxerosradio.duckdns.org/xerosradio';
 
+        // Accessibility: aria-labels toevoegen
+        this.playPauseButton.setAttribute('aria-label', 'Play / Pauze');
+        this.volumeSlider.setAttribute('aria-label', 'Volume aanpassen');
+        this.castButton.setAttribute('aria-label', 'Cast naar apparaat');
+
         this.lastSong = {
             artist: '',
             title: '',
