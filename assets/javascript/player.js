@@ -14,6 +14,18 @@ class RadioPlayer {
         this.defaultImage = 'https://res.cloudinary.com/xerosradio/image/upload/w_500,h_500,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
         this.streamUrl = 'https://stream.streamxerosradio.duckdns.org/xerosradio';
 
+        this.lastSong = {
+            artist: '',
+            title: '',
+            cover: ''
+        };
+
+        this.lastDJ = {
+            status: null,
+            name: '',
+            cover: ''
+        };
+
         this.playPauseButton.addEventListener('click', this.togglePlay.bind(this));
         this.volumeSlider.addEventListener('input', this.adjustVolume.bind(this));
         this.castButton.addEventListener('click', this.castButtonClick.bind(this));
@@ -55,34 +67,56 @@ class RadioPlayer {
             const { dj_live_status, dj_name, dj_cover } = data.onair_info;
 
             const artwork200 = cover_art200x200 || this.defaultImage;
-            this.artistInfo.textContent = artist;
-            this.titleInfo.textContent = title;
-            this.albumArtwork.src = artwork200;
 
-            this.updateMediaMetadata();
+            // Update now playing alleen als veranderd
+            if (
+                artist !== this.lastSong.artist ||
+                title !== this.lastSong.title ||
+                artwork200 !== this.lastSong.cover
+            ) {
+                this.artistInfo.textContent = artist;
+                this.titleInfo.textContent = title;
+                this.albumArtwork.src = artwork200;
 
-            if (dj_live_status) {
-                this.djInfoElement.textContent = dj_name;
+                this.updateMediaMetadata();
 
-                const artworkUrl = this.isValidUrl(dj_cover) ? dj_cover : this.defaultImage;
-                const newImage = new Image();
-                newImage.src = artworkUrl;
-                newImage.onerror = () => { newImage.src = this.defaultImage; };
-                newImage.draggable = false;
-                newImage.loading = 'lazy';
-                newImage.alt = 'XerosRadio DJ';
-                newImage.style.width = '200px';
-                newImage.style.height = '200px';
+                this.lastSong = { artist, title, cover: artwork200 };
+            }
 
-                this.artworkElement.innerHTML = '';
-                this.artworkElement.appendChild(newImage);
-            } else {
-                this.djInfoElement.textContent = 'Nonstop Muziek';
-                this.artworkElement.innerHTML = `
-                    <img src="${this.defaultImage}" alt="XerosRadio Nonstop Muziek"
-                        draggable="false" loading="lazy"
-                        style="width: 200px; height: 200px;">
-                `;
+            // Update DJ info alleen als veranderd
+            if (
+                dj_live_status !== this.lastDJ.status ||
+                dj_name !== this.lastDJ.name ||
+                dj_cover !== this.lastDJ.cover
+            ) {
+                if (dj_live_status) {
+                    this.djInfoElement.textContent = dj_name;
+
+                    const artworkUrl = this.isValidUrl(dj_cover) ? dj_cover : this.defaultImage;
+                    const newImage = new Image();
+                    newImage.src = artworkUrl;
+                    newImage.onerror = () => { newImage.src = this.defaultImage; };
+                    newImage.draggable = false;
+                    newImage.loading = 'lazy';
+                    newImage.alt = 'XerosRadio DJ';
+                    newImage.style.width = '200px';
+                    newImage.style.height = '200px';
+
+                    this.artworkElement.innerHTML = '';
+                    this.artworkElement.appendChild(newImage);
+                } else {
+                    this.djInfoElement.textContent = 'Nonstop Muziek';
+                    this.artworkElement.innerHTML = `
+                        <img src="${this.defaultImage}" alt="XerosRadio Nonstop Muziek"
+                            draggable="false" loading="lazy"
+                            style="width: 200px; height: 200px;">
+                    `;
+                }
+                this.lastDJ = {
+                    status: dj_live_status,
+                    name: dj_name,
+                    cover: dj_cover
+                };
             }
         } catch (error) {
             this.handleError(error);
@@ -142,7 +176,7 @@ class RadioPlayer {
     handleCastSessionState(event) {
         if (event.sessionState === cast.framework.SessionState.SESSION_STARTED) {
             this.pauseMedia();
-            setTimeout(() => this.loadMediaToCast(), 1000); // kleine delay voor stabiliteit
+            setTimeout(() => this.loadMediaToCast(), 1000);
         } else if (event.sessionState === cast.framework.SessionState.SESSION_ENDED) {
             this.playMedia();
         }
