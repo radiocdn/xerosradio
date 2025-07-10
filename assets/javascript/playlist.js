@@ -3,7 +3,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const apiURL = "https://xerosradioapiprd.global.ssl.fastly.net/playlist";
     const fallbackImage = "https://res.cloudinary.com/xerosradio/image/upload/f_webp,q_auto,w_200,h_200/XerosRadio_Logo_Achtergrond_Wit";
 
-    // Utility to create element with class and optional innerHTML
+    /**
+     * Utility functie om een element aan te maken met optionele class en innerHTML
+     * @param {string} tag - Het HTML-elementtype
+     * @param {string} [className] - Optionele CSS-class
+     * @param {string} [innerHTML] - Optionele inhoud
+     * @returns {HTMLElement}
+     */
     function createElement(tag, className = "", innerHTML = "") {
         const el = document.createElement(tag);
         if (className) el.className = className;
@@ -11,20 +17,30 @@ document.addEventListener("DOMContentLoaded", () => {
         return el;
     }
 
-    // Format playedAt date/time nicely (if applicable)
+    /**
+     * Format de datumtijd van het afgespeelde nummer naar een leesbare string
+     * @param {string} dateString - De originele datumtijdstring
+     * @returns {string} - Geformatteerde datumtijd of lege string
+     */
     function formatPlayedAt(dateString) {
         if (!dateString) return "";
         const date = new Date(dateString);
-        if (isNaN(date)) return dateString; // fallback if invalid date
-        return date.toLocaleString(); // customize locale/format here if needed
+        if (isNaN(date)) return dateString; // fallback als datum ongeldig is
+        return date.toLocaleString(); // evt. locale aanpassen indien gewenst
     }
 
-    // Create playlist item element
+    /**
+     * Maak een playlist-item DOM-element
+     * @param {Object} item - Playlist item met data
+     * @returns {HTMLElement}
+     */
     function createPlaylistItem(item) {
         const artist = item.artist || "Onbekend";
         const title = item.title || "Onbekend nummer";
         const playedAt = formatPlayedAt(item.played_at);
-        const cover = item.album_cover && item.album_cover.startsWith("http") ? item.album_cover : fallbackImage;
+        const cover = (item.album_cover && item.album_cover.startsWith("http")) 
+            ? item.album_cover 
+            : fallbackImage;
 
         const div = createElement("div", "playlist-item");
 
@@ -41,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <p>${playedAt}</p>
         `;
 
-        const spotifyYoutubeContainer = createElement("div", "spotify-youtube-container");
+        const linksContainer = createElement("div", "spotify-youtube-container");
         const searchQuery = encodeURIComponent(`${artist} - ${title}`);
 
         const spotifyLink = createElement("a");
@@ -62,16 +78,18 @@ document.addEventListener("DOMContentLoaded", () => {
         soundcloudLink.rel = "noopener";
         soundcloudLink.innerHTML = `<i class="fab fa-soundcloud soundcloud-icon"></i>`;
 
-        spotifyYoutubeContainer.append(spotifyLink, youtubeLink, soundcloudLink);
+        linksContainer.append(spotifyLink, youtubeLink, soundcloudLink);
 
-        div.append(img, details, spotifyYoutubeContainer);
+        div.append(img, details, linksContainer);
 
         return div;
     }
 
-    // Load playlist data and render
+    /**
+     * Laad de playlist via API en toon in de container
+     */
     async function loadPlaylist() {
-        container.innerHTML = "<p>Laden...</p>"; // loading state
+        container.innerHTML = "<p>Laden...</p>"; // laadstatus tonen
 
         try {
             const response = await fetch(apiURL);
@@ -87,9 +105,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            container.innerHTML = ""; // clear loading text
+            container.innerHTML = ""; // laadtekst verwijderen
 
-            // Append each playlist item
             data.forEach(item => {
                 container.appendChild(createPlaylistItem(item));
             });
@@ -100,5 +117,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // Start laden zodra DOM klaar is
     loadPlaylist();
 });
