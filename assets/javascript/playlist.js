@@ -30,37 +30,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const img = createElement("img");
         img.src = cover;
-        img.alt = ${artist} - ${title};
+        img.alt = `${artist} - ${title}`;  // <-- Use backticks here
         img.loading = "lazy";
         img.draggable = false;
 
-        const details = createElement("div", "details");
-        details.innerHTML = 
+        const details = createElement("div", "details", `
             <h2>${artist}</h2>
             <p>${title}</p>
             <p>${playedAt}</p>
-        ;
+        `);
 
         const spotifyYoutubeContainer = createElement("div", "spotify-youtube-container");
-        const searchQuery = encodeURIComponent(${artist} - ${title});
+        const searchQuery = encodeURIComponent(`${artist} - ${title}`);  // <-- Backticks here
 
         const spotifyLink = createElement("a");
-        spotifyLink.href = https://open.spotify.com/search/${searchQuery};
+        spotifyLink.href = `https://open.spotify.com/search/${searchQuery}`;
         spotifyLink.target = "_blank";
         spotifyLink.rel = "noopener";
-        spotifyLink.innerHTML = <i class="fab fa-spotify spotify-icon"></i>;
+        spotifyLink.innerHTML = `<i class="fab fa-spotify spotify-icon"></i>`;
 
         const youtubeLink = createElement("a");
-        youtubeLink.href = https://www.youtube.com/results?search_query=${searchQuery};
+        youtubeLink.href = `https://www.youtube.com/results?search_query=${searchQuery}`;
         youtubeLink.target = "_blank";
         youtubeLink.rel = "noopener";
-        youtubeLink.innerHTML = <i class="fab fa-youtube youtube-icon"></i>;
+        youtubeLink.innerHTML = `<i class="fab fa-youtube youtube-icon"></i>`;
 
         const soundcloudLink = createElement("a");
-        soundcloudLink.href = https://soundcloud.com/search?q=${searchQuery};
+        soundcloudLink.href = `https://soundcloud.com/search?q=${searchQuery}`;
         soundcloudLink.target = "_blank";
         soundcloudLink.rel = "noopener";
-        soundcloudLink.innerHTML = <i class="fab fa-soundcloud soundcloud-icon"></i>;
+        soundcloudLink.innerHTML = `<i class="fab fa-soundcloud soundcloud-icon"></i>`;
 
         spotifyYoutubeContainer.append(spotifyLink, youtubeLink, soundcloudLink);
 
@@ -95,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
         } catch (error) {
-            container.innerHTML = <p>Fout bij het laden van de afspeellijst: ${error.message}</p>;
+            container.innerHTML = `<p>Fout bij het laden van de afspeellijst: ${error.message}</p>`;  // <-- Backticks here too
             console.error(error);
         }
     }
