@@ -3,23 +3,24 @@ document.addEventListener("DOMContentLoaded", () => {
     const apiURL = "https://xerosradioapiprd.global.ssl.fastly.net/playlist";
     const fallbackImage = "https://res.cloudinary.com/xerosradio/image/upload/f_webp,q_auto,w_200,h_200/XerosRadio_Logo_Achtergrond_Wit";
 
-    // Utility to create element with class and optional innerHTML XerosRadio
-    function createElement(tag, className = "", innerHTML = "") {
+    function createElement(tag, className = "", content = "") {
         const el = document.createElement(tag);
         if (className) el.className = className;
-        if (innerHTML) el.innerHTML = innerHTML;
+        if (content && !content.includes("<")) {
+            el.textContent = content; // veilige tekst
+        } else if (content) {
+            el.innerHTML = content; // HTML mag gebruikt worden
+        }
         return el;
     }
 
-    // Format playedAt date/time nicely (if applicable) XerosRadio
     function formatPlayedAt(dateString) {
         if (!dateString) return "";
         const date = new Date(dateString);
-        if (isNaN(date)) return dateString; // fallback if invalid date XerosRadio
-        return date.toLocaleString(); // customize locale/format here if needed XerosRadio
+        if (isNaN(date)) return dateString;
+        return date.toLocaleString();
     }
 
-    // Create playlist item element XerosRadio
     function createPlaylistItem(item) {
         const artist = item.artist || "Onbekend";
         const title = item.title || "Onbekend nummer";
@@ -30,9 +31,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const img = createElement("img");
         img.src = cover;
-        img.alt = `${artist} - ${title}`;  // <-- Use backticks here XerosRadio
+        img.alt = `${artist} - ${title}`;
         img.loading = "lazy";
+        img.decoding = "async";
         img.draggable = false;
+        img.onerror = () => {
+            img.src = fallbackImage;
+        };
 
         const details = createElement("div", "details", `
             <h2>${artist}</h2>
@@ -40,41 +45,38 @@ document.addEventListener("DOMContentLoaded", () => {
             <p>${playedAt}</p>
         `);
 
-        const spotifyYoutubeContainer = createElement("div", "spotify-youtube-container");
-        const searchQuery = encodeURIComponent(`${artist} - ${title}`);  // <-- Backticks here XerosRadio
+        const links = createElement("div", "spotify-youtube-container");
+        const searchQuery = encodeURIComponent(`${artist} - ${title}`);
 
-        const spotifyLink = createElement("a");
-        spotifyLink.href = `https://open.spotify.com/search/${searchQuery}`;
-        spotifyLink.target = "_blank";
-        spotifyLink.rel = "noopener";
-        spotifyLink.innerHTML = `<i class="fab fa-spotify spotify-icon"></i>`;
+        const spotify = createElement("a");
+        spotify.href = `https://open.spotify.com/search/${searchQuery}`;
+        spotify.target = "_blank";
+        spotify.rel = "noopener";
+        spotify.innerHTML = `<i class="fab fa-spotify spotify-icon"></i>`;
 
-        const youtubeLink = createElement("a");
-        youtubeLink.href = `https://www.youtube.com/results?search_query=${searchQuery}`;
-        youtubeLink.target = "_blank";
-        youtubeLink.rel = "noopener";
-        youtubeLink.innerHTML = `<i class="fab fa-youtube youtube-icon"></i>`;
+        const youtube = createElement("a");
+        youtube.href = `https://www.youtube.com/results?search_query=${searchQuery}`;
+        youtube.target = "_blank";
+        youtube.rel = "noopener";
+        youtube.innerHTML = `<i class="fab fa-youtube youtube-icon"></i>`;
 
-        const soundcloudLink = createElement("a");
-        soundcloudLink.href = `https://soundcloud.com/search?q=${searchQuery}`;
-        soundcloudLink.target = "_blank";
-        soundcloudLink.rel = "noopener";
-        soundcloudLink.innerHTML = `<i class="fab fa-soundcloud soundcloud-icon"></i>`;
+        const soundcloud = createElement("a");
+        soundcloud.href = `https://soundcloud.com/search?q=${searchQuery}`;
+        soundcloud.target = "_blank";
+        soundcloud.rel = "noopener";
+        soundcloud.innerHTML = `<i class="fab fa-soundcloud soundcloud-icon"></i>`;
 
-        spotifyYoutubeContainer.append(spotifyLink, youtubeLink, soundcloudLink);
-
-        div.append(img, details, spotifyYoutubeContainer);
+        links.append(spotify, youtube, soundcloud);
+        div.append(img, details, links);
 
         return div;
     }
 
-    // Load playlist data and render
     async function loadPlaylist() {
-        container.innerHTML = "<p>Laden van de Playlist...</p>"; // loading state XerosRadio
+        container.textContent = "Laden van de Playlist...";
 
         try {
             const response = await fetch(apiURL);
-
             if (!response.ok) {
                 throw new Error("Kan de afspeellijst niet laden.");
             }
@@ -82,19 +84,19 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await response.json();
 
             if (!Array.isArray(data) || data.length === 0) {
-                container.innerHTML = "<p>Helaas, er zijn geen nummers gevonden.</p>";
+                container.innerHTML = `<p class="empty-message">Helaas, er zijn geen nummers gevonden.</p>`;
                 return;
             }
 
-            container.innerHTML = ""; // clear loading text XerosRadio
-
-            // Append each playlist item
+            container.innerHTML = "";
+            const fragment = document.createDocumentFragment();
             data.forEach(item => {
-                container.appendChild(createPlaylistItem(item));
+                fragment.appendChild(createPlaylistItem(item));
             });
+            container.appendChild(fragment);
 
         } catch (error) {
-            container.innerHTML = `<p>Fout bij het laden van de afspeellijst: ${error.message}</p>`;  // <-- Backticks here too XerosRadio
+            container.innerHTML = `<p>Fout bij het laden van de afspeellijst: ${error.message}</p>`;
             console.error(error);
         }
     }
