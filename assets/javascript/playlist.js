@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const apiURL = "https://xerosradioapiprd.global.ssl.fastly.net/playlist";
     const fallbackImage = "https://res.cloudinary.com/xerosradio/image/upload/f_webp,q_auto,w_200,h_200/XerosRadio_Logo_Achtergrond_Wit";
 
-    // Utility to create element with class and optional innerHTML
+    // Utility to create element with class and optional innerHTML XerosRadio
     function createElement(tag, className = "", innerHTML = "") {
         const el = document.createElement(tag);
         if (className) el.className = className;
@@ -11,15 +11,15 @@ document.addEventListener("DOMContentLoaded", () => {
         return el;
     }
 
-    // Format playedAt date/time nicely (if applicable)
+    // Format playedAt date/time nicely (if applicable) XerosRadio
     function formatPlayedAt(dateString) {
         if (!dateString) return "";
         const date = new Date(dateString);
-        if (isNaN(date)) return dateString; // fallback if invalid date
-        return date.toLocaleString(); // customize locale/format here if needed
+        if (isNaN(date)) return dateString; // fallback if invalid date XerosRadio
+        return date.toLocaleString(); // customize locale/format here if needed XerosRadio
     }
 
-    // Create playlist item element
+    // Create playlist item element XerosRadio
     function createPlaylistItem(item) {
         const artist = item.artist || "Onbekend";
         const title = item.title || "Onbekend nummer";
@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const img = createElement("img");
         img.src = cover;
-        img.alt = `${artist} - ${title}`;  // <-- Use backticks here
+        img.alt = `${artist} - ${title}`;  // <-- Use backticks here XerosRadio
         img.loading = "lazy";
         img.draggable = false;
 
@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
         `);
 
         const spotifyYoutubeContainer = createElement("div", "spotify-youtube-container");
-        const searchQuery = encodeURIComponent(`${artist} - ${title}`);  // <-- Backticks here
+        const searchQuery = encodeURIComponent(`${artist} - ${title}`);  // <-- Backticks here XerosRadio
 
         const spotifyLink = createElement("a");
         spotifyLink.href = `https://open.spotify.com/search/${searchQuery}`;
@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Load playlist data and render
     async function loadPlaylist() {
-        container.innerHTML = "<p>Laden...</p>"; // loading state
+        container.innerHTML = "<p>Laden van de Playlist...</p>"; // loading state XerosRadio
 
         try {
             const response = await fetch(apiURL);
@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            container.innerHTML = ""; // clear loading text
+            container.innerHTML = ""; // clear loading text XerosRadio
 
             // Append each playlist item
             data.forEach(item => {
@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
 
         } catch (error) {
-            container.innerHTML = `<p>Fout bij het laden van de afspeellijst: ${error.message}</p>`;  // <-- Backticks here too
+            container.innerHTML = `<p>Fout bij het laden van de afspeellijst: ${error.message}</p>`;  // <-- Backticks here too XerosRadio
             console.error(error);
         }
     }
