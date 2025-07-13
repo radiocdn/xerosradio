@@ -868,13 +868,6 @@ img[data-opt-lazy-loaded] {
             color: #ff5555;
             font-size: 1.2rem;
         }
-
-        #feed-feed-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 300px; /* pas aan afhankelijk van je layout */
-        }
         
         .news-unavailable {
             display: flex;
