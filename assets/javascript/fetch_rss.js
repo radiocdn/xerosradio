@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
         container.innerHTML = `
             <div class="news-unavailable" style="text-align: center; padding: 2rem;">
                 <img src="https://res.cloudinary.com/xerosradio/image/upload/v1752406213/Assets/errornews_xerosradio.svg" 
-                     style="width: 100px;" draggable="false" alt="Nieuwsfeed niet beschikbaar">
+                     style="width: 150px;" draggable="false" alt="Nieuwsfeed niet beschikbaar">
                 <h3 style="color: white;">Nieuws is niet beschikbaar, probeer het later op een andere tijd</h3>
             </div>
         `;
