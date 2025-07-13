@@ -15,15 +15,24 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 2  # Nodig om diff te kunnen maken
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20'
 
+      - name: Cache node_modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
       - name: Install Babel dependencies
-        run: |
-          npm install --save-dev @babel/core @babel/cli @babel/preset-env @babel/preset-react
+        run: npm install --save-dev @babel/core @babel/cli @babel/preset-env @babel/preset-react
 
       - name: Create Babel config
         run: |
@@ -31,7 +40,15 @@ jobs:
             "presets": ["@babel/preset-env", "@babel/preset-react"]
           }' > babel.config.json
 
-      - name: Auto Minify
+      - name: Get list of changed files in assets folder
+        id: changed-files
+        run: |
+          # Krijg lijst van gewijzigde bestanden in ./assets sinds vorige commit
+          changed=$(git diff --name-only HEAD~1 HEAD -- ./assets)
+          echo "::set-output name=files::$changed"
+
+      - name: Auto Minify changed files only
+        if: steps.changed-files.outputs.files != ''
         uses: nizarmah/auto-minify@v3.0.0
         with:
           directory: ./assets
@@ -40,11 +57,21 @@ jobs:
           maxdepth: 3
           js_engine: babel
           css_engine: lightning
+          # Er is geen directe input om alleen specifieke bestanden te minifyen in nizarmah/auto-minify,
+          # dus we filter met een workaround hieronder
+
+      - name: Minify only changed files (manual)
+        if: steps.changed-files.outputs.files != ''
+        run: |
+          # Voor elk bestand dat veranderd is, minify individueel
+          for file in ${{ steps.changed-files.outputs.files }}; do
+            echo "Minifying $file"
+            npx auto-minify --directory "$(dirname "$file")" --output ./dist/minified --overwrite false --maxdepth 1 --js_engine babel --css_engine lightning --files "$(basename "$file")"
+          done
 
       - name: Commit and Push Minified Files
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add dist/minified
-          git commit -m "Auto-minified files"
-          git push
+          git diff --quiet && echo "No changes to commit" || (git commit -m "Auto-minified files" && git push)
