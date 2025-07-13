@@ -14,7 +14,6 @@ class RadioPlayer {
         this.defaultImage = 'https://res.cloudinary.com/xerosradio/image/upload/w_500,h_500,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
         this.streamUrl = 'https://stream.streamxerosradio.duckdns.org/xerosradio';
 
-        // Accessibility: aria-labels toevoegen
         this.playPauseButton.setAttribute('aria-label', 'Play / Pauze');
         this.volumeSlider.setAttribute('aria-label', 'Volume aanpassen');
         this.castButton.setAttribute('aria-label', 'Cast naar apparaat');
@@ -73,7 +72,7 @@ class RadioPlayer {
 
             const artwork200 = cover_art200x200 || this.defaultImage;
 
-            // Update now playing alleen als veranderd
+            // Update now playing
             if (
                 artist !== this.lastSong.artist ||
                 title !== this.lastSong.title ||
@@ -88,30 +87,27 @@ class RadioPlayer {
                 this.lastSong = { artist, title, cover: artwork200 };
             }
 
-            // Update DJ info alleen als veranderd
+            // Update DJ info en cover altijd
             if (
                 dj_live_status !== this.lastDJ.status ||
                 dj_name !== this.lastDJ.name ||
                 dj_cover !== this.lastDJ.cover
             ) {
-                if (dj_live_status) {
-                    this.djInfoElement.textContent = dj_name;
+                this.djInfoElement.textContent = dj_name;
 
-                    const artworkUrl = this.isValidUrl(dj_cover) ? dj_cover : this.defaultImage;
-                    const newImage = new Image();
-                    newImage.src = artworkUrl;
-                    newImage.onerror = () => { newImage.src = this.defaultImage; };
-                    newImage.draggable = false;
-                    newImage.loading = 'lazy';
-                    newImage.alt = 'XerosRadio DJ';
-                    newImage.style.width = '200px';
-                    newImage.style.height = '200px';
+                const artworkUrl = this.isValidUrl(dj_cover) ? dj_cover : this.defaultImage;
+                const newImage = new Image();
+                newImage.src = artworkUrl;
+                newImage.onerror = () => { newImage.src = this.defaultImage; };
+                newImage.draggable = false;
+                newImage.loading = 'lazy';
+                newImage.alt = 'XerosRadio DJ';
+                newImage.style.width = '200px';
+                newImage.style.height = '200px';
 
-                    this.artworkElement.innerHTML = '';
-                    this.artworkElement.appendChild(newImage);
-                } else {
-                    this.djInfoElement.textContent = dj_name;
-                }
+                this.artworkElement.innerHTML = '';
+                this.artworkElement.appendChild(newImage);
+
                 this.lastDJ = {
                     status: dj_live_status,
                     name: dj_name,
