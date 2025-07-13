@@ -869,14 +869,14 @@ img[data-opt-lazy-loaded] {
             font-size: 1.2rem;
         }
         
-        .news-unavailable {
+        .news-fallback {
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
         }
         
-        .news-unavailable h3 {
+        .news-fallback h3 {
             color: white;
             margin-top: 1rem;
         }
