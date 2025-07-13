@@ -868,21 +868,16 @@ img[data-opt-lazy-loaded] {
             font-size: 1.2rem;
         }
 
-        #feed-feed-container {
+        #news-unavailable-container {
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 300px; /* pas aan afhankelijk van je layout */
-        }
-        
-        .news-unavailable {
-            display: flex;
             flex-direction: column;
-            align-items: center;
+            height: 300px; /* of 100vh voor hele scherm */
             text-align: center;
         }
         
-        .news-unavailable h3 {
+        #news-unavailable-container h3 {
             color: white;
             margin-top: 1rem;
         }
