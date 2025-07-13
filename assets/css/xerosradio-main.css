@@ -868,6 +868,21 @@ img[data-opt-lazy-loaded] {
             font-size: 1.2rem;
         }
 
+        .news-unavailable {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            min-height: 300px; /* of 100vh voor volledige viewport */
+        }
+        
+        .news-unavailable h3 {
+            color: white;
+            margin-top: 1rem;
+        }
+
         /* Mobile styles */
         @media (max-width: 768px) {
             .playlist-item {
