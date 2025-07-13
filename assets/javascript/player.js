@@ -110,7 +110,7 @@ class RadioPlayer {
                     this.artworkElement.innerHTML = '';
                     this.artworkElement.appendChild(newImage);
                 } else {
-                    this.djInfoElement.textContent = 'Nonstop Muziek';
+                    this.djInfoElement.textContent = dj_name;
                     this.artworkElement.innerHTML = `
                         <img src="${this.defaultImage}" alt="XerosRadio Nonstop Muziek"
                             draggable="false" loading="lazy"
