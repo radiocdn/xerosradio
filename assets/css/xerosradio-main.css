@@ -881,6 +881,10 @@ img[data-opt-lazy-loaded] {
             margin-top: 1rem;
         }
 
+        .news-fallback img {
+            width: 150px;
+        }  
+
         /* Mobile styles */
         @media (max-width: 768px) {
             .playlist-item {
