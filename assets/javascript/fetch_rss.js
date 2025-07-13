@@ -75,18 +75,14 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function showFallback() {
-    // Verberg normale container
-    container.style.display = 'none';
-    loadMoreButton.style.display = 'none';
-
-    const fallback = document.getElementById('news-unavailable-container');
-    fallback.style.display = 'flex';
-    fallback.innerHTML = `
-        <img src="https://res.cloudinary.com/xerosradio/image/upload/v1752406213/Assets/errornews_xerosradio.svg" 
-             style="width: 100px;" draggable="false" alt="Nieuwsfeed niet beschikbaar">
-        <h3>Nieuws is niet beschikbaar,<br>probeer het later op een andere tijd</h3>
-    `;
-}
+        container.innerHTML = `
+            <div class="news-unavailable" style="text-align: center; padding: 2rem;">
+                <img src="https://res.cloudinary.com/xerosradio/image/upload/v1752406213/Assets/errornews_xerosradio.svg" 
+                     style="width: 100px;" draggable="false" alt="Nieuwsfeed niet beschikbaar">
+                <h3>Nieuws is niet beschikbaar, probeer het later op een andere tijd</h3>
+            </div>
+        `;
+    }
 
     fetchAndDisplayFeed(`${feedUrl}?start=${start}`);
 
