@@ -476,6 +476,7 @@ button {
 
 /* Feed Description */
 .feed-description {
+    display: none
     font-size: 0.9em;
     color: #555;
     transition: max-height 0.3s ease;
