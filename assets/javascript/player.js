@@ -72,7 +72,6 @@ class RadioPlayer {
 
             const artwork200 = cover_art200x200 || this.defaultImage;
 
-            // Update now playing
             if (
                 artist !== this.lastSong.artist ||
                 title !== this.lastSong.title ||
@@ -87,7 +86,6 @@ class RadioPlayer {
                 this.lastSong = { artist, title, cover: artwork200 };
             }
 
-            // Update DJ info en cover altijd
             if (
                 dj_live_status !== this.lastDJ.status ||
                 dj_name !== this.lastDJ.name ||
@@ -105,7 +103,7 @@ class RadioPlayer {
                 newImage.style.width = '200px';
                 newImage.style.height = '200px';
 
-                this.artworkElement.innerHTML = '';
+                this.artworkElement.innerHTML = ''; // veilig leeglopen
                 this.artworkElement.appendChild(newImage);
 
                 this.lastDJ = {
@@ -122,11 +120,17 @@ class RadioPlayer {
     handleError(error) {
         console.error('Fout:', error);
         this.djInfoElement.textContent = 'XerosRadio is momenteel niet beschikbaar.';
-        this.artworkElement.innerHTML = `
-            <img src="${this.defaultImage}" alt="XerosRadio"
-                draggable="false" loading="lazy"
-                style="width: 200px; height: 200px;">
-        `;
+
+        const fallbackImg = new Image();
+        fallbackImg.src = this.defaultImage;
+        fallbackImg.alt = 'XerosRadio';
+        fallbackImg.draggable = false;
+        fallbackImg.loading = 'lazy';
+        fallbackImg.style.width = '200px';
+        fallbackImg.style.height = '200px';
+
+        this.artworkElement.innerHTML = '';
+        this.artworkElement.appendChild(fallbackImg);
     }
 
     initializeCastSDK() {
@@ -244,7 +248,7 @@ class RadioPlayer {
     saveVolumeToCookie(volume) {
         const expiration = new Date();
         expiration.setFullYear(expiration.getFullYear() + 1);
-        document.cookie = `volume=${volume}; expires=${expiration.toUTCString()}; path=/;`;
+        document.cookie = `volume=${volume}; expires=${expiration.toUTCString()}; path=/; Secure; SameSite=Strict`;
     }
 
     getVolumeFromCookie() {
@@ -267,5 +271,5 @@ class RadioPlayer {
     }
 }
 
-// Initialisatie
+// Initialiseer de speler
 const radioPlayer = new RadioPlayer();
