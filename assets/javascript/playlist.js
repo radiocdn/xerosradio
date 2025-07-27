@@ -6,11 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function createElement(tag, className = "", content = "") {
         const el = document.createElement(tag);
         if (className) el.className = className;
-        if (content && !content.includes("<")) {
-            el.textContent = content; // veilige tekst
-        } else if (content) {
-            el.innerHTML = content; // HTML mag gebruikt worden
-        }
+        if (content) el.textContent = content; // altijd veilige tekst
         return el;
     }
 
@@ -39,28 +35,28 @@ document.addEventListener("DOMContentLoaded", () => {
             img.src = fallbackImage;
         };
 
-        const details = createElement("div", "details", `
-            <h2>${artist}</h2>
-            <p>${title}</p>
-            <p>${playedAt}</p>
-        `);
+        const details = createElement("div", "details");
+        const h2 = createElement("h2", "", artist);
+        const pTitle = createElement("p", "", title);
+        const pDate = createElement("p", "", playedAt);
+        details.append(h2, pTitle, pDate);
 
         const links = createElement("div", "spotify-youtube-container");
         const searchQuery = encodeURIComponent(`${artist} - ${title}`);
 
-        const spotify = createElement("a");
+        const spotify = document.createElement("a");
         spotify.href = `https://open.spotify.com/search/${searchQuery}`;
         spotify.target = "_blank";
         spotify.rel = "noopener";
-        spotify.innerHTML = `<i class="fab fa-spotify spotify-icon"></i>`;
+        spotify.innerHTML = `<i class="fab fa-spotify spotify-icon"></i>`; // Alleen veilige iconen
 
-        const youtube = createElement("a");
+        const youtube = document.createElement("a");
         youtube.href = `https://www.youtube.com/results?search_query=${searchQuery}`;
         youtube.target = "_blank";
         youtube.rel = "noopener";
         youtube.innerHTML = `<i class="fab fa-youtube youtube-icon"></i>`;
 
-        const soundcloud = createElement("a");
+        const soundcloud = document.createElement("a");
         soundcloud.href = `https://soundcloud.com/search?q=${searchQuery}`;
         soundcloud.target = "_blank";
         soundcloud.rel = "noopener";
@@ -83,12 +79,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const data = await response.json();
 
+            container.innerHTML = "";
+
             if (!Array.isArray(data) || data.length === 0) {
-                container.innerHTML = `<p class="empty-message">Helaas, er zijn geen nummers gevonden.</p>`;
+                const emptyMessage = createElement("p", "empty-message", "Helaas, er zijn geen nummers gevonden.");
+                container.appendChild(emptyMessage);
                 return;
             }
 
-            container.innerHTML = "";
             const fragment = document.createDocumentFragment();
             data.forEach(item => {
                 fragment.appendChild(createPlaylistItem(item));
@@ -96,7 +94,9 @@ document.addEventListener("DOMContentLoaded", () => {
             container.appendChild(fragment);
 
         } catch (error) {
-            container.innerHTML = `<p>Fout bij het laden van de afspeellijst: ${error.message}</p>`;
+            const errorMessage = createElement("p", "", `Fout bij het laden van de afspeellijst: ${error.message}`);
+            container.innerHTML = "";
+            container.appendChild(errorMessage);
             console.error(error);
         }
     }
