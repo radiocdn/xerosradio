@@ -34,30 +34,48 @@ document.addEventListener('DOMContentLoaded', () => {
                 const articleDiv = document.createElement('div');
                 articleDiv.classList.add('feed-article');
 
+                // Titel met link
+                const titleLink = document.createElement('a');
+                titleLink.href = article.link;
+                titleLink.target = '_blank';
+                titleLink.rel = 'noopener noreferrer';
+                titleLink.classList.add('feed-title-link');
+
                 const title = document.createElement('h2');
                 title.textContent = article.title;
-                articleDiv.appendChild(title);
+                titleLink.appendChild(title);
+                articleDiv.appendChild(titleLink);
 
+                // Datum
                 const date = document.createElement('p');
                 date.classList.add('feed-date');
                 date.textContent = new Date(article.pubDate).toLocaleDateString();
                 articleDiv.appendChild(date);
 
+                // Afbeelding met link
                 if (article.image) {
+                    const imageLink = document.createElement('a');
+                    imageLink.href = article.link;
+                    imageLink.target = '_blank';
+                    imageLink.rel = 'noopener noreferrer';
+
                     const img = document.createElement('img');
                     img.src = article.image;
                     img.alt = article.title;
                     img.loading = 'lazy';
                     img.classList.add('feed-article-image');
-                    articleDiv.appendChild(img);
+
+                    imageLink.appendChild(img);
+                    articleDiv.appendChild(imageLink);
                 }
 
+                // Beschrijving
                 const description = document.createElement('p');
                 description.classList.add('feed-description');
                 description.textContent = article.description;
-                // Verberg description standaard via CSS class
                 articleDiv.appendChild(description);
 
+                // Lees meer link
                 const link = document.createElement('a');
                 link.href = article.link;
                 link.textContent = 'Lees meer';
@@ -66,6 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 link.classList.add('feed-read-more');
                 articleDiv.appendChild(link);
 
+                // Toggle beschrijving
                 articleDiv.addEventListener('click', () => {
                     description.classList.toggle('visible');
                 });
@@ -84,20 +103,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-function showFallback() {
-    const fallback = document.createElement('div');
-    fallback.className = 'news-fallback';
-    fallback.innerHTML = `
-        <img src="https://res.cloudinary.com/xerosradio/image/upload/v1752406213/Assets/errornews_xerosradio.svg" draggable="false" loading="lazy" alt="Nieuwsfeed niet beschikbaar">
-        <h3>Nieuws is niet beschikbaar, probeer het later op een ander moment</h3>
-    `;
+    function showFallback() {
+        const fallback = document.createElement('div');
+        fallback.className = 'news-fallback';
+        fallback.innerHTML = `
+            <img src="https://res.cloudinary.com/xerosradio/image/upload/v1752406213/Assets/errornews_xerosradio.svg" draggable="false" loading="lazy" alt="Nieuwsfeed niet beschikbaar">
+            <h3>Nieuws is niet beschikbaar, probeer het later op een ander moment</h3>
+        `;
 
-    const container = document.getElementById('feed-feed-container');
-    if (container && container.parentNode) {
-        container.parentNode.insertBefore(fallback, container);
+        const container = document.getElementById('feed-feed-container');
+        if (container && container.parentNode) {
+            container.parentNode.insertBefore(fallback, container);
+        }
     }
-}
-
 
     fetchAndDisplayFeed(`${feedUrl}?start=${start}`);
 
