@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const feedUrl = 'https://xerosradiocdn.global.ssl.fastly.net/api/xerosradio/nieuws/';
+    const feedUrl = 'https://xr-api.faststreamdiensten.nl/api/xerosradio/nieuws/';
     const container = document.getElementById('feed-feed-container');
     const loadMoreButton = document.getElementById('feed-load-more');
     const loader = document.getElementById('feed-loader');
