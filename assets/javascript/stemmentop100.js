@@ -15,7 +15,7 @@ let currentTrack = null;
 
 document.getElementById('searchBtn').addEventListener('click', () => {
   const query = document.getElementById('searchInput').value;
-  fetch(`https://xerosradiocdn.global.ssl.fastly.net/api/xerosradio/search/?q=${encodeURIComponent(query)}`)
+  fetch(`https://xr-api.faststreamdiensten.nl/api/xerosradio/search/?q=${encodeURIComponent(query)}`)
     .then(response => response.json())
     .then(json => {
       resultsEl.innerHTML = '';
@@ -189,7 +189,7 @@ voteForm.addEventListener('submit', async (e) => {
   const votesToSend = voteList.map(t => t.name);
 
   try {
-    const res = await fetch('https://xerosradiocdn.global.ssl.fastly.net/api/xerosradio/vote/index.php', {
+    const res = await fetch('https://xr-api.faststreamdiensten.nl/api/xerosradio/vote/index.php', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, votes: votesToSend })
