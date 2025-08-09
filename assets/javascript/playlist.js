@@ -39,12 +39,13 @@ document.addEventListener("DOMContentLoaded", () => {
         const h2 = createElement("h2", "", artist);
         const pTitle = createElement("p", "", title);
 
-        // ✅ DJ tonen als aanwezig
-        let playedText = playedAt;
+        // ✅ DJ boven de tijd tonen (alleen als gevuld)
         if (item.dj && item.dj.trim() !== "") {
-            playedText += ` – Gedraaid Door ${item.dj}`;
+            const pDJ = createElement("p", "dj-name", `Gedraaid Door ${item.dj}`);
+            details.appendChild(pDJ);
         }
-        const pDate = createElement("p", "", playedText);
+
+        const pDate = createElement("p", "", playedAt);
 
         details.append(h2, pTitle, pDate);
 
