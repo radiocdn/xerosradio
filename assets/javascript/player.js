@@ -61,7 +61,7 @@ class RadioPlayer {
     }
 
     async updateRadioInfo() {
-        const url = 'https://xerosradioapiprd.global.ssl.fastly.net/';
+        const url = 'https://xr-api-prd.faststreamdiensten.nl/';
         try {
             const response = await fetch(url, { method: 'GET', cache: 'no-cache' });
             if (!response.ok) throw new Error('Fout bij ophalen data');
