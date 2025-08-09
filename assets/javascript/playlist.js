@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // ✅ DJ boven de tijd tonen (alleen als gevuld)
         if (item.dj && item.dj.trim() !== "") {
-            const pDJ = createElement("p", "dj-name", `Gedraaid Door ${item.dj}`);
+            const pDJ = createElement("p", "dj-name", `Gedraaid door ${item.dj}`);
             details.appendChild(pDJ);
         }
 
