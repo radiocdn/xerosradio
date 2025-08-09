@@ -38,7 +38,14 @@ document.addEventListener("DOMContentLoaded", () => {
         const details = createElement("div", "details");
         const h2 = createElement("h2", "", artist);
         const pTitle = createElement("p", "", title);
-        const pDate = createElement("p", "", playedAt);
+
+        // ✅ DJ tonen als aanwezig
+        let playedText = playedAt;
+        if (item.dj && item.dj.trim() !== "") {
+            playedText += ` – Door ${item.dj}`;
+        }
+        const pDate = createElement("p", "", playedText);
+
         details.append(h2, pTitle, pDate);
 
         const links = createElement("div", "spotify-youtube-container");
@@ -48,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
         spotify.href = `https://open.spotify.com/search/${searchQuery}`;
         spotify.target = "_blank";
         spotify.rel = "noopener";
-        spotify.innerHTML = `<i class="fab fa-spotify spotify-icon"></i>`; // Alleen veilige iconen
+        spotify.innerHTML = `<i class="fab fa-spotify spotify-icon"></i>`;
 
         const youtube = document.createElement("a");
         youtube.href = `https://www.youtube.com/results?search_query=${searchQuery}`;
