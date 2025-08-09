@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     const container = document.getElementById("playlist-container");
-    const apiURL = "https://xerosradioapiprd.global.ssl.fastly.net/playlist";
+    const apiURL = "https://xr-api-prd.faststreamdiensten.nl/playlist";
     const fallbackImage = "https://res.cloudinary.com/xerosradio/image/upload/f_webp,q_auto,w_200,h_200/XerosRadio_Logo_Achtergrond_Wit";
 
     function createElement(tag, className = "", content = "") {
