@@ -42,7 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // ✅ DJ tonen als aanwezig
         let playedText = playedAt;
         if (item.dj && item.dj.trim() !== "") {
-            playedText += ` – Door ${item.dj}`;
+            playedText += ` – Gedraaid Door ${item.dj}`;
         }
         const pDate = createElement("p", "", playedText);
 
