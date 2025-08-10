@@ -25,8 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const div = createElement("div", "playlist-item");
 
-        const img = createElement("img");
-        img.id = "song-cover-playlist";  // unieke id toevoegen
+        const img = createElement("img", "song-cover-playlist");
         img.src = cover;
         img.alt = `${artist} - ${title}`;
         img.loading = "lazy";
