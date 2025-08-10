@@ -779,6 +779,13 @@ img[data-opt-lazy-loaded] {
             text-align: left;
         }
 
+        .dj-cover {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
         .playlist-item:hover {
             background-color: #ededed; /* Darken the background on hover */
         }
