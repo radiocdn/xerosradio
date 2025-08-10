@@ -39,10 +39,24 @@ document.addEventListener("DOMContentLoaded", () => {
         const h2 = createElement("h2", "", artist);
         const pTitle = createElement("p", "", title);
 
-        // ✅ DJ boven de tijd tonen (alleen als gevuld)
+        // ✅ DJ naam + kleine cirkel met dj_cover
         if (item.dj && item.dj.trim() !== "") {
-            const pDJ = createElement("p", "dj-name", `Gedraaid door ${item.dj}`);
-            details.appendChild(pDJ);
+            const djWrapper = createElement("p", "dj-name");
+            djWrapper.textContent = `Gedraaid door ${item.dj} `;
+
+            if (item.dj_cover && item.dj_cover.startsWith("http")) {
+                const djImg = document.createElement("img");
+                djImg.src = item.dj_cover;
+                djImg.alt = `${item.dj}`;
+                djImg.className = "dj-cover";
+                djImg.loading = "lazy";
+                djImg.decoding = "async";
+                djImg.onerror = () => {
+                    djImg.style.display = "none";
+                };
+                djWrapper.appendChild(djImg);
+            }
+            details.appendChild(djWrapper);
         }
 
         const pDate = createElement("p", "", playedAt);
