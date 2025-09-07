@@ -49,6 +49,23 @@ class RadioPlayer {
         this.radioPlayer?.addEventListener('pause', this.handlePause);
 
         this.reconnectDelay = 3000;
+
+        // Detect iOS devices
+        this.isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+
+        // Hide cast icon and disable cast on iOS
+        if (this.isIOS) {
+            // Hide all elements with class 'hide-on-ios'
+            document.querySelectorAll('.hide-on-ios').forEach(el => {
+                el.style.display = 'none';
+            });
+            // Optionally disable cast button
+            if (this.castButton) {
+                this.castButton.disabled = true;
+                this.castButton.style.pointerEvents = 'none';
+                this.castButton.title = 'Casting niet beschikbaar op iOS';
+            }
+        }
     }
 
     // Helper to create an image element with fallback
@@ -130,6 +147,7 @@ class RadioPlayer {
     };
 
     initializeCastSDK = () => {
+        if (this.isIOS) return; // Do not initialize cast on iOS
         window['__onGCastApiAvailable'] = isAvailable => {
             if (isAvailable) {
                 const castContext = cast.framework.CastContext.getInstance();
@@ -178,6 +196,7 @@ class RadioPlayer {
     };
 
     castButtonClick = () => {
+        if (this.isIOS) return; // Disable cast on iOS
         const castContext = cast.framework.CastContext.getInstance();
         castContext.requestSession()
             .then(this.loadMediaToCast)
@@ -185,6 +204,7 @@ class RadioPlayer {
     };
 
     loadMediaToCast = () => {
+        if (this.isIOS) return; // Disable cast on iOS
         const session = cast.framework.CastContext.getInstance().getCurrentSession();
         if (session) {
             const mediaInfo = new chrome.cast.media.MediaInfo(this.streamUrl, 'audio/aac');
