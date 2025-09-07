@@ -5,7 +5,6 @@ const playPauseBtn = document.getElementById('playPauseBtn');
 function updateButton() {
   playPauseBtn.textContent = audio.paused ? 'Afspelen' : 'Pauze';
   playPauseBtn.setAttribute('aria-label', audio.paused ? 'Afspelen' : 'Pauzeren');
-  playPauseBtn.disabled = audio.readyState < 2; // Disable if not ready
 }
 
 // Update button text when clicking the button
