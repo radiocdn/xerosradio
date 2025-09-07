@@ -237,9 +237,11 @@ class RadioPlayer {
 
     pauseMedia = () => {
         if (!this.radioPlayer) return;
+        this._programmaticPause = true; // Set flag for programmatic pause
         this.radioPlayer.pause();
         this.isPlaying = false;
         this.updatePlayPauseButton();
+        setTimeout(() => { this._programmaticPause = false; }, 100); // Reset flag after short delay
     };
 
     updatePlayPauseButton = () => {
@@ -281,7 +283,8 @@ class RadioPlayer {
     };
 
     handlePause = () => {
-        if (!this.userPaused && this.radioPlayer && !this.radioPlayer.ended) {
+        // Only auto-restart if not paused by user or programmatically (e.g. Media Session)
+        if (!this.userPaused && !this._programmaticPause && this.radioPlayer && !this.radioPlayer.ended) {
             console.warn('Pauze zonder gebruikersinput. Herstart...');
             setTimeout(this.playMedia, this.reconnectDelay);
         }
