@@ -33,8 +33,11 @@ class RadioPlayer {
         if (this.volumeSlider) this.volumeSlider.value = initialVolume;
         if (this.radioPlayer) this.radioPlayer.volume = initialVolume;
 
+        // Debounce flag for updateRadioInfo
+        this._isUpdatingRadioInfo = false;
+
         this.updateRadioInfo();
-        setInterval(this.updateRadioInfo, 5000);
+        this._radioInfoInterval = setInterval(this.updateRadioInfo, 5000);
 
         this.initializeCastSDK();
         this.setupMediaSession();
@@ -70,7 +73,10 @@ class RadioPlayer {
         }
     };
 
+    // Debounced updateRadioInfo to avoid overlapping requests
     updateRadioInfo = async () => {
+        if (this._isUpdatingRadioInfo) return;
+        this._isUpdatingRadioInfo = true;
         const url = 'https://xr-api-prd.faststreamdiensten.nl/';
         try {
             const response = await fetch(url, { method: 'GET', cache: 'no-cache' });
@@ -109,6 +115,8 @@ class RadioPlayer {
             }
         } catch (error) {
             this.handleError(error);
+        } finally {
+            this._isUpdatingRadioInfo = false;
         }
     };
 
@@ -204,15 +212,27 @@ class RadioPlayer {
     playMedia = () => {
         if (!this.radioPlayer) return;
         this.radioPlayer.src = this.streamUrl;
-        this.radioPlayer.play()
-            .then(() => {
+        // Try/catch for browsers that block autoplay
+        try {
+            const playPromise = this.radioPlayer.play();
+            if (playPromise && typeof playPromise.then === 'function') {
+                playPromise
+                    .then(() => {
+                        this.isPlaying = true;
+                        this.updatePlayPauseButton();
+                    })
+                    .catch(err => {
+                        console.error('Fout bij afspelen:', err);
+                        setTimeout(this.playMedia, this.reconnectDelay);
+                    });
+            } else {
                 this.isPlaying = true;
                 this.updatePlayPauseButton();
-            })
-            .catch(err => {
-                console.error('Fout bij afspelen:', err);
-                setTimeout(this.playMedia, this.reconnectDelay);
-            });
+            }
+        } catch (err) {
+            console.error('Fout bij afspelen:', err);
+            setTimeout(this.playMedia, this.reconnectDelay);
+        }
     };
 
     pauseMedia = () => {
@@ -230,16 +250,22 @@ class RadioPlayer {
     adjustVolume = () => {
         if (!this.radioPlayer || !this.volumeSlider) return;
         this.radioPlayer.volume = this.volumeSlider.value;
-        this.saveVolumeToCookie(this.volumeSlider.value);
+        this.saveVolumeToStorage(this.volumeSlider.value);
     };
 
-    saveVolumeToCookie = volume => {
-        const expiration = new Date();
-        expiration.setFullYear(expiration.getFullYear() + 1);
-        document.cookie = `volume=${volume}; expires=${expiration.toUTCString()}; path=/; Secure; SameSite=Strict`;
+    // Use localStorage for volume instead of cookies
+    saveVolumeToStorage = volume => {
+        try {
+            localStorage.setItem('xr_volume', volume);
+        } catch {}
     };
 
     getVolumeFromCookie = () => {
+        // Try localStorage first, fallback to cookie for backward compatibility
+        try {
+            const v = localStorage.getItem('xr_volume');
+            if (v !== null) return parseFloat(v);
+        } catch {}
         const match = document.cookie.split(';').find(c => c.trim().startsWith('volume='));
         if (!match) return null;
         const value = match.split('=')[1];
@@ -259,6 +285,19 @@ class RadioPlayer {
             console.warn('Pauze zonder gebruikersinput. Herstart...');
             setTimeout(this.playMedia, this.reconnectDelay);
         }
+    };
+
+    // Optional: Clean up intervals and listeners if needed
+    destroy = () => {
+        clearInterval(this._radioInfoInterval);
+        // Remove event listeners if you ever need to destroy the player
+        this.playPauseButton?.removeEventListener('click', this.togglePlay);
+        this.volumeSlider?.removeEventListener('input', this.adjustVolume);
+        this.castButton?.removeEventListener('click', this.castButtonClick);
+        this.radioPlayer?.removeEventListener('error', this.handleStreamError);
+        this.radioPlayer?.removeEventListener('stalled', this.handleStreamError);
+        this.radioPlayer?.removeEventListener('ended', this.handleStreamError);
+        this.radioPlayer?.removeEventListener('pause', this.handlePause);
     };
 }
 
