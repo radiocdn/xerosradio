@@ -153,7 +153,7 @@ class RadioPlayer {
     updateMediaMetadata() {
         if ('mediaSession' in navigator) {
             const artist = this.artistInfo.textContent || 'XerosRadio';
-            const title = this.titleInfo.textContent || 'Bij XerosRadio zit je goed';
+            const title = this.titleInfo.textContent || 'Bij XerosRadio zit je goed. Altijd online de beste Nederlandstalige geheime zender en piraten hits. 24 uur per dag de mooiste muziek.';
             const artwork = this.albumArtwork?.src || this.defaultImage;
 
             navigator.mediaSession.metadata = new MediaMetadata({
