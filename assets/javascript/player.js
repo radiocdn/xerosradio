@@ -18,14 +18,23 @@ class RadioPlayer {
         this.volumeSlider.setAttribute('aria-label', 'Volume aanpassen');
         this.castButton.setAttribute('aria-label', 'Cast naar apparaat');
 
-        this.lastSong = { artist: '', title: '', cover: '' };
-        this.lastDJ = { status: null, name: '', cover: '' };
+        this.lastSong = {
+            artist: '',
+            title: '',
+            cover: ''
+        };
+
+        this.lastDJ = {
+            status: null,
+            name: '',
+            cover: ''
+        };
 
         this.playPauseButton.addEventListener('click', this.togglePlay.bind(this));
         this.volumeSlider.addEventListener('input', this.adjustVolume.bind(this));
         this.castButton.addEventListener('click', this.castButtonClick.bind(this));
 
-        this.volumeSlider.value = this.getVolumeFromStorage() || 0.5;
+        this.volumeSlider.value = this.getVolumeFromCookie() || 0.5;
         this.radioPlayer.volume = this.volumeSlider.value;
 
         this.updateRadioInfo();
@@ -40,7 +49,6 @@ class RadioPlayer {
         this.radioPlayer.addEventListener('pause', this.handlePause.bind(this));
 
         this.reconnectDelay = 3000;
-        this.maxReconnectDelay = 30000;
     }
 
     isValidUrl(url) {
@@ -64,66 +72,65 @@ class RadioPlayer {
 
             const artwork200 = cover_art200x200 || this.defaultImage;
 
-            if (artist !== this.lastSong.artist || title !== this.lastSong.title || artwork200 !== this.lastSong.cover) {
-                this.artistInfo.textContent = artist || 'Onbekende artiest';
-                this.titleInfo.textContent = title || 'Onbekend nummer';
-
-                this.preloadImage(artwork200, img => {
-                    this.albumArtwork.src = img.src;
-                });
+            if (
+                artist !== this.lastSong.artist ||
+                title !== this.lastSong.title ||
+                artwork200 !== this.lastSong.cover
+            ) {
+                this.artistInfo.textContent = artist;
+                this.titleInfo.textContent = title;
+                this.albumArtwork.src = artwork200;
 
                 this.updateMediaMetadata();
+
                 this.lastSong = { artist, title, cover: artwork200 };
             }
 
-            if (dj_live_status !== this.lastDJ.status || dj_name !== this.lastDJ.name || dj_cover !== this.lastDJ.cover) {
-                this.djInfoElement.textContent = dj_name || 'DJ onbekend';
+            if (
+                dj_live_status !== this.lastDJ.status ||
+                dj_name !== this.lastDJ.name ||
+                dj_cover !== this.lastDJ.cover
+            ) {
+                this.djInfoElement.textContent = dj_name;
+
                 const artworkUrl = this.isValidUrl(dj_cover) ? dj_cover : this.defaultImage;
+                const newImage = new Image();
+                newImage.src = artworkUrl;
+                newImage.onerror = () => { newImage.src = this.defaultImage; };
+                newImage.draggable = false;
+                newImage.loading = 'lazy';
+                newImage.alt = 'XerosRadio DJ';
+                newImage.style.width = '200px';
+                newImage.style.height = '200px';
 
-                this.preloadImage(artworkUrl, img => {
-                    img.style.width = '200px';
-                    img.style.height = '200px';
-                    img.draggable = false;
-                    img.loading = 'lazy';
-                    img.alt = 'XerosRadio DJ';
-                    this.artworkElement.innerHTML = '';
-                    this.artworkElement.appendChild(img);
-                });
+                this.artworkElement.innerHTML = ''; // veilig leeglopen
+                this.artworkElement.appendChild(newImage);
 
-                this.lastDJ = { status: dj_live_status, name: dj_name, cover: dj_cover };
+                this.lastDJ = {
+                    status: dj_live_status,
+                    name: dj_name,
+                    cover: dj_cover
+                };
             }
         } catch (error) {
             this.handleError(error);
         }
     }
 
-    preloadImage(url, callback) {
-        const img = new Image();
-        img.src = url;
-        img.onload = () => callback(img);
-        img.onerror = () => {
-            const fallback = new Image();
-            fallback.src = this.defaultImage;
-            fallback.onload = () => callback(fallback);
-        };
-    }
-
     handleError(error) {
         console.error('Fout:', error);
         this.djInfoElement.textContent = 'XerosRadio is momenteel niet beschikbaar.';
 
-        this.preloadImage(this.defaultImage, img => {
-            img.style.width = '200px';
-            img.style.height = '200px';
-            img.draggable = false;
-            img.loading = 'lazy';
-            img.alt = 'XerosRadio';
-            this.artworkElement.innerHTML = '';
-            this.artworkElement.appendChild(img);
-        });
+        const fallbackImg = new Image();
+        fallbackImg.src = this.defaultImage;
+        fallbackImg.alt = 'XerosRadio';
+        fallbackImg.draggable = false;
+        fallbackImg.loading = 'lazy';
+        fallbackImg.style.width = '200px';
+        fallbackImg.style.height = '200px';
 
-        // Retry met langere delay
-        setTimeout(() => this.updateRadioInfo(), Math.min(this.reconnectDelay * 2, this.maxReconnectDelay));
+        this.artworkElement.innerHTML = '';
+        this.artworkElement.appendChild(fallbackImg);
     }
 
     initializeCastSDK() {
@@ -153,13 +160,15 @@ class RadioPlayer {
     updateMediaMetadata() {
         if ('mediaSession' in navigator) {
             const artist = this.artistInfo.textContent || 'XerosRadio';
-            const title = this.titleInfo.textContent || 'Bij XerosRadio zit je goed. Altijd online de beste Nederlandstalige geheime zender en piraten hits. 24 uur per dag de mooiste muziek.';
+            const title = this.titleInfo.textContent || 'Bij XerosRadio zit je goed';
             const artwork = this.albumArtwork?.src || this.defaultImage;
 
             navigator.mediaSession.metadata = new MediaMetadata({
                 title,
                 artist,
-                artwork: [{ src: artwork, sizes: '500x500', type: 'image/webp' }]
+                artwork: [
+                    { src: artwork, sizes: '500x500', type: 'image/webp' }
+                ]
             });
         }
     }
@@ -187,7 +196,9 @@ class RadioPlayer {
             mediaInfo.metadata = new chrome.cast.media.MusicTrackMediaMetadata();
             mediaInfo.metadata.title = 'Bij XerosRadio zit je goed. Altijd online de beste Nederlandstalige geheime zender en piraten hits. 24 uur per dag de mooiste muziek.';
             mediaInfo.metadata.artist = 'XerosRadio';
-            mediaInfo.metadata.images = [{ url: this.defaultImage }];
+            mediaInfo.metadata.images = [
+                { url: this.defaultImage }
+            ];
 
             const request = new chrome.cast.media.LoadRequest(mediaInfo);
             session.loadMedia(request)
@@ -212,11 +223,10 @@ class RadioPlayer {
             .then(() => {
                 this.isPlaying = true;
                 this.updatePlayPauseButton();
-                this.reconnectDelay = 3000; // reset backoff
             })
             .catch(err => {
                 console.error('Fout bij afspelen:', err);
-                this.scheduleReconnect();
+                setTimeout(() => this.playMedia(), this.reconnectDelay);
             });
     }
 
@@ -232,34 +242,32 @@ class RadioPlayer {
 
     adjustVolume() {
         this.radioPlayer.volume = this.volumeSlider.value;
-        this.saveVolumeToStorage(this.volumeSlider.value);
+        this.saveVolumeToCookie(this.volumeSlider.value);
     }
 
-    saveVolumeToStorage(volume) {
-        localStorage.setItem('volume', volume);
+    saveVolumeToCookie(volume) {
+        const expiration = new Date();
+        expiration.setFullYear(expiration.getFullYear() + 1);
+        document.cookie = `volume=${volume}; expires=${expiration.toUTCString()}; path=/; Secure; SameSite=Strict`;
     }
 
-    getVolumeFromStorage() {
-        return parseFloat(localStorage.getItem('volume'));
+    getVolumeFromCookie() {
+        const match = document.cookie.split(';').find(c => c.trim().startsWith('volume='));
+        return match ? parseFloat(match.split('=')[1]) : null;
     }
 
     handleStreamError() {
         if (!this.userPaused) {
             console.warn('Stream onderbroken. Herstart...');
-            this.scheduleReconnect();
+            setTimeout(() => this.playMedia(), this.reconnectDelay);
         }
     }
 
     handlePause() {
         if (!this.userPaused && !this.radioPlayer.ended) {
             console.warn('Pauze zonder gebruikersinput. Herstart...');
-            this.scheduleReconnect();
+            setTimeout(() => this.playMedia(), this.reconnectDelay);
         }
-    }
-
-    scheduleReconnect() {
-        setTimeout(() => this.playMedia(), this.reconnectDelay);
-        this.reconnectDelay = Math.min(this.reconnectDelay * 2, this.maxReconnectDelay);
     }
 }
 
