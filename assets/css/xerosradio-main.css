@@ -390,8 +390,12 @@ img {
     text-decoration: none;
 }
 
-.buttonappenberichten
+.buttonappenberichten {
     margin-top: 20px;
+    animation-name: fadeIn;
+    animation-duration: 1s;
+    animation-timing-function: ease-in;
+    animation-fill-mode: forwards;
 }
 
 /* Feed Body */
