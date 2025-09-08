@@ -305,8 +305,10 @@ img {
 
 /* Hover effect - fade the button */
 .xerosradiobutton:hover {
+    color: #9003fc;
     transform: scale(1.05);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    text-decoration: none; /* Remove the default underline for anchor elements */
 }
 
 /* XerosContainer */
@@ -376,8 +378,10 @@ img {
 }
 
 .appen-naar-de-studio-button:hover {
+    color: #008cff;
     transform: scale(1.05);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+    text-decoration: none;
 }
 
 
