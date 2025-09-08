@@ -135,7 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function showErrorMessage(message) {
         container.innerHTML = `
             <div class="col mx-auto">
-                <div class="alert alert-danger text-center mx-auto" style="width: fit-content;">❌ Fout bij het laden van de afspeellijst: ${message}</div>
+                <div class="alert alert-danger text-center mx-auto" style="width: fit-content;">❌ Fout bij het laden van de afspeellijst probeer het later opnieuw.</div>
             </div>
         `;
     }
