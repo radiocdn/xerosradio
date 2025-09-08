@@ -131,7 +131,7 @@ document.addEventListener("DOMContentLoaded", () => {
             btn.className = "xerosradiobutton";
             btn.innerHTML = '<i class="fa fa-rotate-right" aria-hidden="true"></i> Vernieuwen';
             btn.title = "Vernieuw de afspeellijst";
-            btn.style.margin = "10px 0";
+            btn.style.margin = "10px 0 10px 8px";
             btn.onclick = () => {
                 btn.disabled = true;
                 showLoader();
