@@ -129,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
             btn.id = "playlist-refresh-btn";
             btn.type = "button";
             btn.className = "xerosradiobutton";
-            btn.innerHTML = "&#x21bb; Vernieuwen";
+            btn.innerHTML = '<i class="fa fa-rotate-right" aria-hidden="true"></i> Vernieuwen';
             btn.title = "Vernieuw de afspeellijst";
             btn.style.margin = "10px 0";
             btn.onclick = () => {
