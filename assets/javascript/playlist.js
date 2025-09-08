@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const artist = item.artist || "Onbekend";
         const title = item.title || "Onbekend nummer";
         const playedAt = formatPlayedAt(item.played_at);
-        const cover = item.album_cover && item.album_cover.startsWith("http") ? item.album_cover : fallbackImage;
+        const cover = item.cover_art200x200 && item.cover_art200x200.startsWith("http") ? item.album_cover : fallbackImage;
 
         const div = createElement("div", "playlist-item");
 
