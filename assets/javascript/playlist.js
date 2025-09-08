@@ -115,9 +115,27 @@ document.addEventListener("DOMContentLoaded", () => {
     // Add spinner SVG and refresh button
     function showLoader() {
         container.innerHTML = `
-            <div class="playlist-loader" style="display:flex;align-items:center;gap:10px;">
-                <svg width="32" height="32" viewBox="0 0 50 50" aria-hidden="true" focusable="false"><circle cx="25" cy="25" r="20" fill="none" stroke="#8008f0ff" stroke-width="5" stroke-linecap="round" stroke-dasharray="31.415, 31.415" transform="rotate(72.3242 25 25)"><animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="1s" repeatCount="indefinite"/></circle></svg>
-                <span id="playlist-loading-text">Laden van de Playlist...</span>
+            <div class="col mx-auto">
+                <div class="alert alert-info text-center mx-auto" style="width: fit-content; display: flex; align-items: center; gap: 10px;">
+                    <svg width="24" height="24" viewBox="0 0 50 50" aria-hidden="true" focusable="false" style="vertical-align:middle"><circle cx="25" cy="25" r="20" fill="none" stroke="#8008f0ff" stroke-width="5" stroke-linecap="round" stroke-dasharray="31.415, 31.415" transform="rotate(72.3242 25 25)"><animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="1s" repeatCount="indefinite"/></circle></svg>
+                    <span id="playlist-loading-text">Laden van de Playlist...</span>
+                </div>
+            </div>
+        `;
+    }
+
+    function showEmptyMessage() {
+        container.innerHTML = `
+            <div class="col mx-auto">
+                <div class="alert alert-info text-center mx-auto" style="width: fit-content;">ℹ️ Helaas, er zijn geen nummers gevonden.</div>
+            </div>
+        `;
+    }
+
+    function showErrorMessage(message) {
+        container.innerHTML = `
+            <div class="col mx-auto">
+                <div class="alert alert-danger text-center mx-auto" style="width: fit-content;">❌ Fout bij het laden van de afspeellijst: ${message}</div>
             </div>
         `;
     }
@@ -147,8 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const data = await fetchWithRetry(apiURL);
             container.innerHTML = "";
             if (!Array.isArray(data) || data.length === 0) {
-                const emptyMessage = createElement("p", "empty-message", "Helaas, er zijn geen nummers gevonden.");
-                container.appendChild(emptyMessage);
+                showEmptyMessage();
                 return;
             }
             const fragment = document.createDocumentFragment();
@@ -157,9 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
             container.appendChild(fragment);
         } catch (error) {
-            const errorMessage = createElement("p", "", `Fout bij het laden van de afspeellijst: ${error.message}`);
-            container.innerHTML = "";
-            container.appendChild(errorMessage);
+            showErrorMessage(error.message);
             console.error(error);
         }
     }
