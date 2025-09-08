@@ -12,16 +12,18 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function formatPlayedAt(dateString) {
         if (!dateString) return "";
+        // Try to parse as time (HH:MM) or as ISO string
+        if (/^\d{2}:\d{2}$/.test(dateString)) return dateString;
         const date = new Date(dateString);
         if (isNaN(date)) return dateString;
-        return date.toLocaleString();
+        return date.toLocaleString('nl-NL', { hour: '2-digit', minute: '2-digit' });
     }
 
     function createPlaylistItem(item) {
         const artist = item.artist || "Onbekend";
         const title = item.title || "Onbekend nummer";
         const playedAt = formatPlayedAt(item.played_at);
-        const cover = item.cover_art200x200 && item.cover_art200x200.startsWith("http") ? item.album_cover : fallbackImage;
+        const cover = item.cover_art200x200 && item.cover_art200x200.startsWith("http") ? item.cover_art200x200 : fallbackImage;
 
         const div = createElement("div", "playlist-item");
 
@@ -39,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const h2 = createElement("h2", "", artist);
         const pTitle = createElement("p", "", title);
 
-        // ✅ DJ naam + kleine cirkel met dj_cover
+        // DJ naam + kleine cirkel met dj_cover
         if (item.dj && item.dj.trim() !== "") {
             const djWrapper = createElement("p", "dj-name");
             djWrapper.textContent = `Gedraaid door ${item.dj} `;
@@ -66,55 +68,65 @@ document.addEventListener("DOMContentLoaded", () => {
         const links = createElement("div", "spotify-youtube-container");
         const searchQuery = encodeURIComponent(`${artist} - ${title}`);
 
-        const spotify = document.createElement("a");
-        spotify.href = `https://open.spotify.com/search/${searchQuery}`;
-        spotify.target = "_blank";
-        spotify.rel = "noopener";
-        spotify.innerHTML = `<i class="fab fa-spotify spotify-icon"></i>`;
-
-        const youtube = document.createElement("a");
-        youtube.href = `https://www.youtube.com/results?search_query=${searchQuery}`;
-        youtube.target = "_blank";
-        youtube.rel = "noopener";
-        youtube.innerHTML = `<i class="fab fa-youtube youtube-icon"></i>`;
-
-        const soundcloud = document.createElement("a");
-        soundcloud.href = `https://soundcloud.com/search?q=${searchQuery}`;
-        soundcloud.target = "_blank";
-        soundcloud.rel = "noopener";
-        soundcloud.innerHTML = `<i class="fab fa-soundcloud soundcloud-icon"></i>`;
-
-        links.append(spotify, youtube, soundcloud);
+        const platforms = [
+            {
+                href: `https://open.spotify.com/search/${searchQuery}`,
+                icon: "fab fa-spotify spotify-icon",
+                label: "Zoek op Spotify"
+            },
+            {
+                href: `https://www.youtube.com/results?search_query=${searchQuery}`,
+                icon: "fab fa-youtube youtube-icon",
+                label: "Zoek op YouTube"
+            },
+            {
+                href: `https://soundcloud.com/search?q=${searchQuery}`,
+                icon: "fab fa-soundcloud soundcloud-icon",
+                label: "Zoek op SoundCloud"
+            }
+        ];
+        platforms.forEach(({ href, icon, label }) => {
+            const a = document.createElement("a");
+            a.href = href;
+            a.target = "_blank";
+            a.rel = "noopener";
+            a.setAttribute("aria-label", label);
+            a.innerHTML = `<i class="${icon}"></i>`;
+            links.appendChild(a);
+        });
         div.append(img, details, links);
 
         return div;
     }
 
+    async function fetchWithRetry(url, options = {}, retries = 2, delay = 500) {
+        for (let i = 0; i <= retries; i++) {
+            try {
+                const response = await fetch(url, options);
+                if (!response.ok) throw new Error("Kan de afspeellijst niet laden.");
+                return await response.json();
+            } catch (err) {
+                if (i === retries) throw err;
+                await new Promise(res => setTimeout(res, delay));
+            }
+        }
+    }
+
     async function loadPlaylist() {
         container.textContent = "Laden van de Playlist...";
-
         try {
-            const response = await fetch(apiURL);
-            if (!response.ok) {
-                throw new Error("Kan de afspeellijst niet laden.");
-            }
-
-            const data = await response.json();
-
+            const data = await fetchWithRetry(apiURL);
             container.innerHTML = "";
-
             if (!Array.isArray(data) || data.length === 0) {
                 const emptyMessage = createElement("p", "empty-message", "Helaas, er zijn geen nummers gevonden.");
                 container.appendChild(emptyMessage);
                 return;
             }
-
             const fragment = document.createDocumentFragment();
             data.forEach(item => {
                 fragment.appendChild(createPlaylistItem(item));
             });
             container.appendChild(fragment);
-
         } catch (error) {
             const errorMessage = createElement("p", "", `Fout bij het laden van de afspeellijst: ${error.message}`);
             container.innerHTML = "";
