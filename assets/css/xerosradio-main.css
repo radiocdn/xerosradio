@@ -389,6 +389,10 @@ img {
     text-decoration: none;
 }
 
+.buttonappenberichten
+    margin-top: 10px;
+}
+
 /* Feed Body */
 .feed-body {
     line-height: 1.6;
