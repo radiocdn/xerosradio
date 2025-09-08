@@ -112,8 +112,37 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // Add spinner SVG and refresh button
+    function showLoader() {
+        container.innerHTML = `
+            <div class="playlist-loader" style="display:flex;align-items:center;gap:10px;">
+                <svg width="32" height="32" viewBox="0 0 50 50" aria-hidden="true" focusable="false"><circle cx="25" cy="25" r="20" fill="none" stroke="#8008f0ff" stroke-width="5" stroke-linecap="round" stroke-dasharray="31.415, 31.415" transform="rotate(72.3242 25 25)"><animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="1s" repeatCount="indefinite"/></circle></svg>
+                <span id="playlist-loading-text">Laden van de Playlist...</span>
+            </div>
+        `;
+    }
+
+    function addRefreshButton() {
+        let btn = document.getElementById("playlist-refresh-btn");
+        if (!btn) {
+            btn = document.createElement("button");
+            btn.id = "playlist-refresh-btn";
+            btn.type = "button";
+            btn.className = "playlist-refresh-btn";
+            btn.innerHTML = "&#x21bb; Vernieuwen";
+            btn.title = "Vernieuw de afspeellijst";
+            btn.style.margin = "10px 0";
+            btn.onclick = () => {
+                btn.disabled = true;
+                showLoader();
+                loadPlaylist().finally(() => { btn.disabled = false; });
+            };
+            container.parentNode.insertBefore(btn, container);
+        }
+    }
+
     async function loadPlaylist() {
-        container.textContent = "Laden van de Playlist...";
+        showLoader();
         try {
             const data = await fetchWithRetry(apiURL);
             container.innerHTML = "";
@@ -135,5 +164,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    addRefreshButton();
     loadPlaylist();
 });
