@@ -299,7 +299,7 @@ img {
     margin: 5px;
     border-radius: 5px;
     text-decoration: none; /* Remove the default underline for anchor elements */
-    transition: opacity 0.3s ease; /* Add a fade effect on hover */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
