@@ -6,13 +6,12 @@ document.addEventListener("DOMContentLoaded", () => {
     function createElement(tag, className = "", content = "") {
         const el = document.createElement(tag);
         if (className) el.className = className;
-        if (content) el.textContent = content; // altijd veilige tekst
+        if (content) el.textContent = content;
         return el;
     }
 
     function formatPlayedAt(dateString) {
         if (!dateString) return "";
-        // Try to parse as time (HH:MM) or as ISO string
         if (/^\d{2}:\d{2}$/.test(dateString)) return dateString;
         const date = new Date(dateString);
         if (isNaN(date)) return dateString;
@@ -33,19 +32,15 @@ document.addEventListener("DOMContentLoaded", () => {
         img.loading = "lazy";
         img.decoding = "async";
         img.draggable = false;
-        img.onerror = () => {
-            img.src = fallbackImage;
-        };
+        img.onerror = () => { img.src = fallbackImage; };
 
         const details = createElement("div", "details");
         const h2 = createElement("h2", "", artist);
         const pTitle = createElement("p", "", title);
 
-        // DJ naam + kleine cirkel met dj_cover
         if (item.dj && item.dj.trim() !== "") {
             const djWrapper = createElement("p", "dj-name");
             djWrapper.textContent = `Gedraaid door ${item.dj} `;
-
             if (item.dj_cover && item.dj_cover.startsWith("http")) {
                 const djImg = document.createElement("img");
                 djImg.src = item.dj_cover;
@@ -53,16 +48,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 djImg.className = "dj-cover";
                 djImg.loading = "lazy";
                 djImg.decoding = "async";
-                djImg.onerror = () => {
-                    djImg.style.display = "none";
-                };
+                djImg.onerror = () => { djImg.style.display = "none"; };
                 djWrapper.appendChild(djImg);
             }
             details.appendChild(djWrapper);
         }
 
         const pDate = createElement("p", "", playedAt);
-
         details.append(h2, pTitle, pDate);
 
         const links = createElement("div", "spotify-youtube-container");
@@ -85,17 +77,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 label: "Zoek op SoundCloud"
             }
         ];
+
         platforms.forEach(({ href, icon, label }) => {
             const a = document.createElement("a");
             a.href = href;
             a.target = "_blank";
             a.rel = "noopener";
             a.setAttribute("aria-label", label);
+            a.setAttribute("data-tippy-content", label); // ✅ tooltip content
             a.innerHTML = `<i class="${icon}"></i>`;
             links.appendChild(a);
         });
-        div.append(img, details, links);
 
+        div.append(img, details, links);
         return div;
     }
 
@@ -112,7 +106,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Add spinner SVG and refresh button
     function showLoader() {
         container.innerHTML = `
             <div class="col mx-auto">
@@ -168,11 +161,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 showEmptyMessage();
                 return;
             }
+
             const fragment = document.createDocumentFragment();
             data.forEach(item => {
                 fragment.appendChild(createPlaylistItem(item));
             });
             container.appendChild(fragment);
+
+            // ✅ Activeer Tippy.js op alle links binnen de playlist
+            tippy('.spotify-youtube-container a', {
+                placement: 'top',
+                animation: 'scale',
+                theme: 'light-border'
+            });
+
         } catch (error) {
             showErrorMessage(error.message);
             console.error(error);
