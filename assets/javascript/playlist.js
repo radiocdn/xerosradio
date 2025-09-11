@@ -61,21 +61,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const searchQuery = encodeURIComponent(`${artist} - ${title}`);
 
         const platforms = [
-            {
-                href: `https://open.spotify.com/search/${searchQuery}`,
-                icon: "fab fa-spotify spotify-icon",
-                label: "Zoek op Spotify"
-            },
-            {
-                href: `https://www.youtube.com/results?search_query=${searchQuery}`,
-                icon: "fab fa-youtube youtube-icon",
-                label: "Zoek op YouTube"
-            },
-            {
-                href: `https://soundcloud.com/search?q=${searchQuery}`,
-                icon: "fab fa-soundcloud soundcloud-icon",
-                label: "Zoek op SoundCloud"
-            }
+            { href: `https://open.spotify.com/search/${searchQuery}`, icon: "fab fa-spotify spotify-icon", label: "Zoek op Spotify" },
+            { href: `https://www.youtube.com/results?search_query=${searchQuery}`, icon: "fab fa-youtube youtube-icon", label: "Zoek op YouTube" },
+            { href: `https://soundcloud.com/search?q=${searchQuery}`, icon: "fab fa-soundcloud soundcloud-icon", label: "Zoek op SoundCloud" }
         ];
 
         platforms.forEach(({ href, icon, label }) => {
@@ -84,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
             a.target = "_blank";
             a.rel = "noopener";
             a.setAttribute("aria-label", label);
-            a.setAttribute("data-tippy-content", label); // ✅ tooltip content
+            a.setAttribute("data-tippy-content", label); // Tooltip tekst
             a.innerHTML = `<i class="${icon}"></i>`;
             links.appendChild(a);
         });
@@ -110,7 +98,11 @@ document.addEventListener("DOMContentLoaded", () => {
         container.innerHTML = `
             <div class="col mx-auto">
                 <div class="alert alert-info text-center mx-auto" style="width: fit-content; display: flex; align-items: center; gap: 10px;">
-                    <svg width="24" height="24" viewBox="0 0 50 50" aria-hidden="true" focusable="false" style="vertical-align:middle"><circle cx="25" cy="25" r="20" fill="none" stroke="#8008f0ff" stroke-width="5" stroke-linecap="round" stroke-dasharray="31.415, 31.415" transform="rotate(72.3242 25 25)"><animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="1s" repeatCount="indefinite"/></circle></svg>
+                    <svg width="24" height="24" viewBox="0 0 50 50" aria-hidden="true" focusable="false" style="vertical-align:middle">
+                        <circle cx="25" cy="25" r="20" fill="none" stroke="#8008f0ff" stroke-width="5" stroke-linecap="round" stroke-dasharray="31.415, 31.415" transform="rotate(72.3242 25 25)">
+                            <animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="1s" repeatCount="indefinite"/>
+                        </circle>
+                    </svg>
                     Laden van de Playlist...
                 </div>
             </div>
@@ -118,19 +110,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function showEmptyMessage() {
-        container.innerHTML = `
-            <div class="col mx-auto">
-                <div class="alert alert-info text-center mx-auto" style="width: fit-content;">ℹ️ Helaas, er zijn geen nummers gevonden.</div>
-            </div>
-        `;
+        container.innerHTML = `<div class="col mx-auto"><div class="alert alert-info text-center mx-auto" style="width: fit-content;">ℹ️ Helaas, er zijn geen nummers gevonden.</div></div>`;
     }
 
     function showErrorMessage(message) {
-        container.innerHTML = `
-            <div class="col mx-auto">
-                <div class="alert alert-danger text-center mx-auto" style="width: fit-content;">❌ Fout bij het laden van de afspeellijst probeer het later opnieuw.</div>
-            </div>
-        `;
+        container.innerHTML = `<div class="col mx-auto"><div class="alert alert-danger text-center mx-auto" style="width: fit-content;">❌ Fout bij het laden van de afspeellijst probeer het later opnieuw.</div></div>`;
     }
 
     function addRefreshButton() {
@@ -163,18 +147,19 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             const fragment = document.createDocumentFragment();
-            data.forEach(item => {
-                fragment.appendChild(createPlaylistItem(item));
-            });
+            data.forEach(item => fragment.appendChild(createPlaylistItem(item)));
             container.appendChild(fragment);
 
-            // ✅ Activeer Tippy.js op alle links binnen de playlist
-            tippy('.spotify-youtube-container a', {
-                placement: 'top',
-                animation: 'scale',
-                theme: 'light-border'
-            });
-
+            // ✅ Activeer Tippy.js tooltips na DOM-update
+            if (typeof tippy !== "undefined") {
+                tippy('.spotify-youtube-container a', {
+                    placement: 'top',
+                    animation: 'scale',
+                    theme: 'light-border'
+                });
+            } else {
+                console.warn("Tippy.js is niet geladen");
+            }
         } catch (error) {
             showErrorMessage(error.message);
             console.error(error);
