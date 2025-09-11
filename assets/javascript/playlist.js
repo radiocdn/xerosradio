@@ -2,8 +2,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const container = document.getElementById("playlist-container");
     const apiURL = "https://xr-api-prd.faststreamdiensten.nl/playlist";
     const fallbackImage = "https://res.cloudinary.com/xerosradio/image/upload/f_webp,q_auto,w_200,h_200/XerosRadio_Logo_Achtergrond_Wit";
+    const refreshInterval = 60 * 1000; // Auto-refresh every 60 seconds
+    let autoRefreshTimer = null;
 
-    // Utility to create element with class and text
+    // Utility to create elements
     function createElement(tag, className = "", content = "") {
         const el = document.createElement(tag);
         if (className) el.className = className;
@@ -20,7 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return date.toLocaleString("nl-NL", { hour: "2-digit", minute: "2-digit" });
     }
 
-    // Create playlist item element
+    // Create a playlist item element
     function createPlaylistItem(item) {
         const artist = item.artist || "Onbekend";
         const title = item.title || "Onbekend nummer";
@@ -31,7 +33,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const div = createElement("div", "playlist-item");
 
-        // Cover image
         const img = createElement("img", "song-cover-playlist");
         img.src = cover;
         img.alt = `${artist} - ${title}`;
@@ -40,17 +41,15 @@ document.addEventListener("DOMContentLoaded", () => {
         img.draggable = false;
         img.onerror = () => { img.src = fallbackImage; };
 
-        // Details
         const details = createElement("div", "details");
         const h2 = createElement("h2", "", artist);
         const pTitle = createElement("p", "", title);
 
-        // DJ info
         if (item.dj && item.dj.trim() !== "") {
             const djWrapper = createElement("p", "dj-name");
             djWrapper.textContent = `Gedraaid door ${item.dj}`;
             if (item.dj_cover && item.dj_cover.startsWith("http")) {
-                const djImg = document.createElement("img");
+                const djImg = createElement("img");
                 djImg.src = item.dj_cover;
                 djImg.alt = item.dj;
                 djImg.className = "dj-cover";
@@ -65,7 +64,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const pDate = createElement("p", "", playedAt);
         details.append(h2, pTitle, pDate);
 
-        // Links
         const links = createElement("div", "spotify-youtube-container");
         const searchQuery = encodeURIComponent(`${artist} - ${title}`);
         const platforms = [
@@ -75,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
         ];
 
         platforms.forEach(({ href, icon, label }) => {
-            const a = document.createElement("a");
+            const a = createElement("a");
             a.href = href;
             a.target = "_blank";
             a.rel = "noopener";
@@ -102,7 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // Show loader
+    // Loader
     function showLoader() {
         container.innerHTML = `
             <div class="col mx-auto">
@@ -118,7 +116,6 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
     }
 
-    // Show empty message
     function showEmptyMessage() {
         container.innerHTML = `
             <div class="col mx-auto">
@@ -127,7 +124,6 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
     }
 
-    // Show error message
     function showErrorMessage(message) {
         container.innerHTML = `
             <div class="col mx-auto">
@@ -136,25 +132,24 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
     }
 
-    // Add refresh button
+    // Refresh button
     function addRefreshButton() {
         let btn = document.getElementById("playlist-refresh-btn");
         if (!btn) {
-            btn = document.createElement("button");
+            btn = createElement("button", "xerosradiobutton");
             btn.id = "playlist-refresh-btn";
             btn.type = "button";
-            btn.className = "xerosradiobutton";
             btn.innerHTML = '<i class="fa fa-rotate-right" aria-hidden="true"></i> Vernieuwen';
             btn.title = "Vernieuw de afspeellijst";
             btn.style.margin = "10px 0 10px 8px";
 
             btn.onclick = async () => {
-                btn.disabled = true;  // disable button while loading
+                btn.disabled = true;
                 showLoader();
                 try {
                     await loadPlaylist();
                 } finally {
-                    btn.disabled = false; // enable again after load or error
+                    btn.disabled = false;
                 }
             };
 
@@ -173,9 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
             const fragment = document.createDocumentFragment();
-            data.forEach(item => {
-                fragment.appendChild(createPlaylistItem(item));
-            });
+            data.forEach(item => fragment.appendChild(createPlaylistItem(item)));
             container.appendChild(fragment);
         } catch (error) {
             showErrorMessage(error.message);
@@ -183,6 +176,22 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // Auto-refresh setup
+    function startAutoRefresh() {
+        if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+        autoRefreshTimer = setInterval(async () => {
+            const btn = document.getElementById("playlist-refresh-btn");
+            if (!btn.disabled) { // Only refresh if button isn't disabled
+                btn.disabled = true;
+                try {
+                    await loadPlaylist();
+                } finally {
+                    btn.disabled = false;
+                }
+            }
+        }, refreshInterval);
+    }
+
     addRefreshButton();
-    loadPlaylist();
+    loadPlaylist().then(startAutoRefresh);
 });
