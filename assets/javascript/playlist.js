@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const apiURL = "https://xr-api-prd.faststreamdiensten.nl/playlist";
     const fallbackImage = "https://res.cloudinary.com/xerosradio/image/upload/f_webp,q_auto,w_200,h_200/XerosRadio_Logo_Achtergrond_Wit";
 
+    // Utility to create element with class and text
     function createElement(tag, className = "", content = "") {
         const el = document.createElement(tag);
         if (className) el.className = className;
@@ -10,22 +11,27 @@ document.addEventListener("DOMContentLoaded", () => {
         return el;
     }
 
+    // Format played_at string
     function formatPlayedAt(dateString) {
         if (!dateString) return "";
         if (/^\d{2}:\d{2}$/.test(dateString)) return dateString;
         const date = new Date(dateString);
         if (isNaN(date)) return dateString;
-        return date.toLocaleString('nl-NL', { hour: '2-digit', minute: '2-digit' });
+        return date.toLocaleString("nl-NL", { hour: "2-digit", minute: "2-digit" });
     }
 
+    // Create playlist item element
     function createPlaylistItem(item) {
         const artist = item.artist || "Onbekend";
         const title = item.title || "Onbekend nummer";
         const playedAt = formatPlayedAt(item.played_at);
-        const cover = item.cover_art200x200 && item.cover_art200x200.startsWith("http") ? item.cover_art200x200 : fallbackImage;
+        const cover = item.cover_art200x200 && item.cover_art200x200.startsWith("http")
+            ? item.cover_art200x200
+            : fallbackImage;
 
         const div = createElement("div", "playlist-item");
 
+        // Cover image
         const img = createElement("img", "song-cover-playlist");
         img.src = cover;
         img.alt = `${artist} - ${title}`;
@@ -34,17 +40,19 @@ document.addEventListener("DOMContentLoaded", () => {
         img.draggable = false;
         img.onerror = () => { img.src = fallbackImage; };
 
+        // Details
         const details = createElement("div", "details");
         const h2 = createElement("h2", "", artist);
         const pTitle = createElement("p", "", title);
 
+        // DJ info
         if (item.dj && item.dj.trim() !== "") {
             const djWrapper = createElement("p", "dj-name");
-            djWrapper.textContent = `Gedraaid door ${item.dj} `;
+            djWrapper.textContent = `Gedraaid door ${item.dj}`;
             if (item.dj_cover && item.dj_cover.startsWith("http")) {
                 const djImg = document.createElement("img");
                 djImg.src = item.dj_cover;
-                djImg.alt = `${item.dj}`;
+                djImg.alt = item.dj;
                 djImg.className = "dj-cover";
                 djImg.loading = "lazy";
                 djImg.decoding = "async";
@@ -57,9 +65,9 @@ document.addEventListener("DOMContentLoaded", () => {
         const pDate = createElement("p", "", playedAt);
         details.append(h2, pTitle, pDate);
 
+        // Links
         const links = createElement("div", "spotify-youtube-container");
         const searchQuery = encodeURIComponent(`${artist} - ${title}`);
-
         const platforms = [
             { href: `https://open.spotify.com/search/${searchQuery}`, icon: "fab fa-spotify spotify-icon", label: "Zoek op Spotify" },
             { href: `https://www.youtube.com/results?search_query=${searchQuery}`, icon: "fab fa-youtube youtube-icon", label: "Zoek op YouTube" },
@@ -72,7 +80,6 @@ document.addEventListener("DOMContentLoaded", () => {
             a.target = "_blank";
             a.rel = "noopener";
             a.setAttribute("aria-label", label);
-            a.setAttribute("data-tippy-content", label); // Tooltip tekst
             a.innerHTML = `<i class="${icon}"></i>`;
             links.appendChild(a);
         });
@@ -81,6 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return div;
     }
 
+    // Fetch with retry
     async function fetchWithRetry(url, options = {}, retries = 2, delay = 500) {
         for (let i = 0; i <= retries; i++) {
             try {
@@ -94,6 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // Show loader
     function showLoader() {
         container.innerHTML = `
             <div class="col mx-auto">
@@ -109,14 +118,25 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
     }
 
+    // Show empty message
     function showEmptyMessage() {
-        container.innerHTML = `<div class="col mx-auto"><div class="alert alert-info text-center mx-auto" style="width: fit-content;">ℹ️ Helaas, er zijn geen nummers gevonden.</div></div>`;
+        container.innerHTML = `
+            <div class="col mx-auto">
+                <div class="alert alert-info text-center mx-auto" style="width: fit-content;">ℹ️ Helaas, er zijn geen nummers gevonden.</div>
+            </div>
+        `;
     }
 
+    // Show error message
     function showErrorMessage(message) {
-        container.innerHTML = `<div class="col mx-auto"><div class="alert alert-danger text-center mx-auto" style="width: fit-content;">❌ Fout bij het laden van de afspeellijst probeer het later opnieuw.</div></div>`;
+        container.innerHTML = `
+            <div class="col mx-auto">
+                <div class="alert alert-danger text-center mx-auto" style="width: fit-content;">❌ Fout bij het laden van de afspeellijst, probeer het later opnieuw.</div>
+            </div>
+        `;
     }
 
+    // Add refresh button
     function addRefreshButton() {
         let btn = document.getElementById("playlist-refresh-btn");
         if (!btn) {
@@ -127,15 +147,22 @@ document.addEventListener("DOMContentLoaded", () => {
             btn.innerHTML = '<i class="fa fa-rotate-right" aria-hidden="true"></i> Vernieuwen';
             btn.title = "Vernieuw de afspeellijst";
             btn.style.margin = "10px 0 10px 8px";
-            btn.onclick = () => {
-                btn.disabled = true;
+
+            btn.onclick = async () => {
+                btn.disabled = true;  // disable button while loading
                 showLoader();
-                loadPlaylist().finally(() => { btn.disabled = false; });
+                try {
+                    await loadPlaylist();
+                } finally {
+                    btn.disabled = false; // enable again after load or error
+                }
             };
+
             container.parentNode.insertBefore(btn, container);
         }
     }
 
+    // Load playlist
     async function loadPlaylist() {
         showLoader();
         try {
@@ -145,21 +172,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 showEmptyMessage();
                 return;
             }
-
             const fragment = document.createDocumentFragment();
-            data.forEach(item => fragment.appendChild(createPlaylistItem(item)));
+            data.forEach(item => {
+                fragment.appendChild(createPlaylistItem(item));
+            });
             container.appendChild(fragment);
-
-            // ✅ Activeer Tippy.js tooltips na DOM-update
-            if (typeof tippy !== "undefined") {
-                tippy('.spotify-youtube-container a', {
-                    placement: 'top',
-                    animation: 'scale',
-                    theme: 'light-border'
-                });
-            } else {
-                console.warn("Tippy.js is niet geladen");
-            }
         } catch (error) {
             showErrorMessage(error.message);
             console.error(error);
