@@ -5,6 +5,23 @@ document.addEventListener("DOMContentLoaded", () => {
     const refreshInterval = 60 * 1000; // Auto-refresh every 60 seconds
     let autoRefreshTimer = null;
 
+    // Initialize lozad observer (wait until lozad script is available)
+    let lozadObserver = null;
+    if (window.lozad) {
+        lozadObserver = lozad(".lozad", {
+            rootMargin: "10px 0px", // start loading a bit before the image is in viewport
+            threshold: 0.1,
+            loaded: function(el) {
+                // Optional: add a class when loaded for fade-in CSS
+                el.classList.add("lozad-loaded");
+            }
+        });
+        // we will call lozadObserver.observe() after we append images
+    } else {
+        // If lozad isn't loaded for some reason, we still proceed (images will use src fallback)
+        console.warn("lozad not found - images will not be lazy-loaded");
+    }
+
     // Utility to create elements
     function createElement(tag, className = "", content = "") {
         const el = document.createElement(tag);
@@ -33,13 +50,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const div = createElement("div", "playlist-item");
 
-        const img = createElement("img", "song-cover-playlist");
-        img.src = cover;
+        // Create img element but use lozad data-src instead of src
+        const img = createElement("img", "song-cover-playlist lozad");
         img.alt = `${artist} - ${title}`;
-        img.loading = "lazy";
-        img.decoding = "async";
+        img.setAttribute("decoding", "async");
         img.draggable = false;
-        img.onerror = () => { img.src = fallbackImage; };
+        // set data-src for lozad
+        img.dataset.src = cover;
+        // set a tiny placeholder src (very small transparent image) to avoid layout shift if desired
+        img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+        // error fallback: if loading fails, show fallbackImage
+        img.onerror = () => { img.src = fallbackImage; img.removeAttribute("data-src"); img.classList.remove("lozad"); };
 
         const details = createElement("div", "details");
         const h2 = createElement("h2", "", artist);
@@ -49,13 +70,13 @@ document.addEventListener("DOMContentLoaded", () => {
             const djWrapper = createElement("p", "dj-name");
             djWrapper.textContent = `Gedraaid door ${item.dj}`;
             if (item.dj_cover && item.dj_cover.startsWith("http")) {
-                const djImg = createElement("img");
-                djImg.src = item.dj_cover;
+                const djImg = createElement("img", "dj-cover lozad");
                 djImg.alt = item.dj;
-                djImg.className = "dj-cover";
-                djImg.loading = "lazy";
-                djImg.decoding = "async";
-                djImg.onerror = () => { djImg.style.display = "none"; };
+                djImg.setAttribute("decoding", "async");
+                djImg.draggable = false;
+                djImg.dataset.src = item.dj_cover;
+                djImg.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+                djImg.onerror = () => { djImg.style.display = "none"; djImg.removeAttribute("data-src"); djImg.classList.remove("lozad"); };
                 djWrapper.appendChild(djImg);
             }
             details.appendChild(djWrapper);
@@ -170,6 +191,18 @@ document.addEventListener("DOMContentLoaded", () => {
             const fragment = document.createDocumentFragment();
             data.forEach(item => fragment.appendChild(createPlaylistItem(item)));
             container.appendChild(fragment);
+
+            // Tell lozad to observe new elements (if lozad is available)
+            if (lozadObserver) {
+                lozadObserver.observe(); // scan for .lozad elements and observe them
+            } else {
+                // If lozad not present, we can set actual src for images to ensure they load
+                const imgs = container.querySelectorAll("img[data-src]");
+                imgs.forEach(img => {
+                    img.src = img.dataset.src || img.src;
+                    img.removeAttribute("data-src");
+                });
+            }
         } catch (error) {
             showErrorMessage(error.message);
             console.error(error);
