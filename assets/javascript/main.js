@@ -38,4 +38,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // Beveilig dynamisch geladen afbeeldingen (bijvoorbeeld via AJAX of SPA)
     const observer = new MutationObserver(beveiligAfbeeldingen);
     observer.observe(document.body, { childList: true, subtree: true });
+
+    // --- Vul automatisch het jaartal in bij <span id="year"> ---
+    const yearSpan = document.getElementById("year");
+    if (yearSpan) {
+        yearSpan.textContent = new Date().getFullYear();
+    }
 });
