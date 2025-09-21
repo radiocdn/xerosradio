@@ -774,6 +774,63 @@ img[data-opt-lazy-loaded] {
     }
 }
 
+/* Carousel */
+  .partners-section {
+    max-width: 1000px;
+    margin: 50px auto;
+    text-align: center;
+  }
+
+  .partners-section h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    color: #ffff;
+  }
+
+  .owl-carousel .item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .owl-carousel .item a {
+    display: inline-block;
+    transition: transform 0.3s ease;
+  }
+
+  .owl-carousel .item img {
+    max-width: 150px;
+    max-height: 80px;
+    object-fit: contain;
+  }
+
+  .owl-carousel .item a:hover {
+    transform: scale(1.1);
+  }
+
+  .owl-nav button {
+    background: rgba(255,255,255,0.9) !important;
+    border-radius: 50% !important;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px !important;
+    transition: background 0.3s ease;
+  }
+
+  .owl-nav button:hover {
+    background: #eee !important;
+  }
+
+  .owl-nav i {
+    color: #333;
+  }
+/* End Carousel */
+
 /* Playlist */
         .xerosradioplaylist {
             color: black;
