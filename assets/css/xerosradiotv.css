@@ -96,7 +96,8 @@ video {
     color: #fff;
     padding: 8px 12px;
     border-radius: 6px;
-    font-family: Arial, sans-serif;
+    font-family: 'Sofia Sans', sans-serif;
+    font-weight: 800;
     font-size: 14px;
     display: none;
     z-index: 10;
