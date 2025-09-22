@@ -8,10 +8,6 @@ body, html {
     height: 100%;
     width: 100%;
     overflow: hidden;
-    font-family: Arial, sans-serif;
-}
-
-* {
     font-family: 'Sofia Sans', sans-serif;
     font-weight: 800;
 }
