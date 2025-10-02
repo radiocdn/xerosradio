@@ -19,6 +19,7 @@ class RadioPlayer {
         this.playPauseButton?.setAttribute('aria-label', 'Play / Pauze');
         this.volumeSlider?.setAttribute('aria-label', 'Volume aanpassen');
         this.castButton?.setAttribute('aria-label', 'Cast naar apparaat');
+        this.playlistButton?.setAttribute('aria-label', 'Check de nummers die net zijn gedraait zijn');
 
         this.lastSong = { artist: '', title: '', cover: '' };
         this.lastDJ = { status: null, name: '', cover: '' };
