@@ -1,6 +1,14 @@
+'use strict';
+
 class RadioPlayer {
+    // Configuration constants
+    DEFAULT_IMAGE = 'https://res.cloudinary.com/xerosradio/image/upload/w_500,h_500,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
+    STREAM_URL = 'https://stream.streamxerosradio.duckdns.org/xerosradio';
+    PLAYLIST_URL = 'https://xerosradio.pages.dev/playlist';
+    RADIO_INFO_API = 'https://xr-api-prd.faststreamdiensten.nl/';
+
     constructor() {
-        // Cache DOM elements with optional chaining for robustness
+        // Cache DOM elements
         this.radioPlayer = document.getElementById('radioPlayer');
         this.artistInfo = document.getElementById('artistInfo');
         this.titleInfo = document.getElementById('titleInfo');
@@ -11,10 +19,27 @@ class RadioPlayer {
         this.volumeSlider = document.getElementById('volumeSlider');
         this.castButton = document.getElementById('castButton');
         this.playlistButton = document.getElementById('playlistButton');
+
+        // Log missing elements for debugging
+        [
+            ['radioPlayer', this.radioPlayer],
+            ['artistInfo', this.artistInfo],
+            ['titleInfo', this.titleInfo],
+            ['albumArtwork', this.albumArtwork],
+            ['djInfo', this.djInfoElement],
+            ['artwork', this.artworkElement],
+            ['playPauseButton', this.playPauseButton],
+            ['volumeSlider', this.volumeSlider],
+            ['castButton', this.castButton],
+            ['playlistButton', this.playlistButton]
+        ].forEach(([name, el]) => {
+            if (!el) console.warn(`RadioPlayer: Missing DOM element #${name}`);
+        });
+
         this.isPlaying = false;
         this.userPaused = false;
-        this.defaultImage = 'https://res.cloudinary.com/xerosradio/image/upload/w_500,h_500,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
-        this.streamUrl = 'https://stream.streamxerosradio.duckdns.org/xerosradio';
+        this.lastSong = { artist: '', title: '', cover: '' };
+        this.lastDJ = { status: null, name: '', cover: '' };
 
         // Set ARIA labels for accessibility
         this.playPauseButton?.setAttribute('aria-label', 'Play / Pauze');
@@ -22,14 +47,11 @@ class RadioPlayer {
         this.castButton?.setAttribute('aria-label', 'Cast naar apparaat');
         this.playlistButton?.setAttribute('aria-label', 'Check de nummers die net zijn gedraaid');
 
-        this.lastSong = { artist: '', title: '', cover: '' };
-        this.lastDJ = { status: null, name: '', cover: '' };
-
         // Event listeners
-        if (this.playPauseButton) this.playPauseButton.addEventListener('click', this.togglePlay);
-        if (this.volumeSlider) this.volumeSlider.addEventListener('input', this.adjustVolume);
-        if (this.castButton) this.castButton.addEventListener('click', this.castButtonClick);
-        if (this.playlistButton) this.playlistButton.addEventListener('click', this.openPlaylistPage);
+        this.playPauseButton?.addEventListener('click', this.togglePlay);
+        this.volumeSlider?.addEventListener('input', this.adjustVolume);
+        this.castButton?.addEventListener('click', this.castButtonClick);
+        this.playlistButton?.addEventListener('click', this.openPlaylistPage);
 
         // Volume initialization
         const initialVolume = this.getVolumeFromCookie() ?? 0.5;
@@ -58,11 +80,9 @@ class RadioPlayer {
 
         // Hide cast icon and disable cast on iOS
         if (this.isIOS) {
-            // Hide all elements with class 'hide-on-ios'
             document.querySelectorAll('.hide-on-ios').forEach(el => {
                 el.style.display = 'none';
             });
-            // Optionally disable cast button
             if (this.castButton) {
                 this.castButton.disabled = true;
                 this.castButton.style.pointerEvents = 'none';
@@ -80,7 +100,7 @@ class RadioPlayer {
         img.loading = 'lazy';
         img.style.width = `${width}px`;
         img.style.height = `${height}px`;
-        img.onerror = () => { img.src = this.defaultImage; };
+        img.onerror = () => { img.src = this.DEFAULT_IMAGE; };
         return img;
     };
 
@@ -97,14 +117,13 @@ class RadioPlayer {
     updateRadioInfo = async () => {
         if (this._isUpdatingRadioInfo) return;
         this._isUpdatingRadioInfo = true;
-        const url = 'https://xr-api-prd.faststreamdiensten.nl/';
         try {
-            const response = await fetch(url, { method: 'GET', cache: 'no-cache' });
+            const response = await fetch(this.RADIO_INFO_API, { method: 'GET', cache: 'no-cache' });
             if (!response.ok) throw new Error('Fout bij ophalen data');
             const data = await response.json();
             const { artist, title, cover_art200x200 } = data.current_song;
             const { dj_live_status, dj_name, dj_cover } = data.onair_info;
-            const artwork200 = cover_art200x200 || this.defaultImage;
+            const artwork200 = cover_art200x200 || this.DEFAULT_IMAGE;
 
             // Update song info if changed
             if (
@@ -112,9 +131,9 @@ class RadioPlayer {
                 title !== this.lastSong.title ||
                 artwork200 !== this.lastSong.cover
             ) {
-                if (this.artistInfo) this.artistInfo.textContent = artist;
-                if (this.titleInfo) this.titleInfo.textContent = title;
-                if (this.albumArtwork) this.albumArtwork.src = artwork200;
+                this.artistInfo && (this.artistInfo.textContent = artist);
+                this.titleInfo && (this.titleInfo.textContent = title);
+                this.albumArtwork && (this.albumArtwork.src = artwork200);
                 this.updateMediaMetadata();
                 this.lastSong = { artist, title, cover: artwork200 };
             }
@@ -125,8 +144,8 @@ class RadioPlayer {
                 dj_name !== this.lastDJ.name ||
                 dj_cover !== this.lastDJ.cover
             ) {
-                if (this.djInfoElement) this.djInfoElement.textContent = dj_name;
-                const artworkUrl = this.isValidUrl(dj_cover) ? dj_cover : this.defaultImage;
+                this.djInfoElement && (this.djInfoElement.textContent = dj_name);
+                const artworkUrl = this.isValidUrl(dj_cover) ? dj_cover : this.DEFAULT_IMAGE;
                 if (this.artworkElement) {
                     this.artworkElement.innerHTML = '';
                     this.artworkElement.appendChild(this.createArtworkImage(artworkUrl, 'XerosRadio DJ'));
@@ -142,15 +161,15 @@ class RadioPlayer {
 
     handleError = error => {
         console.error('Fout:', error);
-        if (this.djInfoElement) this.djInfoElement.textContent = 'XerosRadio is momenteel niet beschikbaar.';
+        this.djInfoElement && (this.djInfoElement.textContent = 'XerosRadio is momenteel niet beschikbaar.');
         if (this.artworkElement) {
             this.artworkElement.innerHTML = '';
-            this.artworkElement.appendChild(this.createArtworkImage(this.defaultImage));
+            this.artworkElement.appendChild(this.createArtworkImage(this.DEFAULT_IMAGE));
         }
     };
 
     initializeCastSDK = () => {
-        if (this.isIOS) return; // Do not initialize cast on iOS
+        if (this.isIOS) return;
         window['__onGCastApiAvailable'] = isAvailable => {
             if (isAvailable) {
                 const castContext = cast.framework.CastContext.getInstance();
@@ -178,7 +197,7 @@ class RadioPlayer {
         if ('mediaSession' in navigator) {
             const artist = this.artistInfo?.textContent || 'XerosRadio';
             const title = this.titleInfo?.textContent || 'Bij XerosRadio zit je goed';
-            const artwork = this.albumArtwork?.src || this.defaultImage;
+            const artwork = this.albumArtwork?.src || this.DEFAULT_IMAGE;
             navigator.mediaSession.metadata = new MediaMetadata({
                 title,
                 artist,
@@ -199,7 +218,7 @@ class RadioPlayer {
     };
 
     castButtonClick = () => {
-        if (this.isIOS) return; // Disable cast on iOS
+        if (this.isIOS) return;
         const castContext = cast.framework.CastContext.getInstance();
         castContext.requestSession()
             .then(this.loadMediaToCast)
@@ -207,14 +226,14 @@ class RadioPlayer {
     };
 
     loadMediaToCast = () => {
-        if (this.isIOS) return; // Disable cast on iOS
+        if (this.isIOS) return;
         const session = cast.framework.CastContext.getInstance().getCurrentSession();
         if (session) {
-            const mediaInfo = new chrome.cast.media.MediaInfo(this.streamUrl, 'audio/aac');
+            const mediaInfo = new chrome.cast.media.MediaInfo(this.STREAM_URL, 'audio/aac');
             mediaInfo.metadata = new chrome.cast.media.MusicTrackMediaMetadata();
             mediaInfo.metadata.title = 'Bij XerosRadio zit je goed. Altijd online de beste Nederlandstalige geheime zender en piraten hits. 24 uur per dag de mooiste muziek.';
             mediaInfo.metadata.artist = 'XerosRadio';
-            mediaInfo.metadata.images = [{ url: this.defaultImage }];
+            mediaInfo.metadata.images = [{ url: this.DEFAULT_IMAGE }];
             const request = new chrome.cast.media.LoadRequest(mediaInfo);
             session.loadMedia(request)
                 .then(() => console.log('Cast gestart'))
@@ -234,8 +253,7 @@ class RadioPlayer {
 
     playMedia = () => {
         if (!this.radioPlayer) return;
-        this.radioPlayer.src = this.streamUrl;
-        // Try/catch for browsers that block autoplay
+        this.radioPlayer.src = this.STREAM_URL;
         try {
             const playPromise = this.radioPlayer.play();
             if (playPromise && typeof playPromise.then === 'function') {
@@ -260,11 +278,11 @@ class RadioPlayer {
 
     pauseMedia = () => {
         if (!this.radioPlayer) return;
-        this._programmaticPause = true; // Set flag for programmatic pause
+        this._programmaticPause = true;
         this.radioPlayer.pause();
         this.isPlaying = false;
         this.updatePlayPauseButton();
-        setTimeout(() => { this._programmaticPause = false; }, 100); // Reset flag after short delay
+        setTimeout(() => { this._programmaticPause = false; }, 100);
     };
 
     updatePlayPauseButton = () => {
@@ -274,11 +292,10 @@ class RadioPlayer {
 
     adjustVolume = () => {
         if (!this.radioPlayer || !this.volumeSlider) return;
-        this.radioPlayer.volume = this.volumeSlider.value;
-        this.saveVolumeToStorage(this.volumeSlider.value);
+        this.radioPlayer.volume = parseFloat(this.volumeSlider.value);
+        this.saveVolumeToStorage(this.radioPlayer.volume);
     };
 
-    // Use localStorage for volume instead of cookies
     saveVolumeToStorage = volume => {
         try {
             localStorage.setItem('xr_volume', volume);
@@ -286,7 +303,6 @@ class RadioPlayer {
     };
 
     getVolumeFromCookie = () => {
-        // Try localStorage first, fallback to cookie for backward compatibility
         try {
             const v = localStorage.getItem('xr_volume');
             if (v !== null) return parseFloat(v);
@@ -306,7 +322,6 @@ class RadioPlayer {
     };
 
     handlePause = () => {
-        // Only auto-restart if not paused by user or programmatically (e.g. Media Session)
         if (!this.userPaused && !this._programmaticPause && this.radioPlayer && !this.radioPlayer.ended) {
             console.warn('Pauze zonder gebruikersinput. Herstart...');
             setTimeout(this.playMedia, this.reconnectDelay);
@@ -314,13 +329,11 @@ class RadioPlayer {
     };
 
     openPlaylistPage = () => {
-        window.location.href = 'https://xerosradio.pages.dev/playlist';
+        window.open(this.PLAYLIST_URL, '_blank');
     };
 
-    // Optional: Clean up intervals and listeners if needed
     destroy = () => {
         clearInterval(this._radioInfoInterval);
-        // Remove event listeners if you ever need to destroy the player
         this.playPauseButton?.removeEventListener('click', this.togglePlay);
         this.volumeSlider?.removeEventListener('input', this.adjustVolume);
         this.castButton?.removeEventListener('click', this.castButtonClick);
