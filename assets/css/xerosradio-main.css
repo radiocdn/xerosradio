@@ -249,9 +249,10 @@ img {
     margin-top: 10px;
 }
 
-/* Play/Pause Button XerosRadio */
+/* Play/Pause/Playlist Button XerosRadio */
 #playPauseButton,
-#castButton {
+#castButton,
+#playlistButton {
     font-size: 24px; /* Larger play button */
     color: #fff;
     cursor: pointer;
