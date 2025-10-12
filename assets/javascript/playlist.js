@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const container = document.getElementById("playlist-container");
     const apiURL = "https://xr-api-prd.faststreamdiensten.nl/playlist";
-    const fallbackImage = "https://res.cloudinary.com/xerosradio/image/upload/f_webp,q_auto,w_200,h_200/XerosRadio_Logo_Achtergrond_Wit";
+    const fallbackImage = "https://res.cloudinary.com/xerosradio/image/upload/f_svg,q_auto/v1/Assets/website/default_cover_art_ie9hax";
     const refreshInterval = 60 * 1000; // Auto-refresh every 60 seconds
     let autoRefreshTimer = null;
 
