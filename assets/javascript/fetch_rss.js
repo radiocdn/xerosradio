@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const fallback = document.createElement('div');
         fallback.className = 'news-fallback';
         fallback.innerHTML = `
-            <img src="https://res.cloudinary.com/xerosradio/image/upload/v1752406213/Assets/errornews_xerosradio.svg" draggable="false" loading="lazy" alt="Nieuwsfeed niet beschikbaar">
+            <img type="image/svg+xml" src="https://res.cloudinary.com/xerosradio/image/upload/v1752406213/Assets/errornews_xerosradio.svg" draggable="false" loading="lazy" alt="Nieuwsfeed niet beschikbaar">
             <h3>Nieuws is niet beschikbaar, probeer het later op een ander moment</h3>
         `;
 
