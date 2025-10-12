@@ -10,6 +10,7 @@ class RadioPlayer {
         this.playPauseButton = document.getElementById('playPauseButton');
         this.volumeSlider = document.getElementById('volumeSlider');
         this.castButton = document.getElementById('castButton');
+        this.playlistButton = document.getElementById('playlistButton');
         this.isPlaying = false;
         this.userPaused = false;
         this.defaultImage = 'https://res.cloudinary.com/xerosradio/image/upload/w_500,h_500,f_webp,q_auto/XerosRadio_Logo_Achtergrond_Wit';
@@ -25,9 +26,10 @@ class RadioPlayer {
         this.lastDJ = { status: null, name: '', cover: '' };
 
         // Event listeners
-        this.playPauseButton?.addEventListener('click', this.togglePlay);
-        this.volumeSlider?.addEventListener('input', this.adjustVolume);
-        this.castButton?.addEventListener('click', this.castButtonClick);
+        if (this.playPauseButton) this.playPauseButton.addEventListener('click', this.togglePlay);
+        if (this.volumeSlider) this.volumeSlider.addEventListener('input', this.adjustVolume);
+        if (this.castButton) this.castButton.addEventListener('click', this.castButtonClick);
+        if (this.playlistButton) this.playlistButton.addEventListener('click', this.openPlaylistPage);
 
         // Volume initialization
         const initialVolume = this.getVolumeFromCookie() ?? 0.5;
@@ -38,7 +40,7 @@ class RadioPlayer {
         this._isUpdatingRadioInfo = false;
 
         this.updateRadioInfo();
-        this._radioInfoInterval = setInterval(this.updateRadioInfo, 5000);
+        this._radioInfoInterval = setInterval(() => this.updateRadioInfo(), 5000);
 
         this.initializeCastSDK();
         this.setupMediaSession();
@@ -311,6 +313,10 @@ class RadioPlayer {
         }
     };
 
+    openPlaylistPage = () => {
+        window.location.href = 'https://xerosradio.pages.dev/playlist';
+    };
+
     // Optional: Clean up intervals and listeners if needed
     destroy = () => {
         clearInterval(this._radioInfoInterval);
@@ -318,6 +324,7 @@ class RadioPlayer {
         this.playPauseButton?.removeEventListener('click', this.togglePlay);
         this.volumeSlider?.removeEventListener('input', this.adjustVolume);
         this.castButton?.removeEventListener('click', this.castButtonClick);
+        this.playlistButton?.removeEventListener('click', this.openPlaylistPage);
         this.radioPlayer?.removeEventListener('error', this.handleStreamError);
         this.radioPlayer?.removeEventListener('stalled', this.handleStreamError);
         this.radioPlayer?.removeEventListener('ended', this.handleStreamError);
