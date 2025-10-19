@@ -975,6 +975,59 @@ img[data-opt-lazy-loaded] {
         opacity: 1;
       }
 
+/* Start Marathon Uitzending Planning */
+    .containershows {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    .accordion-item {
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin-bottom: 1rem;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .accordion-header {
+      padding: 1rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #008cff;
+      color: #fff;
+      font-weight: bold;
+    }
+    .accordion-header:hover {
+      background: rgb(124, 0, 196);
+    }
+    .accordion-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      padding: 0 1rem;
+      background: #fafafa;
+    }
+    .accordion-body.show {
+      padding: 0.5rem;
+    }
+    .show-title {
+      font-weight: bold;
+      color: #008cff;
+    }
+    .show-time {
+      font-size: 0.9rem;
+      color: #555;
+    }
+    .arrow {
+      transition: transform 0.3s ease;
+    }
+    .arrow.rotate {
+      transform: rotate(180deg);
+    }
+/* Eind Marathon Uitzending Planning */
+
 /* TOP 100 LIJST Playlist */
     @keyframes backgroundMove {
       0% {
@@ -1180,6 +1233,7 @@ img[data-opt-lazy-loaded] {
   clip: rect(0,0,0,0);
   border: 0;
 }
+
 /*EIND TOP100LIJST */
 
         /* Mobile styles */
