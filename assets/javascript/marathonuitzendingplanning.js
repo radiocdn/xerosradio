@@ -48,7 +48,7 @@ const dayMap = {
 // Fetch data
 async function fetchMarathon() {
     try {
-        const res = await fetch('https://php.streamxerosradio.duckdns.org/marathonuitzending/api/frontend.php?output=all');
+        const res = await fetch('https://xr-api-2.faststreamdiensten.nl/marathonuitzending/api/frontend.php?output=all');
         const data = await res.json();
 
         const showsPerDay = {
