@@ -1028,44 +1028,6 @@ img[data-opt-lazy-loaded] {
     }
 /* Eind Marathon Uitzending Planning */
 
-/* Start Tooltips */
-    .icon-btn {
-      position: relative;
-      font-size: 32px;
-      color: #555;
-      cursor: pointer;
-      transition: color 0.3s ease;
-    }
-
-    .icon-btn:hover {
-      color: rgb(122, 1, 254);
-    }
-
-    /* Tooltip stijl */
-    .icon-btn::after {
-      content: attr(data-tooltip);
-      position: absolute;
-      bottom: -35px;
-      left: 50%;
-      transform: translateX(-50%) scale(0.9);
-      background: rgba(0, 0, 0, 0.8);
-      color: white;
-      padding: 6px 10px;
-      border-radius: 6px;
-      font-size: 13px;
-      opacity: 0;
-      pointer-events: none;
-      white-space: nowrap;
-      transition: all 0.25s ease;
-    }
-
-    .icon-btn:hover::after {
-      opacity: 1;
-      transform: translateX(-50%) scale(1);
-    }
-/* Eind Tooltips */
-
-
 /* TOP 100 LIJST Playlist */
     @keyframes backgroundMove {
       0% {
